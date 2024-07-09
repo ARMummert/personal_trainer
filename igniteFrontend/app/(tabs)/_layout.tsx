@@ -7,11 +7,12 @@ import { Text } from 'react-native';
 import { Button } from 'react-native-elements';
 import SettingsScreen  from './SettingsScreen'; 
 import AccountProfileScreen from './AccountProfileScreen';
-import LoginScreen from './loginScreen';
+import LoginScreen from './LoginScreen';
 import * as React from 'react';
 import { useFonts } from 'expo-font';
 import { FontAwesome } from '@expo/vector-icons'; // Add this import statement
 import { useColorScheme } from '@/components/useColorScheme';
+import PrivacyPolicy  from './PrivacyPolicy';
 
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
@@ -57,7 +58,7 @@ export default function TabLayout() {
         name="Home"
         component={HomeScreen} // Replace with your actual home screen component
         options={{
-          title: 'Tab One',
+          title: 'Dashboard',
           // Remove tabBarIcon as it's not used in Drawer
           // drawerIcon can be used to set the drawer menu icon
           drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
@@ -67,7 +68,7 @@ export default function TabLayout() {
         name="Settings"
         component={SettingsScreen} // Replace with your actual settings screen component
         options={{
-          title: 'Tab Two',
+          title: 'Settings',
           // Remove tabBarIcon as it's not used in Drawer
           drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
         }}
@@ -85,6 +86,14 @@ export default function TabLayout() {
         component={LoginScreen} // Replace with your actual login screen component
         options={{
           title: 'Login',
+          drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+        }}
+        />
+      <Drawer.Screen
+        name="PrivacyPolicy"
+        component={PrivacyPolicy} // Replace with your actual privacy policy screen component
+        options={{
+          title: 'Privacy Policy',
           drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
         }}
         />
