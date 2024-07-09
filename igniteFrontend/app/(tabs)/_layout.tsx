@@ -1,3 +1,4 @@
+
 import { useClientOnlyValue } from '@/components/useClientOnlyValue';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 // Remove the duplicate import statement for 'FontAwesome'
@@ -51,6 +52,7 @@ export default function TabLayout() {
     <Drawer.Navigator
       drawerContent={(props) => <DrawerContent {...props} />}
       screenOptions={{
+
         headerShown: useClientOnlyValue(false, true),
       }}
     >
@@ -62,6 +64,7 @@ export default function TabLayout() {
           // Remove tabBarIcon as it's not used in Drawer
           // drawerIcon can be used to set the drawer menu icon
           drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+
         }}
       />
       <Drawer.Screen
@@ -73,6 +76,7 @@ export default function TabLayout() {
           drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
         }}
       />
+
       <Drawer.Screen
         name="AccountProfileScreen"
         component={AccountProfileScreen} // Replace with your actual account profile screen component
@@ -100,4 +104,40 @@ export default function TabLayout() {
     </Drawer.Navigator>
   );
 }
+
+
+       <Tabs.Screen
+        name="loginScreen"
+        options={{
+          title: 'Login',
+          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+        }}
+      />
+    </Tabs>
+    
+  );
+}
+
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  separator: {
+    marginVertical: 30,
+    height: 1,
+    width: '80%',
+  },
+  Pressable: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+}); 
 
