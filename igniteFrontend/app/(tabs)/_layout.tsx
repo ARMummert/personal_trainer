@@ -1,20 +1,16 @@
+import * as React from 'react';
 import { useClientOnlyValue } from '@/components/useClientOnlyValue';
-import { createDrawerNavigator } from '@react-navigation/drawer';
+import { createDrawerNavigator, DrawerToggleButton } from '@react-navigation/drawer';
+import { View, StyleSheet, Text, GestureResponderEvent, TouchableOpacity } from 'react-native';
 import HomeScreen from './HomeScreen'; 
-import { View, StyleSheet } from 'react-native';
-import { Text } from 'react-native';
-import { Button} from 'react-native-elements';
 import SettingsScreen  from './SettingsScreen'; 
 import AccountProfileScreen from './AccountProfileScreen';
 import LoginScreen from './loginScreen';
-import * as React from 'react';
+import PrivacyPolicy  from './PrivacyPolicy';
 import { useFonts } from 'expo-font';
 import { FontAwesome } from '@expo/vector-icons'; 
 import { useColorScheme } from '@/components/useColorScheme';
-import PrivacyPolicy  from './PrivacyPolicy';
 import { LinearGradient } from 'expo-linear-gradient';
-import { TouchableOpacity } from 'react-native';
-import { GestureResponderEvent } from 'react-native';
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
@@ -41,12 +37,9 @@ function DrawerContent(props: any) {
   }
   return (
    
-    <View style={styles.container}>
-       
-    <View style={styles.navigationButtonContainer}>
-     
+    <View style={styles.container}>   
+    <View style={styles.navigationButtonContainer}>  
       <Text style={styles.headerTitle}>Ignite</Text>
-
       <LinearGradient colors={['#F83600', '#FE8C00']} style={styles.gradient}>
       <TouchableOpacity style={styles.navigationButton} onPress={() => props.navigation.navigate('Home')}>
         <Text style={styles.buttonText}>Home</Text>
@@ -77,8 +70,8 @@ function DrawerContent(props: any) {
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
       </LinearGradient>
-  </View>
-  </View>
+    </View>
+    </View>
   );
 }
 
@@ -87,10 +80,22 @@ export default function TabLayout() {
 
   return (
     <Drawer.Navigator
-      drawerContent={(props) => <DrawerContent {...props} />}
-      screenOptions={{
-        headerShown: useClientOnlyValue(false, true),
-      }}  
+    drawerContent={(props) => <DrawerContent {...props} />}
+    screenOptions={{
+      headerShown: useClientOnlyValue(false, true),
+      headerStyle: {
+        height: 100, // Adjust this value to your desired height
+        backgroundColor: 'black', // Set background color
+      },
+      headerTitle: ({ children }) => ( // Custom header for Home screen
+        <View>
+          <Text style={styles.headerTitle}>Ignite</Text>  
+        </View>
+      ),
+      headerLeft: (props) => (
+        <DrawerToggleButton {...props} tintColor="white" />
+      ),
+    }}
     >
       <Drawer.Screen
         name="Home"
@@ -148,17 +153,16 @@ const styles = StyleSheet.create({
   navigationButton: {
     marginBottom: 10,
     marginTop: 10,
-    
   },
   headerTitle: {
     flex: 1,
-    fontSize: 60,
+    fontSize: 48,
     justifyContent: 'center',
-    marginBottom: 50,
     alignSelf: 'center',
+    marginBottom: 20,
+    marginTop: 20,
     color: '#F83600', 
     fontFamily: 'AguafinaScript-Regular',
-    
   },
   container: {
     flex: 1,
@@ -197,7 +201,7 @@ const styles = StyleSheet.create({
   text: {
     color: 'black',
     fontSize: 16,
-    fontFamily: 'Arial',
+    fontFamily: 'Alkatra-VariableFront_wght',
   },
 });
 
