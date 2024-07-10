@@ -1,14 +1,22 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList } from 'react-native';
 
 const HomeScreen = () => {
-  const workouts = [
-    { id: 1, title: 'Workout 1' },
-    { id: 2, title: 'Workout 2' },
-    { id: 3, title: 'Workout 3' },
-    { id: 4, title: 'Workout 4' },
-    // You can add more workouts here
-  ];
+  const [workouts, setWorkouts] = useState<{ id: number; title: string }[]>([]);
+
+  useEffect(() => {
+    const fetchWorkouts = async () => {
+      try {
+        const response = await fetch('http://<your-flask-backend-url>/api/workouts');
+        const data = await response.json();
+        setWorkouts(data);
+      } catch (error) {
+        console.error('Error fetching workouts:', error);
+      }
+    };
+
+    fetchWorkouts();
+  }, []);
 
   const renderItem = ({ item }: { item: { id: number; title: string } }) => (
     <View style={styles.card}>
@@ -21,7 +29,7 @@ const HomeScreen = () => {
       <FlatList
         data={workouts}
         renderItem={renderItem}
-        keyExtractor={item => item.id.toString()}
+        keyExtractor={(item) => item.id.toString()}
       />
     </View>
   );
@@ -32,9 +40,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: 'black',
   },
   card: {
-    backgroundColor: '#f0f0f0',
+    backgroundColor: 'white',
     padding: 15,
     margin: 10,
     borderRadius: 5,
