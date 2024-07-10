@@ -11,6 +11,8 @@ import { useFonts } from 'expo-font';
 import { FontAwesome } from '@expo/vector-icons'; 
 import { useColorScheme } from '@/components/useColorScheme';
 import { LinearGradient } from 'expo-linear-gradient';
+import { DrawerActions } from '@react-navigation/native';
+import { useNavigation } from 'expo-router';
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
@@ -23,6 +25,8 @@ function TabBarIcon(props: {
 const Drawer = createDrawerNavigator();
 
 function DrawerContent(props: any) {
+  const navigation = useNavigation();
+
   function onPress(event: GestureResponderEvent): void {
     throw new Error('Function not implemented.');
   }
@@ -38,6 +42,9 @@ function DrawerContent(props: any) {
   return (
    
     <View style={styles.container}>   
+      <TouchableOpacity style={styles.closeIcon} onPress={() => navigation.dispatch(DrawerActions.closeDrawer())}>
+    <FontAwesome name="close" size={24} color="white" />
+  </TouchableOpacity>
     <View style={styles.navigationButtonContainer}>  
       <Text style={styles.headerTitle}>Ignite</Text>
       <LinearGradient colors={['#F83600', '#FE8C00']} style={styles.gradient}>
@@ -86,6 +93,11 @@ export default function TabLayout() {
       headerStyle: {
         height: 100, // Adjust this value to your desired height
         backgroundColor: 'black', // Set background color
+        borderBottomWidth: 0, // Remove bottom border
+      },
+      headerTintColor: '#fff',
+      headerTitleStyle: {
+        fontWeight: 'bold',
       },
       headerTitle: ({ children }) => ( // Custom header for Home screen
         <View>
@@ -160,7 +172,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignSelf: 'center',
     marginBottom: 20,
-    marginTop: 20,
+    marginTop: 40,
     color: '#F83600', 
     fontFamily: 'AguafinaScript-Regular',
   },
@@ -169,6 +181,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'black',
+    padding: 0,
+    margin: 0,
   },
   icon: {
     marginBottom: 20,
@@ -202,6 +216,17 @@ const styles = StyleSheet.create({
     color: 'black',
     fontSize: 16,
     fontFamily: 'Alkatra-VariableFront_wght',
+  },
+  closeButton: {
+    color: 'white',
+    fontSize: 24,
+    fontFamily: 'Alkatra-VariableFront_wght',
+    marginBottom: 20,
+  },
+  closeIcon: {
+    position: 'absolute',
+    top: 40,
+    right: 40,
   },
 });
 
