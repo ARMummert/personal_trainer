@@ -20,18 +20,18 @@ const LoginScreen: React.FC<LoginProps> = ({ navigation }) => {
     }
 
     try {
-      // Example of storing data securely
+      // Storing data securely
       await SecureStore.setItemAsync('userEmail', email);
       await SecureStore.setItemAsync('userPassword', password);
 
-      // Example of retrieving data securely
+      // Retrieving data securely
       const storedEmail = await SecureStore.getItemAsync('userEmail');
       const storedPassword = await SecureStore.getItemAsync('userPassword');
 
       console.log('Stored Email:', storedEmail);
       console.log('Stored Password:', storedPassword);
 
-      // Make your API request here
+      //API request
       const response = await axios.post('https://your-api-url.com/login', {
         email,
         password,
@@ -42,7 +42,7 @@ const LoginScreen: React.FC<LoginProps> = ({ navigation }) => {
       } else {
         alert('Login failed');
       }
-    } catch (error) {
+      } catch (error) {
       console.error('Error during login:', error);
       alert('An error occurred. Please try again.');
     }
