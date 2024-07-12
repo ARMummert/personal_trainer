@@ -32,7 +32,7 @@ const LoginScreen: React.FC<LoginProps> = ({ navigation }) => {
       console.log('Stored Password:', storedPassword);
 
       //API request
-      const response = await axios.post('https://your-api-url.com/login', {
+      const response = await axios.post('http://localhost:5000/login', {
         email,
         password,
       });
@@ -50,7 +50,7 @@ const LoginScreen: React.FC<LoginProps> = ({ navigation }) => {
 
   const handleResetPassword = async () => {
     try {
-      const response = await axios.post('https://your-flask-api-url.com/reset-password', {
+      const response = await axios.post('http://localhost:5000/reset-password', {
         email,
       });
   
@@ -69,7 +69,7 @@ const LoginScreen: React.FC<LoginProps> = ({ navigation }) => {
   
   const handleResetUsername = async () => {
     try {
-      const response = await axios.post('https://your-flask-api-url.com/reset-username', {
+      const response = await axios.post('http://localhost:5000/reset-username', {
         email,
       });
   

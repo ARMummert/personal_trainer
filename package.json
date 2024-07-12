@@ -1,0 +1,22 @@
+{
+  "dependencies": {
+    "@expo/cli": "^0.18.25",
+    "@expo/vector-icons": "^14.0.2",
+    "@react-navigation/drawer": "^6.7.0",
+    "axios": "^1.7.2",
+    "expo": "^51.0.20",
+    "expo-linear-gradient": "~13.0.2",
+    "expo-router": "~3.5.18",
+    "expo-secure-store": "~13.0.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-native": "^0.74.3",
+    "react-native-elements": "^3.4.3",
+    "expo-web-browser": "~13.0.3"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "typescript": "^5.5.3"
+  }
+}
