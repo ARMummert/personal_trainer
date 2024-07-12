@@ -195,7 +195,7 @@ export namespace ExpoRouter {
   };
 
   /** The imperative router. */
-  export declare const router: Router;
+  export const router: Router;
 
   /************
    * <Link /> *
@@ -287,17 +287,17 @@ export namespace ExpoRouter {
    * @param props.children Child elements to render the content.
    * @param props.className On web, this sets the HTML \`class\` directly. On native, this can be used with CSS interop tools like Nativewind.
    */
-  export declare const Link: LinkComponent;
+  export const Link: LinkComponent;
 
   /** Redirects to the href as soon as the component is mounted. */
-  export declare const Redirect: (props: React.PropsWithChildren<{ href: Href }>) => ReactNode;
+  export const Redirect: (props: React.PropsWithChildren<{ href: Href }>) => ReactNode;
   export type Redirect = typeof Redirect;
 
   /**
    * Hooks
    */
 
-  export declare function useRouter(): Router;
+  export function useRouter(): Router;
   type useRouter = typeof useRouter;
 
   /**
@@ -308,12 +308,12 @@ export namespace ExpoRouter {
    * To observe updates even when the invoking route is not focused, use \`useGlobalSearchParams()\`.
    * @see \`useGlobalSearchParams\`
    */
-  export declare function useLocalSearchParams<
+  export function useLocalSearchParams<
     TParams extends AllRoutes | UnknownOutputParams = UnknownOutputParams,
   >(): TParams extends AllRoutes ? SearchParams<TParams> : TParams;
   type useLocalSearchParams = typeof useLocalSearchParams;
 
-  export declare function useSearchParams<
+  export function useSearchParams<
     TParams extends AllRoutes | UnknownOutputParams = UnknownOutputParams,
   >(): TParams extends AllRoutes ? SearchParams<TParams> : TParams;
   type useSearchParams = typeof useSearchParams;
@@ -327,7 +327,7 @@ export namespace ExpoRouter {
    *
    * @see \`useLocalSearchParams\`
    */
-  export declare function useGlobalSearchParams<
+  export function useGlobalSearchParams<
     T extends AllRoutes | UnknownOutputParams = UnknownOutputParams,
   >(): T extends AllRoutes ? SearchParams<T> : T;
   type useGlobalSearchParams = typeof useGlobalSearchParams;
@@ -351,7 +351,7 @@ export namespace ExpoRouter {
    * const [first, second] = useSegments<['settings'] | ['[user]'] | ['[user]', 'followers']>()
    * \`\`\`
    */
-  export declare function useSegments<
+  export function useSegments<
     T extends AbsoluteRoute | RouteSegments<AbsoluteRoute> | RelativePathString,
   >(): T extends AbsoluteRoute ? RouteSegments<T> : T extends string ? string[] : T;
   type useSegments = typeof useSegments;

@@ -2,6 +2,7 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { ScrollView } from 'react-native';
 interface PrivacyPolicyProps {}
+import React from 'react';
 
 const IgnitePrivacyPolicy: React.FC<PrivacyPolicyProps> = () => {
   return (
