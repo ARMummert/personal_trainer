@@ -11,39 +11,45 @@ interface LoginProps {
 }
 
 const LoginScreen: React.FC<LoginProps> = ({ navigation }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [Username, setUserName] = useState('');
+  const [Password, setPassword] = useState('');
 
   const handleLogin = async () => {
-    if (!email || !password) {
+    if (!Username || !Password) {
       alert('Please enter email and password');
       return;
     }
 
     try {
       // Storing data securely
-      await SecureStore.setItemAsync('userEmail', email);
-      await SecureStore.setItemAsync('userPassword', password);
-
+      await SecureStore.setItemAsync('userEmail', Username);
+      await SecureStore.setItemAsync('userPassword', Password);
+    
       // Retrieving data securely
       const storedEmail = await SecureStore.getItemAsync('userEmail');
       const storedPassword = await SecureStore.getItemAsync('userPassword');
-
+    
       console.log('Stored Email:', storedEmail);
       console.log('Stored Password:', storedPassword);
-
+    
       //API request
-      const response = await axios.post('http://localhost:5000/login', {
-        email,
-        password,
+      const response = await fetch('http://localhost:5000/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ Username, Password }),
       });
-
-      if (response.data.success) {
-        navigation.navigate('Home');
+    
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success) {
+          onLoginSuccess(Username);
+        } else {
+          alert('Invalid username or password');
+        }
       } else {
         alert('Login failed');
       }
-      } catch (error) {
+    } catch (error) {
       console.error('Error during login:', error);
       alert('An error occurred. Please try again.');
     }
@@ -51,16 +57,31 @@ const LoginScreen: React.FC<LoginProps> = ({ navigation }) => {
 
   const handleResetPassword = async () => {
     try {
-      const response = await axios.post('http://localhost:5000/reset-password', {
-        email,
-      });
+      const Username = await SecureStore.getItemAsync('userEmail'); // Assuming email is stored in SecureStore
+      if (!Username) {
+        // Handle case where email is not found
+        alert('Email not found. Please register first.');
+        return;
+      }
   
-      if (response.data.success) {
-        await SecureStore.deleteItemAsync('userPassword');
-        setPassword('');
-        alert('Password has been reset');
+      //API request
+      const response = await fetch('http://localhost:5000/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ Username }),
+      });
+    
+  
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success) {
+          alert('Password reset email sent. Check your inbox.');
+        } else {
+          alert('Password reset failed. Please try again later.');
+        }
       } else {
-        alert('Password reset failed');
+        console.error('Error during password reset:', response.statusText);
+        alert('An error occurred. Please try again.');
       }
     } catch (error) {
       console.error('Error during password reset:', error);
@@ -70,23 +91,38 @@ const LoginScreen: React.FC<LoginProps> = ({ navigation }) => {
   
   const handleResetUsername = async () => {
     try {
-      const response = await axios.post('http://localhost:5000/reset-username', {
-        email,
-      });
+      const Username = await SecureStore.getItemAsync('userEmail'); // Assuming email is stored in SecureStore
+      if (!Username) {
+        // Handle case where email is not found
+        alert('Email not found. Please register first.');
+        return;
+      }
   
-      if (response.data.success) {
-        await SecureStore.deleteItemAsync('userEmail');
-        setEmail('');
-        alert('Username has been reset');
+      //API request
+      const response = await fetch('http://localhost:5000/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ Password }),
+      });
+    
+  
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success) {
+          alert('Password reset email sent. Check your inbox.');
+        } else {
+          alert('Password reset failed. Please try again later.');
+        }
       } else {
-        alert('Username reset failed');
+        console.error('Error during password reset:', response.statusText);
+        alert('An error occurred. Please try again.');
       }
     } catch (error) {
-      console.error('Error during username reset:', error);
+      console.error('Error during password reset:', error);
       alert('An error occurred. Please try again.');
     }
   };
-
+  
   return (
     <View style={styles.container}>
       <Icon name="account-circle" size={100} color="white" />
@@ -94,15 +130,15 @@ const LoginScreen: React.FC<LoginProps> = ({ navigation }) => {
       <LinearGradient style={styles.emailInput} colors={['#F83600', '#FE8C00']}>
       <TextInput
         placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
+        value={Username}
+        onChangeText={setUserName}
         style={styles.input}
       />
      </LinearGradient>
      <LinearGradient style={styles.emailInput} colors={['#F83600', '#FE8C00']}>
       <TextInput
         placeholder="Password"
-        value={password}
+        value={Password}
         onChangeText={setPassword}
         secureTextEntry={true}
         style={styles.input}
@@ -182,3 +218,7 @@ const styles = StyleSheet.create({
 });
 
 export default LoginScreen;
+function onLoginSuccess(Username: string) {
+  throw new Error('Function not implemented.');
+}
+
