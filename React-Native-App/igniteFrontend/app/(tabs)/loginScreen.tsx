@@ -4,7 +4,7 @@ import { Icon } from 'react-native-elements';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as SecureStore from 'expo-secure-store'; // Import for secure storage
 import axios from 'axios'; // Import for making requests
-
+import { useNavigation } from '@react-navigation/native';
 interface LoginProps {
   navigation: any;
 }
@@ -120,7 +120,17 @@ const LoginScreen: React.FC<LoginProps> = ({ navigation }) => {
       <TouchableOpacity onPress={handleResetUsername}>
       <Text style={styles.reset}>Forgot Username?</Text>
       </TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+        <Icon name="home" type="material-community" size={30} color="white" />
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+        <Icon name="account-circle" type="material-community" size={30} color="white" />
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
+        <Icon name="settings" type="material-community" size={30} color="white" />
+      </TouchableOpacity>
     </View>
+    
   );
 };
 
