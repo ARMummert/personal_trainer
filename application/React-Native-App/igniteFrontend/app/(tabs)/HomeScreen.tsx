@@ -1,9 +1,15 @@
+// Filename: HomeScreen.tsx
+
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity } from 'react-native';
+import { Button } from 'react-native-elements';
+import { useNavigation } from '@react-navigation/native'; // Add this import
+
 
 const HomeScreen = () => {
-  const [workouts, setWorkouts] = useState<{ id: number; title: string }[]>([]);
+  const navigation = useNavigation(); 
+  const [workouts, setWorkouts] = useState([]);
 
   useEffect(() => {
     const fetchWorkouts = async () => {
@@ -19,19 +25,24 @@ const HomeScreen = () => {
     fetchWorkouts();
   }, []);
 
-  const renderItem = ({ item }: { item: { id: number; title: string } }) => (
-    <View style={styles.card}>
-      <Text style={styles.cardText}>{item.title}</Text>
+  const renderWorkout = ({ item }) => (
+    <View style={styles.workoutCard}>
+      <Text style={styles.workoutName}>{item.WorkoutName}</Text>
+      <Button title="Start Workout" onPress={() => navigation.navigate('WorkoutScreen', { workoutId: item.id })} />
     </View>
   );
-
+  
   return (
     <View style={styles.container}>
+      <Image source={require('../../assets/images/fitappimage.jpg')} style={styles.headerImage} resizeMode="cover"  />
       <FlatList
         data={workouts}
-        renderItem={renderItem}
+        renderItem={renderWorkout}
         keyExtractor={(item) => item.id.toString()}
       />
+    <View style={styles.card}>
+        <Text style={styles.cardText}>Welcome to the Home Screen!</Text>
+      </View>
     </View>
   );
 };
@@ -53,6 +64,21 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
+  headerImage: {
+    width: '100%',
+    height: 200,
+  },
+  workoutCard: {
+    backgroundColor: 'white',
+    padding: 20,
+    marginVertical: 10,
+    borderRadius: 5,
+  },
+  workoutName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+
 });
 
 export default HomeScreen;

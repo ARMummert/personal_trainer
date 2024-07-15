@@ -1,12 +1,14 @@
 import * as React from 'react';
 import { useClientOnlyValue } from '@/components/useClientOnlyValue';
 import { createDrawerNavigator, DrawerToggleButton } from '@react-navigation/drawer';
-import { View, StyleSheet, Text, GestureResponderEvent, TouchableOpacity, Appearance } from 'react-native';
+import { View, StyleSheet, Text, GestureResponderEvent, TouchableOpacity, Appearance, Alert } from 'react-native';
 import HomeScreen from './HomeScreen'; 
 import SettingsScreen  from './SettingsScreen'; 
 import AccountProfileScreen from './AccountProfileScreen';
 import LoginScreen from './loginScreen';
 import PrivacyPolicy  from './PrivacyPolicy';
+import WorkoutScreen from './WorkoutScreen';
+import LogoutScreen from './LogoutScreen';
 import { useFonts } from 'expo-font';
 import { FontAwesome } from '@expo/vector-icons'; 
 import { useColorScheme } from '@/components/useColorScheme';
@@ -14,7 +16,27 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { DrawerActions } from '@react-navigation/native';
 import { useNavigation } from 'expo-router';
 
-// You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
+
+// Footer component
+const Footer = () => {
+  const navigation = useNavigation();
+
+  return (
+    <View style={styles.footer}>
+      <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+        <FontAwesome name="home" size={24} color='#F83600' />
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate('AccountProfileScreen')}>
+        <FontAwesome name="user" size={24} color='#F83600' />
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate('SettingsScreen')}>
+        <FontAwesome name="gear" size={24} color='#F83600' />
+      </TouchableOpacity>
+    </View>
+  );
+};
+
+
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>['name'];
   color: string;
@@ -26,6 +48,7 @@ const Drawer = createDrawerNavigator();
 
 function DrawerContent(props: any) {
   const navigation = useNavigation();
+  
 
   function onPress(event: GestureResponderEvent): void {
     throw new Error('Function not implemented.');
@@ -82,8 +105,20 @@ function DrawerContent(props: any) {
         <Text style={styles.buttonText}>Privacy Policy</Text>
       </TouchableOpacity>
       </LinearGradient>
+      <LinearGradient colors={['#F83600', '#FE8C00']} style={styles.gradient}>
+      <TouchableOpacity style={styles.navigationButton} onPress={() => props.navigation.navigate('WorkoutScreen')}>
+        <Text style={styles.buttonText}>Workout Screen</Text>
+      </TouchableOpacity>
+      </LinearGradient>
+      <LinearGradient colors={['#F83600', '#FE8C00']} style={styles.gradient}>
+      <TouchableOpacity style={styles.navigationButton} onPress={() => props.navigation.navigate('LogoutScreen')}>
+        <Text style={styles.buttonText}>Logout</Text>
+      </TouchableOpacity>
+      </LinearGradient>
     </View>
+  
     </View>
+    
   );
 }
 
@@ -91,72 +126,91 @@ export default function TabLayout() {
   const colorScheme = useColorScheme();
 
   return (
-    <Drawer.Navigator
-    drawerContent={(props) => <DrawerContent {...props} />}
-    screenOptions={{
-      headerShown: useClientOnlyValue(false, true),
-      headerStyle: {
+      <View style={{ flex: 1 }}>
+      <Drawer.Navigator
+        drawerContent={(props) => <DrawerContent {...props} />}
+        screenOptions={{
+        headerShown: useClientOnlyValue(false, true),
+        headerStyle: {
         height: 100, // Adjust this value to your desired height
         backgroundColor: 'black', // Set background color
         borderBottomWidth: 0, // Remove bottom border
       },
       headerTintColor: '#fff',
       headerTitleStyle: {
-        fontWeight: 'bold',
+      fontWeight: 'bold',
       },
       headerTitle: ({ children }) => ( // Custom header for Home screen
-        <View>
-          <Text style={styles.headerTitle}>Ignite</Text>  
-        </View>
+      <View>
+        <Text style={styles.headerTitle}>Ignite</Text>
+      </View>
       ),
       headerLeft: (props) => (
-        <DrawerToggleButton {...props} tintColor="white" />
+      <DrawerToggleButton {...props} tintColor="white" />
       ),
     }}
     >
-      <Drawer.Screen
-        name="Home"
-        component={HomeScreen} 
-        options={{
-          title: 'Dashboard',
-          drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-        }}
-      />
-       <Drawer.Screen
-        name="LoginScreen"
-        component={LoginScreen} 
-        options={{
-          title: 'Login',
-          drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-        }}
-        />
-      <Drawer.Screen
-        name="AccountProfileScreen"
-        component={AccountProfileScreen} 
-        options={{
-          title: 'Account Profile',
-          drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-        }}
-        />
-        <Drawer.Screen
-        name="Settings"
-        component={SettingsScreen} 
-        options={{
-          title: 'Settings',
-          drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-        }}
-      />
-       <Drawer.Screen
-        name="PrivacyPolicy"
-        component={PrivacyPolicy} 
-        options={{
-          title: 'Privacy Policy',
-          drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-        }}
-        />
-    </Drawer.Navigator>
-  );
-}
+    <Drawer.Screen
+    name="Home"
+    component={HomeScreen}
+    options={{
+      title: 'Dashboard',
+      drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+    }}
+    />
+    <Drawer.Screen
+    name="LoginScreen"
+    component={LoginScreen}
+    options={{
+      title: 'Login',
+      drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+    }}
+    />
+    <Drawer.Screen
+    name="AccountProfileScreen"
+    component={AccountProfileScreen}
+    options={{
+      title: 'Account Profile',
+      drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+    }}
+    />
+    <Drawer.Screen
+    name="SettingsScreen"
+    component={SettingsScreen}
+    options={{
+      title: 'Settings',
+      drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+    }}
+    />
+    <Drawer.Screen
+    name="PrivacyPolicy"
+    component={PrivacyPolicy}
+    options={{
+      title: 'Privacy Policy',
+      drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+    }}
+    />
+    <Drawer.Screen
+    name="WorkoutScreen"
+    component={WorkoutScreen}
+    options={{
+      title: 'Workout Screen',
+      drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+    }}
+    />
+    <Drawer.Screen
+    name="LogoutScreen"
+    component={LogoutScreen}
+    options={{
+      title: 'Logout',
+      drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+    }}
+    />
+  </Drawer.Navigator>
+    <Footer /> 
+  </View>
+    );
+  }
 
 const styles = StyleSheet.create({
   navigationButtonContainer: {
@@ -232,6 +286,13 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 40,
     right: 40,
+  },
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    backgroundColor: 'black',
+    padding: 10,
   },
 });
 
