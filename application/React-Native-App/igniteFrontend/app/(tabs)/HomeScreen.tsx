@@ -1,14 +1,15 @@
 // Filename: HomeScreen.tsx
-
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity } from 'react-native';
 import { Button } from 'react-native-elements';
-import { useNavigation } from '@react-navigation/native'; // Add this import
-
+import { useNavigation, useRoute } from '@react-navigation/native';
+import WorkoutScreen from './WorkoutScreen'; 
 
 const HomeScreen = () => {
   const navigation = useNavigation(); 
+  const route = useRoute();
+  const {Username} = route.params as { Username: string } || { Username: '' };
   const [workouts, setWorkouts] = useState([]);
 
   useEffect(() => {
@@ -25,24 +26,29 @@ const HomeScreen = () => {
     fetchWorkouts();
   }, []);
 
-  const renderWorkout = ({ item }) => (
+  const renderWorkout = ({ item }: { item: any }) => (
     <View style={styles.workoutCard}>
       <Text style={styles.workoutName}>{item.WorkoutName}</Text>
-      <Button title="Start Workout" onPress={() => navigation.navigate('WorkoutScreen', { workoutId: item.id })} />
+      <Button title="Start Workout" onPress={() => navigation.navigate('WorkoutScreen' )} />
     </View>
   );
   
   return (
     <View style={styles.container}>
       <Image source={require('../../assets/images/fitappimage.jpg')} style={styles.headerImage} resizeMode="cover"  />
+      <Text style={styles.welcomeText}>Welcome, {Username}</Text>
+      <Text style={styles.descriptionText}>
+        Track your fitness journey and your daily workouts, all in one place.
+      </Text>
       <FlatList
         data={workouts}
         renderItem={renderWorkout}
         keyExtractor={(item) => item.id.toString()}
       />
-    <View style={styles.card}>
+      <View style={styles.card}>
         <Text style={styles.cardText}>Welcome to the Home Screen!</Text>
       </View>
+   
     </View>
   );
 };
@@ -77,6 +83,20 @@ const styles = StyleSheet.create({
   workoutName: {
     fontSize: 18,
     fontWeight: 'bold',
+  },
+
+  welcomeText: {
+    fontSize: 24,
+    color: 'white',
+    marginTop: 20,
+  },
+
+  descriptionText: {
+    fontSize: 16,
+    color: 'white',
+    marginHorizontal: 20,
+    marginBottom: 20,
+    textAlign: 'center',
   },
 
 });
