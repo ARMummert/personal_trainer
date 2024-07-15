@@ -1,22 +1,25 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity } from 'react-native';
-import { Icon } from 'react-native-elements';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as SecureStore from 'expo-secure-store'; // Import for secure storage
-import axios from 'axios'; // Import for making requests
 
 //LoginProps may change depending on the backend implementation
 interface LoginProps {
   navigation: any;
 }
-interface LoginResponse {
-  success: boolean;
-}
 
 const LoginScreen: React.FC<LoginProps> = ({ navigation }) => {
   const [Username, setUserName] = useState('');
   const [Password, setPassword] = useState('');
+
+  const handlePressPassword = () => {
+    navigation.navigate('ResetPasswordScreen');
+  };
+
+  const handlePressUsername = () => {
+    navigation.navigate('ResetUsernameScreen');
+  };
 
   const handleLogin = async () => {
     if (!Username || !Password) {
@@ -47,6 +50,7 @@ const LoginScreen: React.FC<LoginProps> = ({ navigation }) => {
         const data = await response.json();
         if (data.success) {
           onLoginSuccess(Username);
+          navigation.navigate('HomeScreen', { Username });
         } else {
           alert('Invalid username or password');
         }
@@ -59,77 +63,9 @@ const LoginScreen: React.FC<LoginProps> = ({ navigation }) => {
     }
   };
 
-  const handleResetPassword = async () => {
-    try {
-      const Username = await SecureStore.getItemAsync('userEmail'); // Assuming email is stored in SecureStore
-      if (!Username) {
-        // Handle case where email is not found
-        alert('Email not found. Please register first.');
-        return;
-      }
-  
-      //API request
-      const response = await fetch('http://localhost:5000/resetPassword', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ Username }),
-      });
-    
-  
-      if (response.ok) {
-        const data = await response.json();
-        if (data.success) {
-          alert('Password reset email sent. Check your inbox.');
-        } else {
-          alert('Password reset failed. Please try again later.');
-        }
-      } else {
-        console.error('Error during password reset:', response.statusText);
-        alert('An error occurred. Please try again.');
-      }
-    } catch (error) {
-      console.error('Error during password reset:', error);
-      alert('An error occurred. Please try again.');
-    }
-  };
-  
-  const handleResetUsername = async () => {
-    try {
-      const Username = await SecureStore.getItemAsync('userEmail'); // Assuming email is stored in SecureStore
-      if (!Username) {
-        // Handle case where email is not found
-        alert('Email not found. Please register first.');
-        return;
-      }
-  
-      //API request
-      const response = await fetch('http://localhost:5000/resetUsername', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ Password }),
-      });
-    
-  
-      if (response.ok) {
-        const data = await response.json();
-        if (data.success) {
-          alert('Password reset email sent. Check your inbox.');
-        } else {
-          alert('Password reset failed. Please try again later.');
-        }
-      } else {
-        console.error('Error during password reset:', response.statusText);
-        alert('An error occurred. Please try again.');
-      }
-    } catch (error) {
-      console.error('Error during password reset:', error);
-      alert('An error occurred. Please try again.');
-    }
-  };
-  
   return (
     <View style={styles.container}>
-      <Icon name="account-circle" size={100} color="white" />
+      <Text style={styles.login}>Login</Text>
       <View style={styles.space}></View>
       <LinearGradient style={styles.emailInput} colors={['#F83600', '#FE8C00']}>
       <TextInput
@@ -154,13 +90,21 @@ const LoginScreen: React.FC<LoginProps> = ({ navigation }) => {
           onPress={handleLogin}
           color="#F83600"
         />
+        
       <View style={styles.space}></View>
-      <TouchableOpacity onPress={handleResetPassword}>
+      <TouchableOpacity onPress={handlePressPassword}>
       <Text style={styles.reset}>Forgot Password?</Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={handleResetUsername}>
+      <TouchableOpacity onPress={handlePressUsername}>
       <Text style={styles.reset}>Forgot Username?</Text>
       </TouchableOpacity>
+     
+      <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 20, borderRadius: 5, }}>
+      <TouchableOpacity >
+        <Text style={styles.signup}>Need an Account? </Text>
+        <Button color="#F83600" title="Sign Up" onPress={() => navigation.navigate('AccountSignUpScreen')}/>
+      </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -215,6 +159,29 @@ const styles = StyleSheet.create({
   reset: {
     color: 'white',
     fontSize: 16,
+    textAlign: 'center',
+    fontFamily: 'Alkatra-VariableFront_wght',
+    margin: 10,
+  },
+  signup: {
+    color: 'white',
+    fontSize: 16,
+    textAlign: 'center',
+    fontFamily: 'Alkatra-VariableFront_wght',
+    margin: 10,
+    borderRadius: 55,
+  },
+  Button: {
+    color: 'white',
+    fontSize: 16,
+    textAlign: 'center',
+    margin: 10,
+    borderRadius: 55,
+  
+  },
+  login: {
+    color: 'white',
+    fontSize: 44,
     textAlign: 'center',
     fontFamily: 'Alkatra-VariableFront_wght',
     margin: 10,
