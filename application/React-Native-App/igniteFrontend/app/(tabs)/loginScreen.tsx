@@ -6,8 +6,12 @@ import { LinearGradient } from 'expo-linear-gradient';
 import * as SecureStore from 'expo-secure-store'; // Import for secure storage
 import axios from 'axios'; // Import for making requests
 
+//LoginProps may change depending on the backend implementation
 interface LoginProps {
   navigation: any;
+}
+interface LoginResponse {
+  success: boolean;
 }
 
 const LoginScreen: React.FC<LoginProps> = ({ navigation }) => {
@@ -65,7 +69,7 @@ const LoginScreen: React.FC<LoginProps> = ({ navigation }) => {
       }
   
       //API request
-      const response = await fetch('http://localhost:5000/login', {
+      const response = await fetch('http://localhost:5000/resetPassword', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ Username }),
@@ -99,7 +103,7 @@ const LoginScreen: React.FC<LoginProps> = ({ navigation }) => {
       }
   
       //API request
-      const response = await fetch('http://localhost:5000/login', {
+      const response = await fetch('http://localhost:5000/resetUsername', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ Password }),
