@@ -3,10 +3,13 @@ import { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as SecureStore from 'expo-secure-store'; // Import for secure storage
+import { NavigationProp } from '@react-navigation/native';
+import handleResetPassword from './ResetPasswordScreen';
+import handleResetUsername from './ResetUserNameScreen';
 
 //LoginProps may change depending on the backend implementation
 interface LoginProps {
-  navigation: any;
+  navigation: NavigationProp<any>;
 }
 
 const LoginScreen: React.FC<LoginProps> = ({ navigation }) => {
@@ -23,20 +26,20 @@ const LoginScreen: React.FC<LoginProps> = ({ navigation }) => {
 
   const handleLogin = async () => {
     if (!Username || !Password) {
-      alert('Please enter email and password');
+      alert('Please enter username and password');
       return;
     }
 
     try {
       // Storing data securely
-      await SecureStore.setItemAsync('userEmail', Username);
+      await SecureStore.setItemAsync('userUsername', Username);
       await SecureStore.setItemAsync('userPassword', Password);
     
       // Retrieving data securely
-      const storedEmail = await SecureStore.getItemAsync('userEmail');
+      const storedUsername = await SecureStore.getItemAsync('userUsername');
       const storedPassword = await SecureStore.getItemAsync('userPassword');
     
-      console.log('Stored Email:', storedEmail);
+      console.log('Stored Username:', storedUsername);
       console.log('Stored Password:', storedPassword);
     
       //API request
@@ -68,42 +71,45 @@ const LoginScreen: React.FC<LoginProps> = ({ navigation }) => {
       <Text style={styles.login}>Login</Text>
       <View style={styles.space}></View>
       <LinearGradient style={styles.emailInput} colors={['#F83600', '#FE8C00']}>
-      <TextInput
-        placeholder="Email"
-        value={Username}
-        onChangeText={setUserName}
-        style={styles.input}
-      />
-     </LinearGradient>
-     <LinearGradient style={styles.emailInput} colors={['#F83600', '#FE8C00']}>
-      <TextInput
-        placeholder="Password"
-        value={Password}
-        onChangeText={setPassword}
-        secureTextEntry={true}
-        style={styles.input}
-      />
+        <TextInput
+          placeholder="Username"
+          value={Username}
+          onChangeText={setUserName}
+          style={styles.input} />
+      </LinearGradient>
+      <LinearGradient style={styles.emailInput} colors={['#F83600', '#FE8C00']}>
+        <TextInput
+          placeholder="Password"
+          value={Password}
+          onChangeText={setPassword}
+          secureTextEntry={true}
+          style={styles.input} />
       </LinearGradient>
       <View style={styles.space}></View>
-        <Button
-          title="Login"
-          onPress={handleLogin}
-          color="#F83600"
-        />
-        
+      <Button
+        title="Login"
+        onPress={handleLogin}
+        color="#F83600" />
+
       <View style={styles.space}></View>
-      <TouchableOpacity onPress={handlePressPassword}>
-      <Text style={styles.reset}>Forgot Password?</Text>
+      <TouchableOpacity style={styles.reset}>
+        <Button
+          title="Forgot Password?"
+          onPress={handleResetPassword}
+          color="#F83600" />
       </TouchableOpacity>
-      <TouchableOpacity onPress={handlePressUsername}>
-      <Text style={styles.reset}>Forgot Username?</Text>
+      <TouchableOpacity style={styles.reset}>
+        <Button
+          title="Forgot Username?"
+          onPress={handleResetUsername}
+          color="#F83600" />
       </TouchableOpacity>
-     
+
       <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 20, borderRadius: 5, }}>
-      <TouchableOpacity >
-        <Text style={styles.signup}>Need an Account? </Text>
-        <Button color="#F83600" title="Sign Up" onPress={() => navigation.navigate('AccountSignUpScreen')}/>
-      </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('AccountSignUpScreen')}>
+          <Text style={styles.signup}>Need an Account? </Text>
+          <Button color="#F83600" title="Sign Up" />
+        </TouchableOpacity>
       </View>
     </View>
   );

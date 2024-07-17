@@ -7,7 +7,6 @@ import SettingsScreen  from './SettingsScreen';
 import AccountProfileScreen from './AccountProfileScreen';
 import LoginScreen from './loginScreen';
 import PrivacyPolicy  from './PrivacyPolicy';
-import WorkoutScreen from './WorkoutScreen';
 import LogoutScreen from './LogoutScreen';
 import { useFonts } from 'expo-font';
 import { FontAwesome } from '@expo/vector-icons'; 
@@ -187,14 +186,6 @@ export default function TabLayout() {
     component={PrivacyPolicy}
     options={{
       title: 'Privacy Policy',
-      drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-    }}
-    />
-    <Drawer.Screen
-    name="WorkoutScreen"
-    component={WorkoutScreen}
-    options={{
-      title: 'Workout Screen',
       drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
     }}
     />

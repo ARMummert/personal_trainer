@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity } from 'react-native';
 import { Button } from 'react-native-elements';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import WorkoutScreen from './WorkoutScreen'; 
+ 
 
 const HomeScreen = () => {
   const navigation = useNavigation(); 
@@ -29,7 +29,7 @@ const HomeScreen = () => {
   const renderWorkout = ({ item }: { item: any }) => (
     <View style={styles.workoutCard}>
       <Text style={styles.workoutName}>{item.WorkoutName}</Text>
-      <Button title="Start Workout" onPress={() => navigation.navigate('WorkoutScreen' )} />
+      <Button title="Start Workout" />
     </View>
   );
   
