@@ -8,6 +8,7 @@ import AccountProfileScreen from './AccountProfileScreen';
 import LoginScreen from './loginScreen';
 import PrivacyPolicy  from './PrivacyPolicy';
 import LogoutScreen from './LogoutScreen';
+import ResetPasswordScreen from './ResetPasswordScreen';
 import { useFonts } from 'expo-font';
 import { FontAwesome } from '@expo/vector-icons'; 
 import { useColorScheme } from '@/components/useColorScheme';
@@ -29,6 +30,9 @@ const Footer = () => {
         <FontAwesome name="user" size={24} color='#F83600' />
       </TouchableOpacity>
       <TouchableOpacity onPress={() => navigation.navigate('SettingsScreen')}>
+        <FontAwesome name="gear" size={24} color='#F83600' />
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate('ResetPasswordScreen')}>
         <FontAwesome name="gear" size={24} color='#F83600' />
       </TouchableOpacity>
     </View>
