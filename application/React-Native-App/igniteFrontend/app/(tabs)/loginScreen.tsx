@@ -46,13 +46,12 @@ const LoginScreen: React.FC<LoginProps> = ({ navigation }) => {
       const response = await fetch('http://localhost:5000/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ Username, Password }),
+        body: JSON.stringify({ username: Username, password: Password }),
       });
     
       if (response.ok) {
         const data = await response.json();
         if (data.success) {
-          onLoginSuccess(Username);
           navigation.navigate('HomeScreen', { Username });
         } else {
           alert('Invalid username or password');
@@ -95,13 +94,13 @@ const LoginScreen: React.FC<LoginProps> = ({ navigation }) => {
       <TouchableOpacity style={styles.reset}>
         <Button
           title="Forgot Password?"
-          onPress={handleResetPassword}
+          onPress={handlePressPassword}
           color="#F83600" />
       </TouchableOpacity>
       <TouchableOpacity style={styles.reset}>
         <Button
           title="Forgot Username?"
-          onPress={handleResetUsername}
+          onPress={handlePressUsername}
           color="#F83600" />
       </TouchableOpacity>
 
