@@ -1,39 +1,23 @@
 // Filename: navigation.tsx
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import LoginScreen from '../app/(tabs)/loginScreen';
+import ResetPasswordScreen from '../app/(tabs)/ResetPasswordScreen';
+import ResetUserNameScreen from '../app/(tabs)/ResetUserNameScreen';
+import React from 'react';
 
-export type RootStackParamList = {
-    HomeScreen: undefined;
-    WorkoutScreen: { workouts: Workouts[] };
+const Stack = createStackNavigator();
+
+const App = () => {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="LoginScreen">
+        <Stack.Screen name="LoginScreen" component={LoginScreen} />
+        <Stack.Screen name="ResetPasswordScreen" component={ResetPasswordScreen} />
+        <Stack.Screen name="ResetUsernameScreen" component={ResetUserNameScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
 };
 
-export interface Workouts {
-    id: number;
-    WorkoutName: string;
-    exercises: Exercises[];
-}
-
-export interface Exercises {
-    exerciseName: string;
-    image: string;
-    sets: number;
-    reps: number;
-    instructions: string;
-    equipment: string;
-}
-
-export interface UsersLogin {
-    id: number;
-    Username: string;
-    Password: string;
-}
-
-export interface UserInfo  {
-    id: number;
-    Name: string;
-    Email: string;
-    Age: number;
-    WorkoutStreak: number;
-    WorkoutsCompleted: number;
-    Height: number;
-    Weight: number;
-
-}
+export default App;
