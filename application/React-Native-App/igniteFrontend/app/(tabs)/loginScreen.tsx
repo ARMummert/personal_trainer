@@ -4,8 +4,9 @@ import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity } from 'rea
 import { LinearGradient } from 'expo-linear-gradient';
 import * as SecureStore from 'expo-secure-store'; // Import for secure storage
 import { NavigationProp } from '@react-navigation/native';
-import handleResetPassword from './ResetPasswordScreen';
-import handleResetUsername from './ResetUserNameScreen';
+import resetPasswordScreen from './ResetPasswordScreen';
+import resetUsernameScreen from './ResetUserNameScreen';
+import { FontAwesome } from '@expo/vector-icons';
 
 //LoginProps may change depending on the backend implementation
 interface LoginProps {
@@ -92,18 +93,16 @@ const LoginScreen: React.FC<LoginProps> = ({ navigation }) => {
 
       <View style={styles.space}></View>
       <TouchableOpacity style={styles.reset}>
-        <Button
-          title="Forgot Password?"
-          onPress={handlePressPassword}
-          color="#F83600" />
+      <TouchableOpacity onPress={handlePressPassword}>
+        <Text style={styles.reset}>Forgot Password?</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.reset}>
-        <Button
-          title="Forgot Username?"
-          onPress={handlePressUsername}
-          color="#F83600" />
+      <TouchableOpacity onPress={handlePressUsername}>
+        <Text style={styles.reset}>Forgot Username?</Text>
       </TouchableOpacity>
-
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate('SettingsScreen')}>
+        <FontAwesome name="gear" size={24} color='#F83600' />
+      </TouchableOpacity>
       <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 20, borderRadius: 5, }}>
         <TouchableOpacity onPress={() => navigation.navigate('AccountSignUpScreen')}>
           <Text style={styles.signup}>Need an Account? </Text>
@@ -194,7 +193,4 @@ const styles = StyleSheet.create({
 });
 
 export default LoginScreen;
-function onLoginSuccess(Username: string) {
-  throw new Error('Function not implemented.');
-}
 
