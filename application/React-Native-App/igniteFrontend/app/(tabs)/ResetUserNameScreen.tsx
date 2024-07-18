@@ -1,60 +1,72 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Button, Alert, StyleSheet } from 'react-native';
+import * as React from 'react';
+import { useState } from 'react';
+import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { NavigationProp } from '@react-navigation/native';
 
-const handleResetUsername = () => {
-  const [Username, setUsername] = useState('');
-  const [Password, setPassword] = useState('');
+interface ResetUsernameProps {
+  navigation: NavigationProp<any>;
+}
+
+const ResetUsernameScreen: React.FC<ResetUsernameProps> = ({ navigation }) => {
+  const [email, setEmail] = useState('');
 
   const handleResetUsername = async () => {
+    if (!email) {
+      alert('Please enter your email');
+      return;
+    }
+
     try {
       const response = await fetch('http://localhost:5000/resetUsername', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ Username, Password }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
       });
 
       if (response.ok) {
-        Alert.alert('Success', 'Username has been reset successfully.');
+        const data = await response.json();
+        if (data.success) {
+          alert('Username reset link has been sent to your email');
+          navigation.navigate('Login');
+        } else {
+          alert('Email not found');
+        }
       } else {
-        console.error('Error during username reset:', response.statusText);
-        Alert.alert('Error', 'An error occurred. Please try again.');
+        alert('Failed to send reset link');
       }
     } catch (error) {
       console.error('Error during username reset:', error);
-      Alert.alert('Error', 'An error occurred. Please try again.');
+      alert('An error occurred. Please try again.');
     }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.login}>Reset Username</Text>
+      <Text style={styles.title}>Reset Username</Text>
       <View style={styles.space}></View>
       <LinearGradient style={styles.emailInput} colors={['#F83600', '#FE8C00']}>
         <TextInput
-          placeholder="New Username"
-          value={Username}
-          onChangeText={setUsername}
+          placeholder="Enter your email"
+          value={email}
+          onChangeText={setEmail}
           style={styles.input}
         />
       </LinearGradient>
-      <LinearGradient style={styles.emailInput} colors={['#F83600', '#FE8C00']}>
-        <TextInput
-          placeholder="Password"
-          value={Password}
-          onChangeText={setPassword}
-          secureTextEntry={true}
-          style={styles.input}
-        />
-      </LinearGradient>
-      <Button title="Reset Username" onPress={handleResetUsername} />
+      <View style={styles.space}></View>
+      <Button
+        title="Reset Username"
+        onPress={handleResetUsername}
+        color="#F83600"
+      />
+      <View style={styles.space}></View>
+      <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+        <Text style={styles.backToLogin}>Back to Login</Text>
+      </TouchableOpacity>
     </View>
   );
 };
 
-// CSS Styles
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -64,14 +76,11 @@ const styles = StyleSheet.create({
     padding: 0,
     margin: 0,
   },
-  icon: {
-    marginBottom: 20,
-  },
   title: {
     fontSize: 24,
     marginBottom: 20,
-    color: 'black',
-    backgroundColor: 'white',
+    color: 'white',
+    backgroundColor: 'black',
   },
   input: {
     width: '100%',
@@ -81,57 +90,22 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     color: 'white',
   },
-  gradient: {
-    width: '100%',
-    borderRadius: 5,
-    marginBottom: 15,
-  },
-  buttonText: {
-    fontSize: 16,
-    textAlign: 'center',
-    margin: 10,
-    color: 'white',
-  },
   emailInput: {
-    width: '25%',
+    width: '75%',
     height: 40,
     borderRadius: 5,
     color: 'white',
     marginBottom: 15,
   },
   space: {
-    height: 50,
+    height: 20,
   },
-  reset: {
+  backToLogin: {
     color: 'white',
     fontSize: 16,
     textAlign: 'center',
-    fontFamily: 'Alkatra-VariableFront_wght',
-    margin: 10,
-  },
-  signup: {
-    color: 'white',
-    fontSize: 16,
-    textAlign: 'center',
-    fontFamily: 'Alkatra-VariableFront_wght',
-    margin: 10,
-    borderRadius: 55,
-  },
-  Button: {
-    color: 'white',
-    fontSize: 16,
-    textAlign: 'center',
-    margin: 10,
-    borderRadius: 55,
-  
-  },
-  login: {
-    color: 'white',
-    fontSize: 44,
-    textAlign: 'center',
-    fontFamily: 'Alkatra-VariableFront_wght',
     margin: 10,
   },
 });
 
-export default handleResetUsername;
+export default ResetUsernameScreen;
