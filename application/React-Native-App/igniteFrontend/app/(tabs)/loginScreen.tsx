@@ -43,7 +43,7 @@ const LoginScreen: React.FC<LoginProps> = ({ navigation }) => {
       console.log('Stored Password:', storedPassword);
     
       //API request
-      const response = await fetch('http://localhost:5000/login', {
+      const response = await fetch('http://localhost:5000/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: Username, password: Password }),

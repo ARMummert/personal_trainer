@@ -7,7 +7,7 @@ import { useEffect } from 'react';
 import 'react-native-reanimated';
 import * as React from 'react';
 import { useColorScheme } from '@/components/useColorScheme';
-import Navigation from '../navigation/navigation';
+import Navigation from './navigation';
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,

@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { NavigationProp } from '@react-navigation/native';
-
 interface ResetPasswordProps {
   navigation: NavigationProp<any>;
 }
@@ -18,7 +17,7 @@ const ResetPasswordScreen: React.FC<ResetPasswordProps> = ({ navigation }) => {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/resetPassword', {
+      const response = await fetch('http://localhost:5000/reset-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ Email }),

@@ -20,7 +20,7 @@ const LogoutScreen: React.FC<LogoutProps> = ({ navigation }) => {
     const handleLogout = async () => {
         try {
         // Send logout request to backend
-        const response = await fetch('http://localhost:5000/logout', {
+        const response = await fetch('http://localhost:5000/api/logout', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
