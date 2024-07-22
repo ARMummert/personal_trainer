@@ -10,6 +10,8 @@ import PrivacyPolicy  from './PrivacyPolicy';
 import LogoutScreen from './LogoutScreen';
 import AccountSignupScreen from './AccountSignupScreen';
 import FitnessSurveyScreen from './FitnessSurveyScreen';
+import ResetPasswordScreen from './ResetPasswordScreen';
+import ResetUserNameScreen from './ResetUserNameScreen';
 import { useFonts } from 'expo-font';
 import { FontAwesome } from '@expo/vector-icons'; 
 import { useColorScheme } from '@/components/useColorScheme';
@@ -24,13 +26,13 @@ const Footer = () => {
 
   return (
     <View style={styles.footer}>
-      <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+      <TouchableOpacity onPress={() => navigation.navigate('Home' as never)}>
         <FontAwesome name="home" size={24} color='#F83600' />
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate('AccountProfileScreen')}>
+      <TouchableOpacity onPress={() => navigation.navigate('AccountProfileScreen' as never)}>
         <FontAwesome name="user" size={24} color='#F83600' />
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate('SettingsScreen')}>
+      <TouchableOpacity onPress={() => navigation.navigate('SettingsScreen' as never)}>
         <FontAwesome name="gear" size={24} color='#F83600' />
       </TouchableOpacity>
     </View>
@@ -87,8 +89,8 @@ function DrawerContent(props: any) {
       </TouchableOpacity>
       </LinearGradient>
       <LinearGradient colors={['#F83600', '#FE8C00']} style={styles.gradient}>
-      <TouchableOpacity style={styles.navigationButton} onPress={() => props.navigation.navigate('AppearanceTheme')}>
-        <Text style={styles.buttonText}>Appearance / Theme </Text>
+      <TouchableOpacity style={styles.navigationButton} onPress={() => props.navigation.navigate('AccountSignupScreen')}>
+        <Text style={styles.buttonText}>Create an Account </Text>
       </TouchableOpacity>
       </LinearGradient>
       <LinearGradient colors={['#F83600', '#FE8C00']} style={styles.gradient}>
@@ -112,11 +114,15 @@ function DrawerContent(props: any) {
       </TouchableOpacity>
       </LinearGradient>
       <LinearGradient colors={['#F83600', '#FE8C00']} style={styles.gradient}>
-      <TouchableOpacity style={styles.navigationButton} onPress={() => props.navigation.navigate('AccountSignupScreen')}>
-        <Text style={styles.buttonText}>Signup</Text>
+      <TouchableOpacity style={styles.navigationButton} onPress={() => props.navigation.navigate('ResetPasswordScreen')}>
+        <Text style={styles.buttonText}>Reset Password</Text>
       </TouchableOpacity>
       </LinearGradient>
-      
+      <LinearGradient colors={['#F83600', '#FE8C00']} style={styles.gradient}>
+      <TouchableOpacity style={styles.navigationButton} onPress={() => props.navigation.navigate('ResetUserNameScreen')}>
+        <Text style={styles.buttonText}>Reset Username</Text>
+      </TouchableOpacity>
+      </LinearGradient>
     </View>
     </View>
     
@@ -175,6 +181,14 @@ export default function TabLayout() {
       drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
     }}
     />
+     <Drawer.Screen
+    name="AccountSignupScreen"
+    component={AccountSignupScreen}
+    options={{
+      title: 'Create an Account',
+      drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+    }}
+    />
       <Drawer.Screen
     name="FitnessSurveyScreen"
     component={FitnessSurveyScreen}
@@ -208,10 +222,18 @@ export default function TabLayout() {
     }}
     />
     <Drawer.Screen
-    name="AccountSignupScreen"
-    component={AccountSignupScreen}
+    name="ResetPasswordScreen"
+    component={ResetPasswordScreen}
     options={{
-      title: 'Account Signup',
+      title: 'Reset Password',
+      drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+    }}
+    />
+     <Drawer.Screen
+    name="ResetUserNameScreen"
+    component={ResetUserNameScreen}
+    options={{
+      title: 'Reset Username',
       drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
     }}
     />

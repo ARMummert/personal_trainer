@@ -109,18 +109,18 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   space: {
-    height: 50,
+    height: 20,
   },
   reset: {
     color: 'white',
-    fontSize: 16,
+    fontSize: 20,
     textAlign: 'center',
     fontFamily: 'Alkatra-VariableFront_wght',
     margin: 10,
   },
   signup: {
     color: 'white',
-    fontSize: 16,
+    fontSize: 20,
     textAlign: 'center',
     fontFamily: 'Alkatra-VariableFront_wght',
     margin: 10,
@@ -128,15 +128,15 @@ const styles = StyleSheet.create({
   },
   Button: {
     color: 'white',
-    fontSize: 16,
+    fontSize: 20,
     textAlign: 'center',
     margin: 10,
     borderRadius: 55,
-  
+ 
   },
   login: {
     color: 'white',
-    fontSize: 44,
+    fontSize: 35,
     textAlign: 'center',
     fontFamily: 'Alkatra-VariableFront_wght',
     margin: 10,
