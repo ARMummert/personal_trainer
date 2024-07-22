@@ -1,23 +1,32 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, Alert, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { NavigationProp } from '@react-navigation/native';
 
-const ResetUserNameScreen = () => {
+interface ResetUserNameProps {
+  navigation: NavigationProp<any>;
+}
+
+const ResetUserNameScreen: React.FC<ResetUserNameProps> = ({ navigation }) => {
   const [Username, setUsername] = useState('');
   const [Password, setPassword] = useState('');
 
   const handleResetUsername = async () => {
+    if (!Username || !Password) {
+      Alert.alert('Error', 'Please enter username and password');
+      return;
+    }
     try {
       const response = await fetch('http://localhost:5000/resetUsername', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({ Username, Password }),
       });
 
       if (response.ok) {
+        const data = await response.json();
         Alert.alert('Success', 'Username has been reset successfully.');
+        navigation.navigate('LoginScreen');
       } else {
         console.error('Error during username reset:', response.statusText);
         Alert.alert('Error', 'An error occurred. Please try again.');

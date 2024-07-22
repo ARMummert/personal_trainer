@@ -9,10 +9,10 @@ interface ResetPasswordProps {
 }
 
 const ResetPasswordScreen: React.FC<ResetPasswordProps> = ({ navigation }) => {
-  const [email, setEmail] = useState('');
+  const [Email, setEmail] = useState('');
 
   const handleResetPassword = async () => {
-    if (!email) {
+    if (!Email) {
       alert('Please enter your email');
       return;
     }
@@ -21,7 +21,7 @@ const ResetPasswordScreen: React.FC<ResetPasswordProps> = ({ navigation }) => {
       const response = await fetch('http://localhost:5000/resetPassword', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ Email }),
       });
 
       if (response.ok) {
@@ -48,7 +48,7 @@ const ResetPasswordScreen: React.FC<ResetPasswordProps> = ({ navigation }) => {
       <LinearGradient style={styles.emailInput} colors={['#F83600', '#FE8C00']}>
         <TextInput
           placeholder="Enter your email"
-          value={email}
+          value={Email}
           onChangeText={setEmail}
           style={styles.input}
         />
