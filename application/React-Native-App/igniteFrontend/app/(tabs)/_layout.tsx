@@ -8,7 +8,8 @@ import AccountProfileScreen from './AccountProfileScreen';
 import LoginScreen from './loginScreen';
 import PrivacyPolicy  from './PrivacyPolicy';
 import LogoutScreen from './LogoutScreen';
-import ResetPasswordScreen from './ResetPasswordScreen';
+import AccountSignupScreen from './AccountSignupScreen';
+import FitnessSurveyScreen from './FitnessSurveyScreen';
 import { useFonts } from 'expo-font';
 import { FontAwesome } from '@expo/vector-icons'; 
 import { useColorScheme } from '@/components/useColorScheme';
@@ -30,9 +31,6 @@ const Footer = () => {
         <FontAwesome name="user" size={24} color='#F83600' />
       </TouchableOpacity>
       <TouchableOpacity onPress={() => navigation.navigate('SettingsScreen')}>
-        <FontAwesome name="gear" size={24} color='#F83600' />
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate('ResetPasswordScreen')}>
         <FontAwesome name="gear" size={24} color='#F83600' />
       </TouchableOpacity>
     </View>
@@ -94,7 +92,7 @@ function DrawerContent(props: any) {
       </TouchableOpacity>
       </LinearGradient>
       <LinearGradient colors={['#F83600', '#FE8C00']} style={styles.gradient}>
-      <TouchableOpacity style={styles.navigationButton} onPress={() => props.navigation.navigate('RetakeFitnessSurvey')}>
+      <TouchableOpacity style={styles.navigationButton} onPress={() => props.navigation.navigate('FitnessSurveyScreen')}>
         <Text style={styles.buttonText}>Retake Fitness Survey</Text>
       </TouchableOpacity>
       </LinearGradient>
@@ -109,17 +107,17 @@ function DrawerContent(props: any) {
       </TouchableOpacity>
       </LinearGradient>
       <LinearGradient colors={['#F83600', '#FE8C00']} style={styles.gradient}>
-      <TouchableOpacity style={styles.navigationButton} onPress={() => props.navigation.navigate('WorkoutScreen')}>
-        <Text style={styles.buttonText}>Workout Screen</Text>
-      </TouchableOpacity>
-      </LinearGradient>
-      <LinearGradient colors={['#F83600', '#FE8C00']} style={styles.gradient}>
       <TouchableOpacity style={styles.navigationButton} onPress={() => props.navigation.navigate('LogoutScreen')}>
         <Text style={styles.buttonText}>Logout</Text>
       </TouchableOpacity>
       </LinearGradient>
+      <LinearGradient colors={['#F83600', '#FE8C00']} style={styles.gradient}>
+      <TouchableOpacity style={styles.navigationButton} onPress={() => props.navigation.navigate('AccountSignupScreen')}>
+        <Text style={styles.buttonText}>Signup</Text>
+      </TouchableOpacity>
+      </LinearGradient>
+      
     </View>
-  
     </View>
     
   );
@@ -177,6 +175,14 @@ export default function TabLayout() {
       drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
     }}
     />
+      <Drawer.Screen
+    name="FitnessSurveyScreen"
+    component={FitnessSurveyScreen}
+    options={{
+      title: 'Fitness Survey',
+      drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+    }}
+    />
     <Drawer.Screen
     name="SettingsScreen"
     component={SettingsScreen}
@@ -198,6 +204,14 @@ export default function TabLayout() {
     component={LogoutScreen}
     options={{
       title: 'Logout',
+      drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+    }}
+    />
+    <Drawer.Screen
+    name="AccountSignupScreen"
+    component={AccountSignupScreen}
+    options={{
+      title: 'Account Signup',
       drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
     }}
     />

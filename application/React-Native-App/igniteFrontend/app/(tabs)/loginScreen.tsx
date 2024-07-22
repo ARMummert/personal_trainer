@@ -4,9 +4,7 @@ import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity } from 'rea
 import { LinearGradient } from 'expo-linear-gradient';
 import * as SecureStore from 'expo-secure-store'; // Import for secure storage
 import { NavigationProp } from '@react-navigation/native';
-import resetPasswordScreen from './ResetPasswordScreen';
-import resetUsernameScreen from './ResetUserNameScreen';
-import { FontAwesome } from '@expo/vector-icons';
+
 
 //LoginProps may change depending on the backend implementation
 interface LoginProps {
@@ -14,17 +12,18 @@ interface LoginProps {
 }
 
 const LoginScreen: React.FC<LoginProps> = ({ navigation }) => {
+
   const [Username, setUserName] = useState('');
   const [Password, setPassword] = useState('');
 
-  const handlePressPassword = () => {
+  const handleResetUserName = () => {
+    navigation.navigate('ResetUserNameScreen');
+  };
+
+  const handleResetPassword = () => {
     navigation.navigate('ResetPasswordScreen');
   };
-
-  const handlePressUsername = () => {
-    navigation.navigate('ResetUsernameScreen');
-  };
-
+  
   const handleLogin = async () => {
     if (!Username || !Password) {
       alert('Please enter username and password');
@@ -92,23 +91,25 @@ const LoginScreen: React.FC<LoginProps> = ({ navigation }) => {
         color="#F83600" />
 
       <View style={styles.space}></View>
-      <TouchableOpacity style={styles.reset}>
-      <TouchableOpacity onPress={handlePressPassword}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 20, borderRadius: 5, }}>
+      <TouchableOpacity  onPress={() => navigation.navigate('ResetPasswordScreen')}>
         <Text style={styles.reset}>Forgot Password?</Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={handlePressUsername}>
+      </View>
+      <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 20, borderRadius: 5, }}>
+      <TouchableOpacity  onPress={() => navigation.navigate('ResetUserNameScreen')}>
         <Text style={styles.reset}>Forgot Username?</Text>
       </TouchableOpacity>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate('SettingsScreen')}>
-        <FontAwesome name="gear" size={24} color='#F83600' />
-      </TouchableOpacity>
+      </View>
       <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 20, borderRadius: 5, }}>
-        <TouchableOpacity onPress={() => navigation.navigate('AccountSignUpScreen')}>
+        <TouchableOpacity onPress={() => navigation.navigate('AccountSignupScreen')}>
           <Text style={styles.signup}>Need an Account? </Text>
-          <Button color="#F83600" title="Sign Up" />
         </TouchableOpacity>
       </View>
+      <View>
+      <Button title="Reset Username" onPress={handleResetUserName} />
+      {/* ... (similar button for Reset Password) */}
+    </View>
     </View>
   );
 };
