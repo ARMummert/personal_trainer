@@ -17,7 +17,7 @@ const ResetUserNameScreen: React.FC<ResetUserNameProps> = ({ navigation }) => {
       return;
     }
     try {
-      const response = await fetch('http://localhost:5000/resetUsername', {
+      const response = await fetch('http://localhost:5000/reset-username', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({ Username, Password }),
