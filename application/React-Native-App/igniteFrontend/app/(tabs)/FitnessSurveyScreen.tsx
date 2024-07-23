@@ -74,7 +74,7 @@ const FitnessSurveyScreen = ({ navigation }: { navigation: NavigationProp<any> }
       <Text style={styles.title}>Fitness Survey</Text>
       
       <TextInput
-        style={styles.input}
+        style={styles.age}
         placeholder="Age"
         value={age}
         onChangeText={setAge}
@@ -116,7 +116,7 @@ const FitnessSurveyScreen = ({ navigation }: { navigation: NavigationProp<any> }
         style={styles.picker}
         onValueChange={(itemValue) => setBodyType(itemValue)}
       >
-        <Picker.Item label="Select..." value="" />
+        <Picker.Item style={styles.pickerItem} label="Select..." value="" />
         <Picker.Item label="I don’t know my body type (skip to next question)" value="I don’t know my body type" />
         <Picker.Item label="Endomorph" value="Endomorph" />
         <Picker.Item label="Ectomorph" value="Ectomorph" />
@@ -171,13 +171,15 @@ const FitnessSurveyScreen = ({ navigation }: { navigation: NavigationProp<any> }
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    paddingTop: 50,
+    paddingBottom: 100,
+    paddingLeft: 150,
     backgroundColor: 'black',
   },
   title: {
-    fontSize: 24,
+    fontSize: 44,
     marginBottom: 20,
     color: 'white',
   },
@@ -191,17 +193,30 @@ const styles = StyleSheet.create({
     borderColor: '#F83600',
     marginBottom: 15,
   },
+  age: {
+    width: '15%',
+    height: 40,
+    fontSize: 20,
+    borderWidth: 1,
+    padding: 10,
+    borderRadius: 5,
+    color: 'white',
+    borderColor: '#F83600',
+    marginBottom: 15,
+  },
   label: {
-    fontSize: 16,
+    fontSize: 20,
     color: 'white',
     marginBottom: 5,
   },
   picker: {
     height: 50,
-    width: '100%',
+    width: '25%',
     color: 'white',
-    backgroundColor: '#333',
+    backgroundColor: '#F83600',
     marginBottom: 15,
+    borderRadius: 5,
+    fontSize: 20,
   },
   checkboxContainer: {
     flexDirection: 'row',
@@ -210,8 +225,12 @@ const styles = StyleSheet.create({
   },
   checkboxLabel: {
     marginLeft: 8,
-    fontSize: 16,
+    fontSize: 20,
     color: 'white',
+  },
+  pickerItem: {
+    color: 'white',
+    fontSize: 20,
   },
 });
 
