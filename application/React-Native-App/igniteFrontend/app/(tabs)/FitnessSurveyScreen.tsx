@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, ScrollView, Alert } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, ScrollView, Alert, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { CheckBox } from 'react-native-elements';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -163,7 +163,11 @@ const FitnessSurveyScreen = ({ navigation }: { navigation: NavigationProp<any> }
         </View>
       ))}
 
-      <Button title="Submit Survey" onPress={handleSubmit} color="#F83600" />
+      <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 0, borderRadius: 5, }}>
+        <TouchableOpacity onPress={handleSubmit} style={{ backgroundColor: '#F83600', paddingHorizontal: 15, paddingVertical: 10, borderRadius: 5 }}>
+          <Text style={{ color: 'white', fontSize: 16, textAlign: 'center' }}>Submit Survey</Text>
+        </TouchableOpacity>
+      </View>
     </ScrollView>
   );
 };

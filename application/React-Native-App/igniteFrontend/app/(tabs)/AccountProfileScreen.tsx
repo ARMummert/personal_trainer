@@ -40,7 +40,7 @@ const AccountProfileScreen = () => {
         <Text style={styles.email}>{username.email}</Text>
       </View>
       <View style={styles.settingsList}>
-        <TouchableOpacity style={styles.settingItem} onPress={() => navigation.navigate('EditProfileScreen' as never)}>
+        <TouchableOpacity style={styles.settingItem} onPress={() => navigation.navigate('editAccountProfileScreen' as never)}>
           <FontAwesome name="edit" size={24} style={styles.icon} />
           <Text style={styles.settingText}>Edit Profile</Text>
         </TouchableOpacity>
@@ -61,10 +61,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+    backgroundColor: 'black',
   },
   profileHeader: {
     alignItems: 'center',
     marginBottom: 20,
+    color: 'white',
   },
   avatar: {
     width: 100,
@@ -75,25 +77,30 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 20,
     fontWeight: 'bold',
+    color: 'white',
   },
   email: {
     fontSize: 16,
-    color: '#aaa',
+    color: 'white',
   },
   settingsList: {
+    // Remove the color property
   },
   settingItem: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 15,
     borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-  },
-  icon: {
-    marginRight: 10,
+    borderBottomColor: 'white',
+    color: 'white',
   },
   settingText: {
     fontSize: 16,
+    color: 'white',
+  },
+  icon: {
+    marginRight: 10,
+    color: 'white',
   },
 });
 

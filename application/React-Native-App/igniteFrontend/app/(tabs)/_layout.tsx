@@ -12,12 +12,14 @@ import AccountSignupScreen from './AccountSignupScreen';
 import FitnessSurveyScreen from './FitnessSurveyScreen';
 import ResetPasswordScreen from './ResetPasswordScreen';
 import ResetUserNameScreen from './ResetUserNameScreen';
+import editAccountProfileScreen from './editAccountProfileScreen';
 import { useFonts } from 'expo-font';
 import { FontAwesome } from '@expo/vector-icons'; 
 import { useColorScheme } from '@/components/useColorScheme';
 import { LinearGradient } from 'expo-linear-gradient';
 import { DrawerActions } from '@react-navigation/native';
 import { useNavigation } from 'expo-router';
+
 
 
 // Footer component
@@ -111,16 +113,6 @@ function DrawerContent(props: any) {
       <LinearGradient colors={['#F83600', '#FE8C00']} style={styles.gradient}>
       <TouchableOpacity style={styles.navigationButton} onPress={() => props.navigation.navigate('LogoutScreen')}>
         <Text style={styles.buttonText}>Logout</Text>
-      </TouchableOpacity>
-      </LinearGradient>
-      <LinearGradient colors={['#F83600', '#FE8C00']} style={styles.gradient}>
-      <TouchableOpacity style={styles.navigationButton} onPress={() => props.navigation.navigate('ResetPasswordScreen')}>
-        <Text style={styles.buttonText}>Reset Password</Text>
-      </TouchableOpacity>
-      </LinearGradient>
-      <LinearGradient colors={['#F83600', '#FE8C00']} style={styles.gradient}>
-      <TouchableOpacity style={styles.navigationButton} onPress={() => props.navigation.navigate('ResetUserNameScreen')}>
-        <Text style={styles.buttonText}>Reset Username</Text>
       </TouchableOpacity>
       </LinearGradient>
     </View>
@@ -234,6 +226,14 @@ export default function TabLayout() {
     component={ResetUserNameScreen}
     options={{
       title: 'Reset Username',
+      drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+    }}
+    />
+        <Drawer.Screen
+    name="editAccountProfileScreen"
+    component={editAccountProfileScreen}
+    options={{
+      title: 'Edit Account Profile',
       drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
     }}
     />
