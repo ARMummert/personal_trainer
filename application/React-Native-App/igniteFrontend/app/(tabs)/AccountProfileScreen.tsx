@@ -40,15 +40,15 @@ const AccountProfileScreen = () => {
         <Text style={styles.email}>{username.email}</Text>
       </View>
       <View style={styles.settingsList}>
-        <TouchableOpacity style={styles.settingItem} onPress={() => navigation.navigate('EditProfileScreen')}>
+        <TouchableOpacity style={styles.settingItem} onPress={() => navigation.navigate('EditProfileScreen' as never)}>
           <FontAwesome name="edit" size={24} style={styles.icon} />
           <Text style={styles.settingText}>Edit Profile</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.settingItem} onPress={() => navigation.navigate('ResetPasswordScreen')}>
+        <TouchableOpacity style={styles.settingItem} onPress={() => navigation.navigate('ResetPasswordScreen' as never)}>
           <FontAwesome name="lock" size={24} style={styles.icon} />
           <Text style={styles.settingText}>Change Password</Text>
         </TouchableOpacity> 
-        <TouchableOpacity style={styles.settingItem} onPress={() => navigation.navigate('LogoutScreen')}>
+        <TouchableOpacity style={styles.settingItem} onPress={() => navigation.navigate('LogoutScreen' as never)}>
           <FontAwesome name="sign-out" size={24} style={styles.icon} />
           <Text style={styles.settingText}>Logout</Text>
         </TouchableOpacity>
