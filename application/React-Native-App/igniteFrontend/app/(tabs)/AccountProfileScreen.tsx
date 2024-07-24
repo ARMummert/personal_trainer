@@ -15,7 +15,7 @@ const AccountProfileScreen = () => {
   };
   const getUserData = async () => {
     try {
-      const response = await fetch('http://your-backend-url/api/user'); // Assuming the endpoint returns all user data
+      const response = await fetch('http://localhost:5000/api/user'); // Assuming the endpoint returns all user data
       if (!response.ok) {
         throw new Error(`Network response was not ok: ${response.status}`);
       }
