@@ -12,6 +12,7 @@ const AccountSignUpScreen: React.FC<SignUpProps> = ({ navigation }) => {
   const [Username, setUsername] = useState('');
   const [Email, setEmail] = useState('');
   const [Password, setPassword] = useState('');
+  const [Fullname, setFullname] = useState('');
 
   const handleSignUp = async () => {
     if (!Username || !Email || !Password) {
@@ -49,6 +50,14 @@ const AccountSignUpScreen: React.FC<SignUpProps> = ({ navigation }) => {
       <View style={styles.space}></View>
       <LinearGradient style={styles.inputContainer} colors={['#F83600', '#FE8C00']}>
         <TextInput
+          placeholder="Fullname"
+          value={Username}
+          onChangeText={setFullname}
+          style={styles.input}
+        />
+      </LinearGradient>
+      <LinearGradient style={styles.inputContainer} colors={['#F83600', '#FE8C00']}>
+        <TextInput
           placeholder="Username"
           value={Username}
           onChangeText={setUsername}
@@ -72,12 +81,21 @@ const AccountSignUpScreen: React.FC<SignUpProps> = ({ navigation }) => {
           style={styles.input}
         />
       </LinearGradient>
+      <LinearGradient style={styles.inputContainer} colors={['#F83600', '#FE8C00']}>
+        <TextInput
+          placeholder="Re-enter Password"
+          value={Password}
+          onChangeText={setPassword}
+          secureTextEntry={true}
+          style={styles.input}
+        />
+      </LinearGradient>
       <View style={styles.space}></View>
-      <Button
-        title="Sign Up"
-        onPress={handleSignUp}
-        color="#F83600"
-      />
+      <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 0, borderRadius: 5, }}>
+        <TouchableOpacity onPress={handleSignUp} style={{ backgroundColor: '#F83600', paddingHorizontal: 15, paddingVertical: 10, borderRadius: 5 }}>
+          <Text style={{ color: 'white', fontSize: 16, textAlign: 'center' }}>Login</Text>
+        </TouchableOpacity>
+      </View>
       <View style={styles.space}></View>
       <TouchableOpacity onPress={() => navigation.navigate('LoginScreen')}>
         <Text style={styles.backToLogin}>Back to Login</Text>
