@@ -47,6 +47,7 @@ const navigateTo = (screen: string) => navigation.navigate(screen);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: 'black',
   },
   settingItem: {
     flexDirection: 'row',
@@ -54,12 +55,15 @@ const styles = StyleSheet.create({
     padding: 15,
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
+    color: 'white',
   },
   icon: {
     marginRight: 10,
+    color: 'white',
   },
   settingText: {
     fontSize: 16,
+    color: 'white',
   },
 });
 

@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   inputContainer: {
-    width: '75%',
+    width: '20%',
     height: 40,
     borderRadius: 5,
     color: 'white',
