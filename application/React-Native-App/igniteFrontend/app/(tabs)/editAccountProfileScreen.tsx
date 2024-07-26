@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 
 const EditAccountProfileScreen = () => {
