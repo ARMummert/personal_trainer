@@ -24,6 +24,7 @@ app.config.update(
 )
 
 mail = Mail(app)
+app.secret_key = 'your-secret'
 serializer = URLSafeTimedSerializer(app.secret_key)
 
 @app.route('/reset-password', methods=['POST'])

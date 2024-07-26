@@ -42,7 +42,7 @@ const ResetUserNameScreen: React.FC<ResetUserNameProps> = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Reset Password</Text>
+      <Text style={styles.title}>Reset Username</Text>
       <View style={styles.space}></View>
       <LinearGradient style={styles.emailInput} colors={['#F83600', '#FE8C00']}>
         <TextInput
