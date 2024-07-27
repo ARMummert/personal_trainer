@@ -15,14 +15,6 @@ const LoginScreen: React.FC<LoginProps> = ({ navigation }) => {
 
   const [Username, setUserName] = useState('');
   const [Password, setPassword] = useState('');
-
-  const handleResetUserName = () => {
-    navigation.navigate('ResetUserNameScreen');
-  };
-
-  const handleResetPassword = () => {
-    navigation.navigate('ResetPasswordScreen');
-  };
   
   const handleLogin = async () => {
     if (!Username || !Password) {
@@ -85,31 +77,29 @@ const LoginScreen: React.FC<LoginProps> = ({ navigation }) => {
           style={styles.input} />
       </LinearGradient>
       <View style={styles.space}></View>
-      <Button
-        title="Login"
-        onPress={handleLogin}
-        color="#F83600" />
-
-      <View style={styles.space}></View>
-      <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 20, borderRadius: 5, }}>
-      <TouchableOpacity  onPress={() => navigation.navigate('ResetPasswordScreen')}>
-        <Text style={styles.reset}>Forgot Password?</Text>
-      </TouchableOpacity>
+      <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 0, borderRadius: 5, }}>
+        <TouchableOpacity onPress={handleLogin} style={{ backgroundColor: '#F83600', paddingHorizontal: 15, paddingVertical: 10, borderRadius: 5 }}>
+          <Text style={{ color: 'white', fontSize: 16, textAlign: 'center' }}>Login</Text>
+        </TouchableOpacity>
       </View>
-      <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 20, borderRadius: 5, }}>
-      <TouchableOpacity  onPress={() => navigation.navigate('ResetUserNameScreen')}>
-        <Text style={styles.reset}>Forgot Username?</Text>
-      </TouchableOpacity>
+      <View style={styles.containertwo}>  
+      <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 0, borderRadius: 5, }}>
+        <TouchableOpacity onPress={() => navigation.navigate('ResetPasswordScreen')}>
+          <Text style={styles.reset}>Forgot Password?</Text>
+        </TouchableOpacity>
+      <View style={styles.spaceBetween} />
       </View>
-      <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 20, borderRadius: 5, }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 0, borderRadius: 5, }}>
+        <TouchableOpacity onPress={() => navigation.navigate('ResetUserNameScreen')}>
+          <Text style={styles.reset}>Forgot Username?</Text>
+        </TouchableOpacity>
+      </View>
+      </View> 
+      <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 0, borderRadius: 5, }}>
         <TouchableOpacity onPress={() => navigation.navigate('AccountSignupScreen')}>
           <Text style={styles.signup}>Need an Account? </Text>
         </TouchableOpacity>
       </View>
-      <View>
-      <Button title="Reset Username" onPress={handleResetUserName} />
-      {/* ... (similar button for Reset Password) */}
-    </View>
     </View>
   );
 };
@@ -123,8 +113,21 @@ const styles = StyleSheet.create({
     padding: 0,
     margin: 0,
   },
+  containertwo: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'black',
+    padding: 0,
+    margin: 0,
+  },
   icon: {
     marginBottom: 20,
+  },
+  spaceBetween: {
+    flex: 1, 
+    margin: 10,
   },
   title: {
     fontSize: 24,
@@ -163,19 +166,33 @@ const styles = StyleSheet.create({
   },
   reset: {
     color: 'white',
-    fontSize: 16,
+    justifyContent: 'center',
     textAlign: 'center',
+    alignSelf: 'center',
+    fontSize: 16,
     fontFamily: 'Alkatra-VariableFront_wght',
-    margin: 10,
+    padding: 10,
+    borderRadius: 15,
+    height: 40,
+    width: 150,
+    backgroundColor: '#F83600',
   },
   signup: {
     color: 'white',
-    fontSize: 16,
+    justifyContent: 'center',
     textAlign: 'center',
+    alignSelf: 'center',
+    fontSize: 16,
     fontFamily: 'Alkatra-VariableFront_wght',
-    margin: 10,
-    borderRadius: 55,
+    padding: 10,
+    marginTop: -10,
+    marginBottom: 40,
+    borderRadius: 15,
+    height: 40,
+    width: 150,
+    backgroundColor: '#F83600',
   },
+
   Button: {
     color: 'white',
     fontSize: 16,

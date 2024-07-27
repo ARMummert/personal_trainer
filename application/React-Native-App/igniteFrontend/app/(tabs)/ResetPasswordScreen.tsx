@@ -27,7 +27,7 @@ const ResetPasswordScreen: React.FC<ResetPasswordProps> = ({ navigation }) => {
         const data = await response.json();
         if (data.success) {
           alert('Password reset link has been sent to your email');
-          navigation.navigate('Login');
+          navigation.navigate('LoginScreen');
         } else {
           alert('Email not found');
         }
@@ -53,13 +53,13 @@ const ResetPasswordScreen: React.FC<ResetPasswordProps> = ({ navigation }) => {
         />
       </LinearGradient>
       <View style={styles.space}></View>
-      <Button
-        title="Reset Password"
-        onPress={handleResetPassword}
-        color="#F83600"
-      />
+      <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 0, borderRadius: 5, }}>
+        <TouchableOpacity onPress={handleResetPassword} style={{ backgroundColor: '#F83600', paddingHorizontal: 15, paddingVertical: 10, borderRadius: 5 }}>
+          <Text style={{ color: 'white', fontSize: 16, textAlign: 'center' }}>Login</Text>
+        </TouchableOpacity>
+      </View>
       <View style={styles.space}></View>
-      <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+      <TouchableOpacity onPress={() => navigation.navigate('LoginScreen')}>
         <Text style={styles.backToLogin}>Back to Login</Text>
       </TouchableOpacity>
     </View>
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
     margin: 0,
   },
   title: {
-    fontSize: 24,
+    fontSize: 44,
     marginBottom: 20,
     color: 'white',
     backgroundColor: 'black',
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   emailInput: {
-    width: '75%',
+    width: '20%',
     height: 40,
     borderRadius: 5,
     color: 'white',

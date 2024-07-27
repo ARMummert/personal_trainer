@@ -17,6 +17,17 @@ db_config = {
     'database': 'capstone_2024_ignite_db',
 }
 
+app.config.update(
+    MAIL_SERVER='smtp.your-email-provider.com',
+    MAIL_PORT=587,
+    MAIL_USE_TLS=True,
+    MAIL_USERNAME='your-email@example.com',
+    MAIL_PASSWORD='your-email-password'
+)
+
+mail = Mail(app)
+serializer = URLSafeTimedSerializer(app.secret_key)
+
 # CORS configuration
 CORS(app, supports_credentials=True, origins=["https://localhost:8081"])
 

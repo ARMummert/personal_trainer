@@ -2,8 +2,7 @@
 import * as SecureStore from 'expo-secure-store';
 import { useState } from 'react';
 import * as React from 'react';
-import LoginScreen from './loginScreen';
-import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 
