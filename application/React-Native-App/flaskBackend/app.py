@@ -1,13 +1,15 @@
 from flask import Flask, request, jsonify, url_for
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 import mysql.connector
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 from flask_mail import Mail, Message
+import logging
 
 app = Flask(__name__)
-CORS(app)  # This will allow your React Native app to communicate with your Flask backend
+app.secret_key = 'your_secret_key'
 
+# Database configuration
 db_config = {
     'user': 'capstone_2024_ignite_db',
     'password': 'cs476su24',
@@ -15,18 +17,58 @@ db_config = {
     'database': 'capstone_2024_ignite_db',
 }
 
-app.config.update(
-    MAIL_SERVER='smtp.your-email-provider.com',
-    MAIL_PORT=587,
-    MAIL_USE_TLS=True,
-    MAIL_USERNAME='your-email@example.com',
-    MAIL_PASSWORD='your-email-password'
-)
+# CORS configuration
+CORS(app, supports_credentials=True, origins=["https://localhost:8081"])
 
-mail = Mail(app)
-serializer = URLSafeTimedSerializer(app.secret_key)
+@app.route('/accountSignup', methods=['POST', 'OPTIONS'])
+@cross_origin(origin='http://localhost:8081', supports_credentials=True)  # Ensure correct origin
+def account_signup():
+    if request.method == 'OPTIONS':
+        response = app.make_default_options_response()
+        response.headers.add("Access-Control-Allow-Origin", "http://localhost:8081")
+        response.headers.add("Access-Control-Allow-Credentials", "true")
+        response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+        return response
+
+    if request.method == 'POST':
+        try:
+            data = request.json
+            username = data['Username']
+            password = data['Password']
+            hashed_password = generate_password_hash(password)  # Hash the password for security
+
+            # Log the received data for debugging
+            app.logger.debug(f'Received data: {data}')
+
+            # Database connection
+            conn = mysql.connector.connect(**db_config)
+            cursor = conn.cursor()
+
+            # Insert a new user into the UserInfo table to generate the UserID
+            query_userinfo = "INSERT INTO UserInfo (Name) VALUES (%s)"
+            cursor.execute(query_userinfo, (username,))
+            
+            # Get the last inserted user ID
+            user_id = cursor.lastrowid
+
+            # Insert user login data into the UserLogins table using the generated UserID
+            query_userlogins = "INSERT INTO UserLogins (UserID, Username, Password) VALUES (%s, %s, %s)"
+            cursor.execute(query_userlogins, (user_id, username, hashed_password))
+            conn.commit()
+
+            return jsonify({"message": "Signup successful"}), 201
+
+        except mysql.connector.Error as err:
+            app.logger.error(f"Error during signup: {err}")
+            return jsonify({"error": "Internal Server Error"}), 500
+
+        finally:
+            cursor.close()
+            conn.close()
 
 @app.route('/reset-password', methods=['POST'])
+@cross_origin(origin='http://localhost:8081', supports_credentials=True)  # Ensure correct origin
 def reset_password():
     try:
         data = request.json
@@ -36,13 +78,14 @@ def reset_password():
         cursor = conn.cursor(dictionary=True)
         
         # Check if the email exists in the database
-        cursor.execute("SELECT * FROM users WHERE email = %s", (email,))
+        cursor.execute("SELECT * FROM UserInfo WHERE Email = %s;", (email,))
         user = cursor.fetchone()
         
         if not user:
             return jsonify({"success": False, "message": "Email not found"}), 404
         
         # Generate a password reset token
+        serializer = URLSafeTimedSerializer(app.secret_key)
         token = serializer.dumps(email, salt='password-reset-salt')
         
         # Send email with the reset link (in real application, use proper email service)
@@ -55,13 +98,16 @@ def reset_password():
     
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
+
     finally:
         cursor.close()
         conn.close()
 
 @app.route('/reset/<token>', methods=['POST'])
+@cross_origin(origin='http://localhost:8081', supports_credentials=True)  # Ensure correct origin
 def reset_with_token(token):
     try:
+        serializer = URLSafeTimedSerializer(app.secret_key)
         password = request.json['password']
         email = serializer.loads(token, salt='password-reset-salt', max_age=3600)
         
@@ -70,7 +116,7 @@ def reset_with_token(token):
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor()
         
-        cursor.execute("UPDATE users SET password = %s WHERE email = %s", (hashed_password, email))
+        cursor.execute("UPDATE UserInfo SET Password = %s WHERE Email = %s;", (hashed_password, email))
         conn.commit()
         
         return jsonify({"success": True}), 200
@@ -79,11 +125,13 @@ def reset_with_token(token):
         return jsonify({"success": False, "message": "The token is expired"}), 400
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
+
     finally:
         cursor.close()
         conn.close()
 
 @app.route('/reset-username', methods=['POST'])
+@cross_origin(origin='http://localhost:8081', supports_credentials=True)  # Ensure correct origin
 def reset_username():
     try:
         data = request.json
@@ -95,67 +143,46 @@ def reset_username():
         cursor = conn.cursor(dictionary=True)
         
         # Fetch the user from the database
-        cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
+        cursor.execute("SELECT * FROM UserLogins WHERE Username = %s;", (username,))
         user = cursor.fetchone()
         
-        if not user or not check_password_hash(user['password'], password):
+        if not user or not check_password_hash(user['Password'], password):
             return jsonify({"success": False, "message": "Invalid username or password"}), 401
         
         # Update the username in the database
-        cursor.execute("UPDATE users SET username = %s WHERE username = %s", (new_username, username))
+        cursor.execute("UPDATE UserLogins SET Username = %s WHERE Username = %s;", (new_username, username))
         conn.commit()
-        
-        cursor.close()
-        conn.close()
         
         return jsonify({"success": True}), 200
     
     except mysql.connector.Error as err:
         return jsonify({"success": False, "error": str(err)}), 500
 
+    finally:
+        cursor.close()
+        conn.close()
+
 @app.route('/api/user', methods=['GET'])
+@cross_origin(origin='http://localhost:8081', supports_credentials=True)  # Ensure correct origin
 def get_user_data():
     try:
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor(dictionary=True)
 
-        cursor.execute("SELECT * FROM users")  # Adjust the query as per your database schema
+        cursor.execute("SELECT * FROM UserInfo;")
         users = cursor.fetchall()
-
-        cursor.close()
-        conn.close()
 
         return jsonify(users), 200
 
     except mysql.connector.Error as err:
         return jsonify({"error": str(err)}), 500
 
-@app.route('/accountSignup', methods=['POST'])
-def account_signup():
-    try:
-        data = request.json
-        username = data['Username']
-        email = data['Email']
-        password = data['Password']
-        hashed_password = generate_password_hash(password)  # Hash the password for security
-
-        conn = mysql.connector.connect(**db_config)
-        cursor = conn.cursor()
-
-        # Insert the new user into the database
-        cursor.execute("INSERT INTO users (username, email, password) VALUES (%s, %s, %s)",
-                       (username, email, hashed_password))
-        conn.commit()
-
+    finally:
         cursor.close()
         conn.close()
 
-        return jsonify({"success": True}), 201
-
-    except mysql.connector.Error as err:
-        return jsonify({"success": False, "error": str(err)}), 500
-
 @app.route('/submitSurvey', methods=['POST'])
+@cross_origin(origin='http://localhost:8081', supports_credentials=True)  # Ensure correct origin
 def submit_survey():
     try:
         survey_data = request.json  # Expecting surveyData to be a JSON object
@@ -170,37 +197,42 @@ def submit_survey():
             question_id = answer['question_id']
             response = answer['response']
             cursor.execute(
-                "INSERT INTO survey_responses (user_id, question_id, response) VALUES (%s, %s, %s)",
+                "INSERT INTO SurveyInfo (UserID, QuestionID, Response) VALUES (%s, %s, %s);",
                 (user_id, question_id, response)
             )
 
         conn.commit()
-        cursor.close()
-        conn.close()
 
         return jsonify({"success": True}), 201
 
     except mysql.connector.Error as err:
         return jsonify({"success": False, "error": str(err)}), 500
 
+    finally:
+        cursor.close()
+        conn.close()
+
 @app.route('/api/workouts', methods=['GET'])
+@cross_origin(origin='http://localhost:8081', supports_credentials=True)  # Ensure correct origin
 def get_workouts():
     try:
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor(dictionary=True)
 
-        cursor.execute("SELECT * FROM workouts")  # Adjust the query as per your database schema
+        cursor.execute("SELECT * FROM Workouts;")
         workouts = cursor.fetchall()
-
-        cursor.close()
-        conn.close()
 
         return jsonify(workouts), 200
 
     except mysql.connector.Error as err:
         return jsonify({"error": str(err)}), 500
 
+    finally:
+        cursor.close()
+        conn.close()
+
 @app.route('/api/login', methods=['POST'])
+@cross_origin(origin='http://localhost:8081', supports_credentials=True)  # Ensure correct origin
 def login():
     try:
         data = request.json
@@ -211,21 +243,23 @@ def login():
         cursor = conn.cursor(dictionary=True)
         
         # Fetch user from the database
-        cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
+        cursor.execute("SELECT * FROM UserLogins WHERE Username = %s;", (username,))
         user = cursor.fetchone()
         
-        cursor.close()
-        conn.close()
-        
-        if user and check_password_hash(user['password'], password):
+        if user and check_password_hash(user['Password'], password):
             return jsonify({"success": True}), 200
         else:
             return jsonify({"success": False, "message": "Invalid username or password"}), 401
-    
+
     except mysql.connector.Error as err:
         return jsonify({"success": False, "error": str(err)}), 500
 
+    finally:
+        cursor.close()
+        conn.close()
+
 @app.route('/api/logout', methods=['POST'])
+@cross_origin(origin='http://localhost:8081', supports_credentials=True)  # Ensure correct origin
 def logout():
     try:
         # Here, you would typically invalidate the session token or clear user-specific session data
