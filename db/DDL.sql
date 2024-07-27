@@ -31,7 +31,8 @@ INSERT INTO `ActivityLevels` (`ActivityLevelID`, `ActivityLevelName`) VALUES
 
 CREATE TABLE `Avatars` (
   `AvatarID` int(11) NOT NULL,
-  `AvatarName` varchar(45) NOT NULL
+  `AvatarName` varchar(45) NOT NULL,
+  `AvatarImg` BLOB NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 CREATE TABLE `BodyTypes` (
@@ -110,21 +111,21 @@ CREATE TABLE `SurveyInfo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 CREATE TABLE `UserInfo` (
+  `UserInfoID` int(11) NOT NULL,
   `UserID` int(11) NOT NULL,
-  `Name` varchar(45) NOT NULL,
-  `Email` varchar(45) NOT NULL,
-  `Age` int(11) NOT NULL,
   `WorkoutStreak` int(11) NOT NULL DEFAULT 0,
   `WorkoutsCompleted` int(11) NOT NULL DEFAULT 0,
   `AvatarID` int(11) NOT NULL DEFAULT 1,
-  `SurveyID` int(11) NOT NULL DEFAULT 0,
+  `SurveyID` int(11),
   `DateCreated` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 CREATE TABLE `UserLogins` (
+  `userID` int(11) NOT NULL
   `Username` varchar(45) NOT NULL,
   `Password` varchar(45) NOT NULL,
-  `userID` int(11) NOT NULL
+  `Name` varchar(45) NOT NULL,
+  `Email` varchar(45) NOT NULL,
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 CREATE TABLE `UsersToWorkouts` (
@@ -192,10 +193,10 @@ ALTER TABLE `SurveyInfo`
   ADD PRIMARY KEY (`SurveyID`);
 
 ALTER TABLE `UserInfo`
-  ADD PRIMARY KEY (`UserID`);
+  ADD PRIMARY KEY (`UserInfoID`);
 
 ALTER TABLE `UserLogins`
-  ADD PRIMARY KEY (`Username`);
+  ADD PRIMARY KEY (`UserID`);
 
 ALTER TABLE `UserToActivities`
   ADD KEY `UserToActivities_ibfk_1` (`SurveyID`),
@@ -236,6 +237,9 @@ ALTER TABLE `SurveyInfo`
   MODIFY `SurveyID` int(11) NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE `UserInfo`
+  MODIFY `UserInfoID` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `UserLogins`
   MODIFY `UserID` int(11) NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE `Workouts`
@@ -243,7 +247,7 @@ ALTER TABLE `Workouts`
 
 
 ALTER TABLE `SurveyInfo`
-  ADD CONSTRAINT `SurveyInfo_ibfk_1` FOREIGN KEY (`UserID`) REFERENCES `UserInfo` (`UserID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `SurveyInfo_ibfk_1` FOREIGN KEY (`UserID`) REFERENCES `UserInfo` (`UserInfoID`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `SurveyInfo_ibfk_2` FOREIGN KEY (`GenderID`) REFERENCES `Genders` (`GenderID`) ON DELETE NO ACTION ON UPDATE CASCADE,
   ADD CONSTRAINT `SurveyInfo_ibfk_3` FOREIGN KEY (`FitnessGoalID`) REFERENCES `FitnessGoals` (`FitnessGoalID`) ON DELETE NO ACTION ON UPDATE CASCADE,
   ADD CONSTRAINT `SurveyInfo_ibfk_4` FOREIGN KEY (`BodyTypeID`) REFERENCES `BodyTypes` (`BodyTypeID`) ON DELETE NO ACTION ON UPDATE CASCADE,
@@ -253,12 +257,10 @@ ALTER TABLE `SurveyInfo`
 ALTER TABLE `UserInfo`
   ADD CONSTRAINT `UserInfo_ibfk_1` FOREIGN KEY (`AvatarID`) REFERENCES `Avatars` (`AvatarID`) ON DELETE NO ACTION ON UPDATE CASCADE,
   ADD CONSTRAINT `UserInfo_ibfk_2` FOREIGN KEY (`SurveyID`) REFERENCES `SurveyInfo` (`SurveyID`) ON DELETE NO ACTION ON UPDATE CASCADE;
-
-ALTER TABLE `UserLogins`
-  ADD CONSTRAINT `userID` FOREIGN KEY (`userID`) REFERENCES `UserInfo` (`UserID`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `UserInfo_ibfk_3` FOREIGN KEY (`UserID`) REFERENCES `UserLogins` (`UserID`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE `UsersToWorkouts`
-  ADD CONSTRAINT `UsersToWorkouts_ibfk_1` FOREIGN KEY (`UserID`) REFERENCES `UserInfo` (`UserID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `UsersToWorkouts_ibfk_1` FOREIGN KEY (`UserID`) REFERENCES `UserInfo` (`UserInfoID`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `UsersToWorkouts_ibfk_2` FOREIGN KEY (`WorkoutID`) REFERENCES `Workouts` (`WorkoutID`) ON DELETE NO ACTION ON UPDATE CASCADE;
 
 ALTER TABLE `UserToActivities`
@@ -270,7 +272,7 @@ ALTER TABLE `UserToChallenges`
   ADD CONSTRAINT `UserToChallenges_ibfk_2` FOREIGN KEY (`ChallengeID`) REFERENCES `Challenges` (`ChallengeID`) ON DELETE NO ACTION ON UPDATE CASCADE;
 
 ALTER TABLE `UserToExcercises`
-  ADD CONSTRAINT `UserToExcercises_ibfk_1` FOREIGN KEY (`UserID`) REFERENCES `UserInfo` (`UserID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `UserToExcercises_ibfk_1` FOREIGN KEY (`UserID`) REFERENCES `UserInfo` (`UserInfoID`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `UserToExcercises_ibfk_2` FOREIGN KEY (`ExerciseID`) REFERENCES `Exercise` (`ExerciseID`) ON DELETE NO ACTION ON UPDATE CASCADE;
 
 ALTER TABLE `WorkoutsToExercises`
