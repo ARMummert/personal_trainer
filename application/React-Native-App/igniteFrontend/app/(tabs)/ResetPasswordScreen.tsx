@@ -55,7 +55,7 @@ const ResetPasswordScreen: React.FC<ResetPasswordProps> = ({ navigation }) => {
       <View style={styles.space}></View>
       <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 0, borderRadius: 5, }}>
         <TouchableOpacity onPress={handleResetPassword} style={{ backgroundColor: '#F83600', paddingHorizontal: 15, paddingVertical: 10, borderRadius: 5 }}>
-          <Text style={{ color: 'white', fontSize: 16, textAlign: 'center' }}>Login</Text>
+          <Text style={{ color: 'white', fontSize: 16, textAlign: 'center' }}>Reset Password</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.space}></View>
