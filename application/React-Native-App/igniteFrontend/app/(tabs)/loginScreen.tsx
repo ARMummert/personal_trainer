@@ -2,7 +2,6 @@ import * as React from 'react';
 import { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import * as SecureStore from 'expo-secure-store'; // Import for secure storage
 import { NavigationProp } from '@react-navigation/native';
 
 
@@ -23,22 +22,12 @@ const LoginScreen: React.FC<LoginProps> = ({ navigation }) => {
     }
 
     try {
-      // Storing data securely
-      await SecureStore.setItemAsync('userUsername', Username);
-      await SecureStore.setItemAsync('userPassword', Password);
-    
-      // Retrieving data securely
-      const storedUsername = await SecureStore.getItemAsync('userUsername');
-      const storedPassword = await SecureStore.getItemAsync('userPassword');
-    
-      console.log('Stored Username:', storedUsername);
-      console.log('Stored Password:', storedPassword);
     
       //API request
-      const response = await fetch('http://localhost:5000/api/login', {
+      const response = await fetch('http://localhost:5000/api/UserLogins', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username: Username, password: Password }),
+        body: JSON.stringify({ Username: Username, Password: Password }),
       });
     
       if (response.ok) {
