@@ -85,8 +85,8 @@ const LoginScreen: React.FC<LoginProps> = ({ navigation }) => {
       </View>
       </View> 
       <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 0, borderRadius: 5, }}>
-        <TouchableOpacity onPress={() => navigation.navigate('AccountSignupScreen')}>
-          <Text style={styles.signup}>Need an Account? </Text>
+        <TouchableOpacity onPress={() => navigation.navigate('AccountSignupScreen')} style={styles.signupButton}>
+          <Text style={styles.signupText}>Need an Account? </Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -166,14 +166,9 @@ const styles = StyleSheet.create({
     width: 150,
     backgroundColor: '#F83600',
   },
-  signup: {
-    color: 'white',
+  signupButton: {
     justifyContent: 'center',
-    textAlign: 'center',
-    alignSelf: 'center',
-    fontSize: 16,
-    fontFamily: 'Alkatra-VariableFront_wght',
-    padding: 10,
+    alignItems: 'center',
     marginTop: -10,
     marginBottom: 40,
     borderRadius: 15,
@@ -182,12 +177,21 @@ const styles = StyleSheet.create({
     backgroundColor: '#F83600',
   },
 
+  signupText: {
+    color: 'white',
+    fontSize: 16,
+    fontFamily: 'Alkatra-VariableFront_wght',
+    padding: 10,
+    textAlign: 'center',
+  },
+
   Button: {
     color: 'white',
     fontSize: 16,
     textAlign: 'center',
     margin: 10,
     borderRadius: 55,
+    shadowColor : 'white',
   
   },
   login: {

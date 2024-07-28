@@ -3,6 +3,9 @@ import { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { NavigationProp } from '@react-navigation/native';
+import PickerSelect from 'react-native-picker-select';
+import { Image } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
 
 interface SignUpProps {
   navigation: NavigationProp<any>;
@@ -14,6 +17,27 @@ const AccountSignUpScreen: React.FC<SignUpProps> = ({ navigation }) => {
   const [Password, setPassword] = useState('');
   const [Fullname, setFullname] = useState('');
   const [RePassword, setRePassword] = useState('');
+  const [selectedAvatar, setSelectedAvatar] = useState('');
+  
+  const handleChoosePhoto = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      alert('Sorry, we need camera roll permissions to make this work!');
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setSelectedAvatar(result.uri);
+    }
+  };
+
 
   const handleSignUp = async () => {
     if (!Fullname || !Username || !Email || !Password) {
@@ -25,7 +49,7 @@ const AccountSignUpScreen: React.FC<SignUpProps> = ({ navigation }) => {
       const response = await fetch('http://localhost:5000/accountSignup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ Fullname, Username, Email, Password }),
+        body: JSON.stringify({ Fullname, Username, Email, Password, selectedAvatar }),
       });
 
       if (response.ok) {
@@ -44,6 +68,13 @@ const AccountSignUpScreen: React.FC<SignUpProps> = ({ navigation }) => {
       alert('An error occurred. Please try again.');
     }
   };
+
+  const avatarOptions = [
+    { label: 'Avatar 1', value: 'avatar1.png' },
+    { label: 'Avatar 2', value: 'avatar2.png' },
+    { label: 'Avatar 3', value: 'avatar3.png' },
+    // Add more avatar options as needed
+  ];
 
   return (
     <View style={styles.container}>
@@ -92,8 +123,19 @@ const AccountSignUpScreen: React.FC<SignUpProps> = ({ navigation }) => {
         />
       </LinearGradient>
       <View style={styles.space}></View>
-      <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 0, borderRadius: 5, }}>
-        <TouchableOpacity onPress={handleSignUp} style={{ backgroundColor: '#F83600', paddingHorizontal: 15, paddingVertical: 10, borderRadius: 5 }}>
+      <Button title="Choose Avatar" onPress={handleChoosePhoto} />
+      {selectedAvatar && (
+        <Image
+          source={{ uri: selectedAvatar }}
+          style={{ width: 100, height: 100 }}
+        />
+      )}
+      <View style={styles.space}></View>
+      <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 0, borderRadius: 5 }}>
+        <TouchableOpacity
+          onPress={handleSignUp}
+          style={{ backgroundColor: '#F83600', paddingHorizontal: 15, paddingVertical: 10, borderRadius: 5 }}
+        >
           <Text style={{ color: 'white', fontSize: 16, textAlign: 'center' }}>Create Account</Text>
         </TouchableOpacity>
       </View>
@@ -143,6 +185,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: 'center',
     margin: 10,
+  },
+  avatarImage: {
+    width: 100,
+    height: 100,
+    resizeMode: 'contain',
   },
 });
 
