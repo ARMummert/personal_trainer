@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { NavigationProp } from '@react-navigation/native';
 
@@ -9,26 +9,28 @@ interface SignUpProps {
 }
 
 const AccountSignUpScreen: React.FC<SignUpProps> = ({ navigation }) => {
+  const [Name, setName] = useState('');
   const [Username, setUsername] = useState('');
   const [Email, setEmail] = useState('');
   const [Password, setPassword] = useState('');
-  const [Fullname, setFullname] = useState('');
+  const [re_enter_password, setre_enter_password] = useState('');
+  
 
   const handleSignUp = async () => {
-    if (!Username || !Email || !Password) {
+    if (!Name || !Username || !Email || !Password) {
       alert('Please fill out all fields');
       return;
     }
 
     try {
-      const response = await fetch('http://localhost:5000/accountSignup', {
+      const response = await fetch('http://localhost:5000/api/UserInfo', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ Username, Email, Password }),
+        body: JSON.stringify({ Name, Username, Email, Password, re_enter_password }),
       });
 
       if (response.ok) {
-        const data = await response.json();
+        const data = await response.json();lko hre_enter_password
         if (data.success) {
           alert('Account created successfully');
           navigation.navigate('LoginScreen');
@@ -50,9 +52,9 @@ const AccountSignUpScreen: React.FC<SignUpProps> = ({ navigation }) => {
       <View style={styles.space}></View>
       <LinearGradient style={styles.inputContainer} colors={['#F83600', '#FE8C00']}>
         <TextInput
-          placeholder="Fullname"
-          value={Username}
-          onChangeText={setFullname}
+          placeholder="Name"
+          value={Name}
+          onChangeText={setName}
           style={styles.input}
         />
       </LinearGradient>
@@ -84,8 +86,8 @@ const AccountSignUpScreen: React.FC<SignUpProps> = ({ navigation }) => {
       <LinearGradient style={styles.inputContainer} colors={['#F83600', '#FE8C00']}>
         <TextInput
           placeholder="Re-enter Password"
-          value={Password}
-          onChangeText={setPassword}
+          value={re_enter_password}
+          onChangeText={setre_enter_password}
           secureTextEntry={true}
           style={styles.input}
         />
