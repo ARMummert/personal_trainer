@@ -7,7 +7,7 @@ interface SignUpProps {
   navigation: NavigationProp<any>;
 }
 
-const editUsername: React.FC<SignUpProps> = ({ navigation }) => {
+const EditUsernameScreen: React.FC<SignUpProps> = ({ navigation }) => {
   const [Username, setUsername] = useState('');
   const [newUsername, setNewUsername] = useState(''); 
 
@@ -198,4 +198,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default editUsername;
+export default EditUsernameScreen;

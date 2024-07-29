@@ -1,11 +1,10 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { NavigationProp } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-
-//LoginProps may change depending on the backend implementation
 interface LoginProps {
   navigation: NavigationProp<any>;
 }
@@ -14,10 +13,13 @@ const LoginScreen: React.FC<LoginProps> = ({ navigation }) => {
 
   const [Username, setUserName] = useState('');
   const [Password, setPassword] = useState('');
+  const [IsLoading, setIsLoading] = useState(false);
   
   const handleLogin = async () => {
+    setIsLoading(true);
     if (!Username || !Password) {
-      alert('Please enter username and password');
+      Alert.alert('Please enter username and password');
+      setIsLoading(false);
       return;
     }
 
@@ -27,20 +29,18 @@ const LoginScreen: React.FC<LoginProps> = ({ navigation }) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ Username, Password }),
       });
-    
+
       if (response.ok) {
         const data = await response.json();
-        if (data.success) {
-          navigation.navigate('HomeScreen', { Username });
-        } else {
-          alert('Invalid username or password');
-        }
+        await AsyncStorage.setItem('authToken', data.token);
+        navigation.navigate('Home');
       } else {
-        alert('Login failed');
+        Alert.alert('Login failed', 'Invalid username or password');
       }
     } catch (error) {
-      console.error('Error during login:', error);
-      alert('An error occurred. Please try again.');
+      Alert.alert('Login failed', 'An error occurred. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
