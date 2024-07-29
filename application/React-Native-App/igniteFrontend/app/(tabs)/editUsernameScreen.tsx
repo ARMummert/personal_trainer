@@ -2,83 +2,44 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, Modal, FlatList } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { NavigationProp } from '@react-navigation/native';
-import { AntDesign } from '@expo/vector-icons';
 import { ScrollView } from 'react-native';
 interface SignUpProps {
   navigation: NavigationProp<any>;
 }
 
-const AccountSignUpScreen: React.FC<SignUpProps> = ({ navigation }) => {
+const editUsername: React.FC<SignUpProps> = ({ navigation }) => {
   const [Username, setUsername] = useState('');
   const [newUsername, setNewUsername] = useState(''); 
-  const [Email, setEmail] = useState('');
-  const [Password, setPassword] = useState('');
-  const [Fullname, setFullname] = useState('');
-  const [RePassword, setRePassword] = useState('');
-  const [loadedAvatarOptions, setLoadedAvatarOptions] = useState<{ label: string; value: any; }[]>([]);
-  const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null);
-  const [modalVisible, setModalVisible] = useState(false);
-
-  useEffect(() => {
-    const loadAvatars = () => {
-      const avatarOptions = [
-        { label: 'Crimson Crush', value: require('../../assets/images/avatardarkpink.png') },
-        { label: 'Blue Boost', value: require('../../assets/images/avatarblue.png') },
-        { label: 'Focused Teal', value: require('../../assets/images/avatarteal.png') },
-        { label: 'Vibrant Violet', value: require('../../assets/images/avatarpurple.png') },
-        { label: 'Refreshing Green', value: require('../../assets/images/avatargreen.png') },
-        { label: 'Sunshine Yellow', value: require('../../assets/images/avataryellow.png') },
-        { label: 'Fiery Orange', value: require('../../assets/images/avatarorange.png') },
-        { label: 'Rose Gold Radiance', value: require('../../assets/images/avatarpink.png') },
-      ];
-      setLoadedAvatarOptions(avatarOptions);
-    };
-
-    loadAvatars();
-  }, []);
 
   const handleEditProfile = async () => {
-    if (!Fullname || !Username || !Email || !Password) {
+    if ( !Username || !newUsername ) {
       alert('Please fill out all fields');
       return;
     }
   
     try {
-      const response = await fetch('http://localhost:5000/api/user/{userid}', {
+      const response = await fetch('http://localhost:5000/api/user/{UserID}', {
         method: 'PUT',
         headers: new Headers({ 'Content-Type': 'application/json' }),
-        body: JSON.stringify({ Fullname, Username, Email, Password, selectedAvatar }),
+        body: JSON.stringify({ Username, newUsername }),
       });
   
       if (response.ok) {
         const data = await response.json();
         if (data.success) {
           alert('Account created successfully');
-          navigation.navigate('LoginScreen');
+          navigation.navigate('AccountProfileScreen');
         } else {
-          alert('Failed to create account');
+          alert('Failed to update Username');
         }
       } else {
-        alert('Sign-up failed');
+        alert('Update failed');
       }
     } catch (error) {
-      console.error('Error during sign-up:', error);
+      console.error('Error during update:', error);
       alert('An error occurred. Please try again.');
     }
   };
-
-  const renderAvatarItem = ({ item }: { item: { label: string; value: any; } }) => (
-    <TouchableOpacity
-      style={styles.pickerItem}
-      onPress={() => {
-        setSelectedAvatar(item.label);
-        setModalVisible(false);
-      }}
-    >
-      <Image source={item.value} style={styles.pickerImage} />
-      <Text style={styles.pickerLabel}>{item.label}</Text>
-    </TouchableOpacity>
-  );
 
   return (
     <ScrollView style={styles.scroll}>
@@ -101,33 +62,13 @@ const AccountSignUpScreen: React.FC<SignUpProps> = ({ navigation }) => {
           style={styles.input}
         />
       </LinearGradient> 
-      <TouchableOpacity style={styles.picker} onPress={() => setModalVisible(true)}> 
-        <Text style={styles.pickerText}>{selectedAvatar || 'Choose New Avatar'}</Text>
-        <AntDesign style={styles.carrot} name="caretdown" size={24} color="white" />
-      </TouchableOpacity>
-      {selectedAvatar && (
-        <Image
-          source={loadedAvatarOptions.find(option => option.label === selectedAvatar)?.value}
-          style={styles.avatarImage}
-        />
-      )}
-      <Modal visible={modalVisible} transparent={true} animationType="slide">
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <FlatList
-              data={loadedAvatarOptions}
-              renderItem={renderAvatarItem}
-              keyExtractor={(item) => item.label}
-            />
-          </View>
-        </View>
-      </Modal>
+     
       <View style={styles.space}></View>
       <TouchableOpacity
         onPress={handleEditProfile}
         style={styles.signUpButton}
       >
-        <Text style={styles.signUpButtonText}>Save Profile</Text>
+        <Text style={styles.signUpButtonText}>Save</Text>
       </TouchableOpacity>
       <View style={styles.space}></View>
     </View>
@@ -257,4 +198,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AccountSignUpScreen;
+export default editUsername;
