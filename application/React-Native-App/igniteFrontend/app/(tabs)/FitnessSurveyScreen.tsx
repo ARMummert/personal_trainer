@@ -186,6 +186,7 @@ const styles = StyleSheet.create({
     fontSize: 44,
     marginBottom: 20,
     color: 'white',
+    fontFamily: 'Alkatra-VariableFront_wght',
   },
   input: {
     width: '100%',
@@ -196,6 +197,7 @@ const styles = StyleSheet.create({
     color: 'white',
     borderColor: '#F83600',
     marginBottom: 15,
+    fontFamily: 'Alkatra-VariableFront_wght',
   },
   age: {
     width: '15%',
@@ -207,11 +209,13 @@ const styles = StyleSheet.create({
     color: 'white',
     borderColor: '#F83600',
     marginBottom: 15,
+    fontFamily: 'Alkatra-VariableFront_wght',
   },
   label: {
     fontSize: 20,
     color: 'white',
     marginBottom: 5,
+    fontFamily: 'Alkatra-VariableFront_wght',
   },
   picker: {
     height: 50,
@@ -221,6 +225,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     borderRadius: 5,
     fontSize: 20,
+    fontFamily: 'Alkatra-VariableFront_wght',
   },
   checkboxContainer: {
     flexDirection: 'row',

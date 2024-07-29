@@ -62,8 +62,9 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   settingText: {
-    fontSize: 16,
+    fontSize: 20,
     color: 'white',
+    fontFamily: 'Alkatra-VariableFront_wght',
   },
 });
 

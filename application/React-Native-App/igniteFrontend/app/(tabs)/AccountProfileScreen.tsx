@@ -67,6 +67,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 20,
     color: 'white',
+    fontFamily: 'Alkatra-VariableFront_wght',
   },
   avatar: {
     width: 100,
@@ -78,10 +79,12 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     color: 'white',
+    fontFamily: 'Alkatra-VariableFront_wght',
   },
   email: {
-    fontSize: 16,
+    fontSize: 20,
     color: 'white',
+    fontFamily: 'Alkatra-VariableFront_wght',
   },
   settingsList: {
     // Remove the color property
@@ -95,8 +98,10 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   settingText: {
-    fontSize: 16,
-    color: 'white',
+    fontSize: 20,
+    color: 'white', 
+    fontFamily: 'Alkatra-VariableFront_wght',
+
   },
   icon: {
     marginRight: 10,
