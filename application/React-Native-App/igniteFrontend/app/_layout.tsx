@@ -8,6 +8,8 @@ import 'react-native-reanimated';
 import * as React from 'react';
 import { useColorScheme } from '@/components/useColorScheme';
 import Navigation from './navigation';
+import HomeScreen from './(tabs)/HomeScreen';
+
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,

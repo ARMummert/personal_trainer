@@ -1,16 +1,31 @@
 // Filename: HomeScreen.tsx
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, Alert } from 'react-native';
 import { Button } from 'react-native-elements';
 import { useNavigation, useRoute } from '@react-navigation/native';
- 
+import ProtectedRoute from './ProtectedRoute';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const HomeScreen = () => {
   const navigation = useNavigation(); 
   const route = useRoute();
   const {Username} = route.params as { Username: string } || { Username: '' };
   const [workouts, setWorkouts] = useState([]);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const checkLoginStatus = async () => {
+      const token = await AsyncStorage.getItem('authToken');
+      if (token) {
+        setIsLoggedIn(true);
+      } else {
+        Alert.alert('You must be logged in to view this page');
+      }
+    };
+
+    checkLoginStatus();
+  }, []);
 
   useEffect(() => {
     const fetchWorkouts = async () => {
@@ -32,7 +47,16 @@ const HomeScreen = () => {
       <Button title="Start Workout" />
     </View>
   );
-  
+
+    if (!isLoggedIn) {
+    return (
+      <View style={styles.container}>
+        <Text>Please log in to access this page.</Text>
+        <Button title="Login" onPress={() => navigation.navigate('LoginScreen' as never)} />
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <Image source={require('../../assets/images/fitappimage.jpg')} style={styles.headerImage} resizeMode="cover"  />
@@ -104,5 +128,4 @@ const styles = StyleSheet.create({
   },
 
 });
-
 export default HomeScreen;
