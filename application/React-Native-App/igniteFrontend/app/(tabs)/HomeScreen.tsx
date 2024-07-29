@@ -67,8 +67,9 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   cardText: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
+    fontFamily: 'Alkatra-VariableFront_wght',
   },
   headerImage: {
     width: '100%',
@@ -81,22 +82,25 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   workoutName: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
+    fontFamily: 'Alkatra-VariableFront_wght',
   },
 
   welcomeText: {
     fontSize: 24,
     color: 'white',
     marginTop: 20,
+    fontFamily: 'Alkatra-VariableFront_wght',
   },
 
   descriptionText: {
-    fontSize: 16,
+    fontSize: 20,
     color: 'white',
     marginHorizontal: 20,
     marginBottom: 20,
     textAlign: 'center',
+    fontFamily: 'Alkatra-VariableFront_wght',
   },
 
 });
