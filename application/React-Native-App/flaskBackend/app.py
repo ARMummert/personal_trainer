@@ -5,6 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 from flask_mail import Mail, Message
 import logging
+from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -46,33 +47,87 @@ def account_signup():
         try:
             data = request.json
             username = data['Username']
+            email = data['Email']
             password = data['Password']
+            fullname = data['Fullname']
             hashed_password = generate_password_hash(password)  # Hash the password for security
+            date_created = datetime.now()
 
             # Log the received data for debugging
             app.logger.debug(f'Received data: {data}')
 
             # Database connection
             conn = mysql.connector.connect(**db_config)
-            cursor = conn.cursor()
-
-            # Insert a new user into the UserInfo table to generate the UserID
-            query_userinfo = "INSERT INTO UserInfo (Name) VALUES (%s)"
-            cursor.execute(query_userinfo, (username,))
+            cursor = conn.cursor(dictionary=True) 
             
-            # Get the last inserted user ID
-            user_id = cursor.lastrowid
-
-            # Insert user login data into the UserLogins table using the generated UserID
-            query_userlogins = "INSERT INTO UserLogins (UserID, Username, Password) VALUES (%s, %s, %s)"
-            cursor.execute(query_userlogins, (user_id, username, hashed_password))
-            conn.commit()
-
-            return jsonify({"message": "Signup successful"}), 201
+            # Insert user login data into the UserLogins table
+            query_userlogins = "INSERT INTO UserLogins (Username, Email, Password, Name) VALUES (%s, %s, %s, %s)"
+            cursor.execute(query_userlogins, (username, email, hashed_password, fullname))
+            
+            # Fetch the generated UserID
+            cursor.execute("SELECT UserID FROM UserLogins WHERE Username = %s", (username,))
+            user = cursor.fetchone()
+            if user:
+                user_id = user['UserID']
+            
+                # Insert into UserInfo table
+                query_userinfo = "INSERT INTO UserInfo (UserID, DateCreated) VALUES (%s, %s)"
+                cursor.execute(query_userinfo, (user_id, date_created))
+            
+                conn.commit()
+                return jsonify({"success": True, "message": "Signup successful"}), 201
+            else:
+                return jsonify({"success": False, "message": "User creation failed"}), 500
 
         except mysql.connector.Error as err:
-            app.logger.error(f"Error during signup: {err}")
-            return jsonify({"error": "Internal Server Error"}), 500
+            return jsonify({"success": False, "error": str(err)}), 500
+
+        finally:
+            cursor.close()
+            conn.close()
+
+@app.route('/login', methods=['POST', 'OPTIONS'])
+@cross_origin(origin='http://localhost:8081', supports_credentials=True)  # Ensure correct origin
+def login():
+    if request.method == 'OPTIONS':
+        response = app.make_default_options_response()
+        response.headers.add("Access-Control-Allow-Origin", "http://localhost:8081")
+        response.headers.add("Access-Control-Allow-Credentials", "true")
+        response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+        return response
+
+    if request.method == 'POST':
+        try:
+            data = request.json
+            username = data['Username']
+            app.logger.debug(f'username: {username}')
+            password = data['Password']
+            
+            conn = mysql.connector.connect(**db_config)
+            cursor = conn.cursor(dictionary=True)
+            
+            # Fetch user from the database
+            cursor.execute("SELECT * FROM UserLogins WHERE Username = %s;", (username,))
+            user = cursor.fetchone()
+            if user:
+                app.logger.debug(f'User found: {user}')
+                user_pass = generate_password_hash(password)
+                app.logger.debug(user_pass)
+                stored_hashed_password = user['Password']
+                if check_password_hash(stored_hashed_password, password):
+                    app.logger.debug('Password match')
+                    return jsonify({"success": True, "message": "Login successful"}), 200
+                else:
+                    app.logger.debug('Password mismatch')
+                    return jsonify({"success": False, "message": "Invalid username or password"}), 401
+            else:
+                app.logger.debug('User not found')
+                return jsonify({"success": False, "message": "Invalid username or password"}), 401
+
+        except mysql.connector.Error as err:
+            app.logger.error(f"Database error: {err}")
+            return jsonify({"success": False, "error": str(err)}), 500
 
         finally:
             cursor.close()
@@ -242,32 +297,7 @@ def get_workouts():
         cursor.close()
         conn.close()
 
-@app.route('/api/login', methods=['POST'])
-@cross_origin(origin='http://localhost:8081', supports_credentials=True)  # Ensure correct origin
-def login():
-    try:
-        data = request.json
-        username = data['username']
-        password = data['password']
-        
-        conn = mysql.connector.connect(**db_config)
-        cursor = conn.cursor(dictionary=True)
-        
-        # Fetch user from the database
-        cursor.execute("SELECT * FROM UserLogins WHERE Username = %s;", (username,))
-        user = cursor.fetchone()
-        
-        if user and check_password_hash(user['Password'], password):
-            return jsonify({"success": True}), 200
-        else:
-            return jsonify({"success": False, "message": "Invalid username or password"}), 401
 
-    except mysql.connector.Error as err:
-        return jsonify({"success": False, "error": str(err)}), 500
-
-    finally:
-        cursor.close()
-        conn.close()
 
 @app.route('/api/logout', methods=['POST'])
 @cross_origin(origin='http://localhost:8081', supports_credentials=True)  # Ensure correct origin
