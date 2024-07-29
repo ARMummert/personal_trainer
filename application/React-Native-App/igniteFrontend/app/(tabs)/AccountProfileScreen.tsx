@@ -11,7 +11,7 @@ const AccountProfileScreen = () => {
 
   const getUserData = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/user');
+      const response = await fetch('http://localhost:5000/api/user{UserID}');
       if (!response.ok) {
         throw new Error(`Network response was not ok: ${response.status}`);
       }
@@ -37,13 +37,13 @@ const AccountProfileScreen = () => {
         <Text style={styles.email}>{userData.email}</Text>
       </View>
       <View style={styles.settingsList}>
-        <TouchableOpacity style={styles.settingItem} onPress={() => navigation.navigate('editUsernameScreen' as never)}>
+        <TouchableOpacity style={styles.settingItem} onPress={() => navigation.navigate('ResetUserNameScreen' as never)}>
           <FontAwesome name="edit" size={24} style={styles.icon} />
-          <Text style={styles.settingText}>Edit Username</Text>
+          <Text style={styles.settingText}>Reset Username</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.settingItem} onPress={() => navigation.navigate('ResetPasswordScreen' as never)}>
           <FontAwesome name="lock" size={24} style={styles.icon} />
-          <Text style={styles.settingText}>Change Password</Text>
+          <Text style={styles.settingText}>Reset Password</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.settingItem} onPress={() => navigation.navigate('LogoutScreen' as never)}>
           <FontAwesome name="sign-out" size={24} style={styles.icon} />
@@ -88,9 +88,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontFamily: 'Alkatra-VariableFront_wght',
   },
-  settingsList: {
-    // Remove the color property
-  },
+  settingsList: {},
   settingItem: {
     flexDirection: 'row',
     alignItems: 'center',
