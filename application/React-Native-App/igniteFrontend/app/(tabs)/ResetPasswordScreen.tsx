@@ -55,7 +55,7 @@ const ResetPasswordScreen: React.FC<ResetPasswordProps> = ({ navigation }) => {
       <View style={styles.space}></View>
       <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 0, borderRadius: 5, }}>
         <TouchableOpacity onPress={handleResetPassword} style={{ backgroundColor: '#F83600', paddingHorizontal: 15, paddingVertical: 10, borderRadius: 5 }}>
-          <Text style={{ color: 'white', fontSize: 16, textAlign: 'center' }}>Reset Password</Text>
+          <Text style={{ color: 'white', fontSize: 20, textAlign: 'center' }}>Reset Password</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.space}></View>
@@ -80,6 +80,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     color: 'white',
     backgroundColor: 'black',
+    fontFamily: 'Alkatra-VariableFront_wght',
   },
   input: {
     width: '100%',
@@ -88,6 +89,8 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     color: 'white',
+    fontSize: 20,
+    fontFamily: 'Alkatra-VariableFront_wght',
   },
   emailInput: {
     width: '20%',
@@ -95,13 +98,16 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     color: 'white',
     marginBottom: 15,
+    fontSize: 20,
+    fontFamily: 'Alkatra-VariableFront_wght',
   },
   space: {
     height: 20,
   },
   backToLogin: {
     color: 'white',
-    fontSize: 16,
+    fontSize: 20,
+    fontFamily: 'Alkatra-VariableFront_wght',
     textAlign: 'center',
     margin: 10,
   },

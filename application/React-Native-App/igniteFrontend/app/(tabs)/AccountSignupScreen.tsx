@@ -244,7 +244,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   pickerLabel: {
-    color: '#F83600',
+    color: 'black',
     fontWeight: 'bold',
   },
   pickerText: {

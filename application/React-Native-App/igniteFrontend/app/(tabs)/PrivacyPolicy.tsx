@@ -159,31 +159,40 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: 'bold',
+    fontFamily: 'Alkatra-VariableFront_wght',
   },
   subTitle: {
     fontSize: 16,
     marginBottom: 10,
+    fontFamily: 'Alkatra-VariableFront_wght',
   },
   sectionHeader: {
     fontSize: 18,
     fontWeight: 'bold',
     marginTop: 20,
+    fontFamily: 'Alkatra-VariableFront_wght',
   },
   paragraph: {
     fontSize: 16,
     marginBottom: 10,
+    fontFamily: 'Alkatra-VariableFront_wght',
   },
   listTitle: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: 'bold', 
+    fontFamily: 'Alkatra-VariableFront_wght',
+
   },
   listItem: {
     fontSize: 16,
     marginBottom: 5,
+    fontFamily: 'Alkatra-VariableFront_wght',
   },
   contactText: {
-    fontSize: 16,
+    fontSize: 16, 
+    fontFamily: 'Alkatra-VariableFront_wght',
     marginTop: 20,
+
   },
   bold: {
     fontWeight: 'bold',
