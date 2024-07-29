@@ -40,7 +40,7 @@ const AccountProfileScreen = () => {
         <Text style={styles.email}>{username.email}</Text>
       </View>
       <View style={styles.settingsList}>
-        <TouchableOpacity style={styles.settingItem} onPress={() => navigation.navigate('editUsername' as never)}>
+        <TouchableOpacity style={styles.settingItem} onPress={() => navigation.navigate('editUsernameScreen' as never)}>
           <FontAwesome name="edit" size={24} style={styles.icon} />
           <Text style={styles.settingText}>Edit Username</Text>
         </TouchableOpacity>
