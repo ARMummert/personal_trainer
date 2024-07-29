@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, url_for
+from flask import Flask, request, jsonify, url_for, render_template_string
 from flask_cors import CORS, cross_origin
 import mysql.connector
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -19,12 +19,14 @@ db_config = {
 }
 
 app.config.update(
-    MAIL_SERVER='smtp.your-email-provider.com',
+    MAIL_SERVER='smtp.office365.com',
     MAIL_PORT=587,
     MAIL_USE_TLS=True,
-    MAIL_USERNAME='your-email@example.com',
-    MAIL_PASSWORD='your-email-password'
+    MAIL_USERNAME='ignitepasswordreset@outlook.com',
+    MAIL_PASSWORD='Capstone123'
 )
+
+
 
 mail = Mail(app)
 serializer = URLSafeTimedSerializer(app.secret_key)
@@ -101,7 +103,6 @@ def login():
         try:
             data = request.json
             username = data['Username']
-            app.logger.debug(f'username: {username}')
             password = data['Password']
             
             conn = mysql.connector.connect(**db_config)
@@ -111,141 +112,319 @@ def login():
             cursor.execute("SELECT * FROM UserLogins WHERE Username = %s;", (username,))
             user = cursor.fetchone()
             if user:
-                app.logger.debug(f'User found: {user}')
                 user_pass = generate_password_hash(password)
-                app.logger.debug(user_pass)
                 stored_hashed_password = user['Password']
                 if check_password_hash(stored_hashed_password, password):
-                    app.logger.debug('Password match')
-                    return jsonify({"success": True, "message": "Login successful"}), 200
+                    return jsonify({"success": True}), 200
                 else:
-                    app.logger.debug('Password mismatch')
                     return jsonify({"success": False, "message": "Invalid username or password"}), 401
             else:
-                app.logger.debug('User not found')
                 return jsonify({"success": False, "message": "Invalid username or password"}), 401
 
         except mysql.connector.Error as err:
-            app.logger.error(f"Database error: {err}")
             return jsonify({"success": False, "error": str(err)}), 500
 
         finally:
             cursor.close()
             conn.close()
 
-@app.route('/reset-password', methods=['POST'])
-@cross_origin(origin='http://localhost:8081', supports_credentials=True)  # Ensure correct origin
+@app.route('/reset-password', methods=['POST', 'OPTIONS'])
+@cross_origin(origin='http://localhost:8081', supports_credentials=True)
 def reset_password():
-    try:
-        data = request.json
-        email = data['Email']
-        
-        conn = mysql.connector.connect(**db_config)
-        cursor = conn.cursor(dictionary=True)
-        
-        # Check if the email exists in the database
-        cursor.execute("SELECT * FROM UserInfo WHERE Email = %s;", (email,))
-        user = cursor.fetchone()
-        
-        if not user:
-            return jsonify({"success": False, "message": "Email not found"}), 404
-        
-        # Generate a password reset token
-        serializer = URLSafeTimedSerializer(app.secret_key)
-        token = serializer.dumps(email, salt='password-reset-salt')
-        
-        # Send email with the reset link (in real application, use proper email service)
-        msg = Message('Password Reset Request', sender='your-email@example.com', recipients=[email])
-        link = url_for('reset_with_token', token=token, _external=True)
-        msg.body = f'Your password reset link is {link}'
-        mail.send(msg)
-        
-        return jsonify({"success": True}), 200
-    
-    except Exception as e:
-        return jsonify({"success": False, "error": str(e)}), 500
+    if request.method == 'OPTIONS':
+        response = app.make_default_options_response()
+        response.headers.add("Access-Control-Allow-Origin", "http://localhost:8081")
+        response.headers.add("Access-Control-Allow-Credentials", "true")
+        response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+        return response
 
-    finally:
-        cursor.close()
-        conn.close()
+    if request.method == 'POST':
+        app.logger.debug(f"Content-Type: {request.content_type}")
+        
+        if not request.is_json:
+            return jsonify({"success": False, "error": "Unsupported Media Type: Expected 'application/json'"}), 415
 
-@app.route('/reset/<token>', methods=['POST'])
-@cross_origin(origin='http://localhost:8081', supports_credentials=True)  # Ensure correct origin
+        conn = None
+        cursor = None
+        try:
+            data = request.json
+            email = data['Email']
+            
+            conn = mysql.connector.connect(**db_config)
+            cursor = conn.cursor(dictionary=True)
+            
+            # Check if the email exists in the database
+            cursor.execute("SELECT * FROM UserLogins WHERE Email = %s;", (email,))
+            user = cursor.fetchone()
+            
+            if not user:
+                app.logger.debug(user)
+                return jsonify({"success": False, "message": "Email not found"}), 404
+            
+            # Generate a password reset token
+            serializer = URLSafeTimedSerializer(app.secret_key)
+            token = serializer.dumps(email, salt='password-reset-salt')
+            
+            # Send email with the reset link
+            msg = Message('Password Reset Request', sender='ignitepasswordreset@outlook.com', recipients=[email])
+            link = url_for('reset_with_token', token=token, _external=True)
+            msg.body = f'Your password reset link is {link}'
+            mail.send(msg)
+            
+            return jsonify({"success": True}), 200
+        
+        except mysql.connector.Error as db_err:
+            logging.error(f"Database error: {db_err}")
+            return jsonify({"success": False, "error": "Database error"}), 500
+
+        except Exception as e:
+            logging.error(f"Error processing reset password request: {e}")
+            return jsonify({"success": False, "error": "Internal server error"}), 500
+
+        finally:
+            if cursor is not None:
+                cursor.close()
+            if conn is not None:
+                conn.close()
+
+@app.route('/reset/<token>', methods=['POST', 'GET', 'OPTIONS'])
+@cross_origin(origin='http://localhost:8081', supports_credentials=True)
 def reset_with_token(token):
-    try:
-        serializer = URLSafeTimedSerializer(app.secret_key)
-        password = request.json['password']
-        email = serializer.loads(token, salt='password-reset-salt', max_age=3600)
-        
-        hashed_password = generate_password_hash(password)
-        
-        conn = mysql.connector.connect(**db_config)
-        cursor = conn.cursor()
-        
-        cursor.execute("UPDATE UserInfo SET Password = %s WHERE Email = %s;", (hashed_password, email))
-        conn.commit()
-        
-        return jsonify({"success": True}), 200
-    
-    except SignatureExpired:
-        return jsonify({"success": False, "message": "The token is expired"}), 400
-    except Exception as e:
-        return jsonify({"success": False, "error": str(e)}), 500
+    if request.method == 'OPTIONS':
+        response = app.make_default_options_response()
+        response.headers.add("Access-Control-Allow-Origin", "http://localhost:8081")
+        response.headers.add("Access-Control-Allow-Credentials", "true")
+        response.headers.add("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+        return response
 
-    finally:
-        cursor.close()
-        conn.close()
+    if request.method == 'GET':
+        try:
+            serializer = URLSafeTimedSerializer(app.secret_key)
+            email = serializer.loads(token, salt='password-reset-salt', max_age=3600)
+            return render_template_string('''
+                <!doctype html>
+                <html lang="en">
+                  <head>
+                    <meta charset="utf-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+                    <title>Reset Password</title>
+                  </head>
+                  <body>
+                    <div class="container">
+                      <h2>Reset Password for {{ email }}</h2>
+                      <form action="" method="post">
+                        <div class="form-group">
+                          <label for="password">New Password</label>
+                          <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Reset Password</button>
+                      </form>
+                    </div>
+                  </body>
+                </html>
+            ''', email=email)
+        except SignatureExpired:
+            return jsonify({"success": False, "message": "The token is expired"}), 400
+        except Exception as e:
+            logging.error(f"Error processing password reset with token: {e}")
+            return jsonify({"success": False, "error": str(e)}), 500
 
-@app.route('/reset-username', methods=['POST'])
-@cross_origin(origin='http://localhost:8081', supports_credentials=True)  # Ensure correct origin
+    if request.method == 'POST':
+        conn = None
+        cursor = None
+        try:
+            serializer = URLSafeTimedSerializer(app.secret_key)
+            password = request.form['password']
+            email = serializer.loads(token, salt='password-reset-salt', max_age=3600)
+            
+            hashed_password = generate_password_hash(password)
+            
+            conn = mysql.connector.connect(**db_config)
+            cursor = conn.cursor()
+            
+            cursor.execute("UPDATE UserLogins SET Password = %s WHERE Email = %s;", (hashed_password, email))
+            conn.commit()
+            
+            return jsonify({"success": True}), 200
+        
+        except SignatureExpired:
+            return jsonify({"success": False, "message": "The token is expired"}), 400
+        except Exception as e:
+            logging.error(f"Error processing password reset with token: {e}")
+            return jsonify({"success": False, "error": str(e)}), 500
+
+        finally:
+            if cursor is not None:
+                cursor.close()
+            if conn is not None:
+                conn.close()
+
+@app.route('/reset-username', methods=['POST', 'OPTIONS'])
+@cross_origin(origin='http://localhost:8081', supports_credentials=True)
 def reset_username():
-    try:
-        data = request.json
-        username = data['Username']
-        password = data['Password']
-        new_username = data['NewUsername']
+    if request.method == 'OPTIONS':
+        response = app.make_default_options_response()
+        response.headers.add("Access-Control-Allow-Origin", "http://localhost:8081")
+        response.headers.add("Access-Control-Allow-Credentials", "true")
+        response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+        return response
+
+    if request.method == 'POST':
+        conn = None
+        cursor = None
+        try:
+            data = request.json
+            email = data.get('Email')
+
+            if not email:
+                logging.error(f"Missing required field: email={email}")
+                return jsonify({"success": False, "message": "Missing required field"}), 400
+
+            conn = mysql.connector.connect(**db_config)
+            cursor = conn.cursor(dictionary=True)
+            
+            # Fetch the user from the database
+            cursor.execute("SELECT * FROM UserLogins WHERE Email = %s;", (email,))
+            user = cursor.fetchone()
+            
+            if not user:
+                logging.error("Invalid email")
+                return jsonify({"success": False, "message": "Invalid email"}), 401
+            
+            # Generate a username reset token
+            serializer = URLSafeTimedSerializer(app.secret_key)
+            token = serializer.dumps(email, salt='username-reset-salt')
+
+            # Send email with the reset link
+            msg = Message('Reset Username Request', sender='ignitepasswordreset@outlook.com', recipients=[email])
+            link = url_for('reset_username_with_token', token=token, _external=True)
+            msg.body = f'Your username reset link is {link}'
+            mail.send(msg)
+            
+            return jsonify({"success": True, "message": "Reset link sent"}), 200
         
-        conn = mysql.connector.connect(**db_config)
-        cursor = conn.cursor(dictionary=True)
+        except mysql.connector.Error as err:
+            logging.error(f"Database error: {err}")
+            return jsonify({"success": False, "error": str(err)}), 500
+
+        except Exception as e:
+            logging.error(f"Error sending reset username link: {e}")
+            return jsonify({"success": False, "error": str(e)}), 500
+
+        finally:
+            if cursor is not None:
+                cursor.close()
+            if conn is not None:
+                conn.close()
+
+@app.route('/reset-username/<token>', methods=['POST', 'GET', 'OPTIONS'])
+@cross_origin(origin='http://localhost:8081', supports_credentials=True)
+def reset_username_with_token(token):
+    if request.method == 'OPTIONS':
+        response = app.make_default_options_response()
+        response.headers.add("Access-Control-Allow-Origin", "http://localhost:8081")
+        response.headers.add("Access-Control-Allow-Credentials", "true")
+        response.headers.add("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+        return response
+
+    if request.method == 'GET':
+        try:
+            serializer = URLSafeTimedSerializer(app.secret_key)
+            email = serializer.loads(token, salt='username-reset-salt', max_age=3600)
+            return render_template_string('''
+                <!doctype html>
+                <html lang="en">
+                  <head>
+                    <meta charset="utf-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+                    <title>Reset Username</title>
+                  </head>
+                  <body>
+                    <div class="container">
+                      <h2>Reset Username for {{ email }}</h2>
+                      <form id="reset-username-form">
+                        <div class="form-group">
+                          <label for="new-username">New Username</label>
+                          <input type="text" class="form-control" id="new-username" name="new-username" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Reset Username</button>
+                      </form>
+                    </div>
+                    <script>
+                      document.getElementById('reset-username-form').addEventListener('submit', function(event) {
+                        event.preventDefault();
+                        const newUsername = document.getElementById('new-username').value;
+                        fetch(window.location.pathname, {
+                          method: 'POST',
+                          headers: {
+                            'Content-Type': 'application/json'
+                          },
+                          body: JSON.stringify({ newUsername })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                          if (data.success) {
+                            alert('Username reset successfully.');
+                          } else {
+                            alert('Error resetting username: ' + data.message);
+                          }
+                        })
+                        .catch(error => {
+                          console.error('Error:', error);
+                        });
+                      });
+                    </script>
+                  </body>
+                </html>
+            ''', email=email)
+        except SignatureExpired:
+            return jsonify({"success": False, "message": "The token is expired"}), 400
+        except Exception as e:
+            logging.error(f"Error processing username reset with token: {e}")
+            return jsonify({"success": False, "error": str(e)}), 500
+
+    if request.method == 'POST':
+        conn = None
+        cursor = None
+        try:
+            data = request.json
+            new_username = data.get('newUsername')
+            serializer = URLSafeTimedSerializer(app.secret_key)
+            email = serializer.loads(token, salt='username-reset-salt', max_age=3600)
+            
+            if not new_username:
+                logging.error(f"Missing required field: newUsername={new_username}")
+                return jsonify({"success": False, "message": "Missing required field"}), 400
+
+            conn = mysql.connector.connect(**db_config)
+            cursor = conn.cursor(dictionary=True)
+            
+            # Update the username in the database
+            cursor.execute("UPDATE UserLogins SET Username = %s WHERE Email = %s;", (new_username, email))
+            conn.commit()
+            
+            return jsonify({"success": True}), 200
         
-        # Fetch the user from the database
-        cursor.execute("SELECT * FROM UserLogins WHERE Username = %s;", (username,))
-        user = cursor.fetchone()
-        
-        if not user or not check_password_hash(user['Password'], password):
-            return jsonify({"success": False, "message": "Invalid username or password"}), 401
-        
-        # Update the username in the database
-        cursor.execute("UPDATE UserLogins SET Username = %s WHERE Username = %s;", (new_username, username))
-        conn.commit()
-        
-        return jsonify({"success": True}), 200
-    
-    except mysql.connector.Error as err:
-        return jsonify({"success": False, "error": str(err)}), 500
+        except SignatureExpired:
+            return jsonify({"success": False, "message": "The token is expired"}), 400
+        except mysql.connector.Error as err:
+            logging.error(f"Database error: {err}")
+            return jsonify({"success": False, "error": str(err)}), 500
 
-    finally:
-        cursor.close()
-        conn.close()
+        except Exception as e:
+            logging.error(f"Error processing username reset: {e}")
+            return jsonify({"success": False, "error": str(e)}), 500
 
-@app.route('/api/user', methods=['GET'])
-@cross_origin(origin='http://localhost:8081', supports_credentials=True)  # Ensure correct origin
-def get_user_data():
-    try:
-        conn = mysql.connector.connect(**db_config)
-        cursor = conn.cursor(dictionary=True)
+        finally:
+            if cursor is not None:
+                cursor.close()
+            if conn is not None:
+                conn.close()
 
-        cursor.execute("SELECT * FROM UserInfo;")
-        users = cursor.fetchall()
-
-        return jsonify(users), 200
-
-    except mysql.connector.Error as err:
-        return jsonify({"error": str(err)}), 500
-
-    finally:
-        cursor.close()
-        conn.close()
 
 @app.route('/submitSurvey', methods=['POST'])
 @cross_origin(origin='http://localhost:8081', supports_credentials=True)  # Ensure correct origin
