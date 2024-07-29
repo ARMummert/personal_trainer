@@ -53,7 +53,7 @@ const AccountSignUpScreen: React.FC<SignUpProps> = ({ navigation }) => {
         const data = await response.json();
         if (data.success) {
           alert('Account created successfully');
-          navigation.navigate('LoginScreen');
+          navigation.navigate('FitnessSurveyScreen');
         } else {
           alert('Failed to create account');
         }
@@ -148,15 +148,11 @@ const AccountSignUpScreen: React.FC<SignUpProps> = ({ navigation }) => {
         </View>
       </Modal>
       <View style={styles.space}></View>
-      <TouchableOpacity
-        onPress={handleSignUp}
-        style={styles.signUpButton}
-      >
+      <TouchableOpacity onPress={handleSignUp} style={styles.signUpButton}>
         <Text style={styles.signUpButtonText}>Create Account</Text>
       </TouchableOpacity>
       <View style={styles.space}></View>
       <TouchableOpacity onPress={() => navigation.navigate('LoginScreen')}>
-        <Text style={styles.backToLogin}>Back to Login</Text>
       </TouchableOpacity>
     </View>
     </ScrollView> 
