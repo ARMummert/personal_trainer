@@ -5,27 +5,23 @@ import { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 
 const AccountProfileScreen = () => {
-  const [Username, setUserName] = useState('');
+  const [userData, setUserData] = useState({ name: '', username: '', email: '', avatar: '' });
 
   const navigation = useNavigation();
-  const username = {
-    name: 'John Doe',
-    email: 'johndoe@example.com',
-    avatar: 'https://placeimg.com/150/150/people', 
-  };
+
   const getUserData = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/user'); 
+      const response = await fetch('http://localhost:5000/api/user');
       if (!response.ok) {
         throw new Error(`Network response was not ok: ${response.status}`);
       }
       const fetchedUser = await response.json();
-      setUserName(fetchedUser); 
+      setUserData(fetchedUser);
     } catch (error) {
       console.error('Error fetching user data:', error);
     }
   };
-  
+
   useEffect(() => {
     getUserData();
   }, []);
@@ -33,11 +29,12 @@ const AccountProfileScreen = () => {
   return (
     <View style={styles.container}>
       <View style={styles.profileHeader}>
-        {username.avatar && (
-          <Image source={{ uri: username.avatar }} style={styles.avatar} />
+        {userData.avatar && (
+          <Image source={{ uri: userData.avatar }} style={styles.avatar} />
         )}
-        <Text style={styles.name}>{username.name}</Text>
-        <Text style={styles.email}>{username.email}</Text>
+        <Text style={styles.name}>{userData.name}</Text>
+        <Text style={styles.username}>{userData.username}</Text>
+        <Text style={styles.email}>{userData.email}</Text>
       </View>
       <View style={styles.settingsList}>
         <TouchableOpacity style={styles.settingItem} onPress={() => navigation.navigate('editUsernameScreen' as never)}>
@@ -47,7 +44,7 @@ const AccountProfileScreen = () => {
         <TouchableOpacity style={styles.settingItem} onPress={() => navigation.navigate('ResetPasswordScreen' as never)}>
           <FontAwesome name="lock" size={24} style={styles.icon} />
           <Text style={styles.settingText}>Change Password</Text>
-        </TouchableOpacity> 
+        </TouchableOpacity>
         <TouchableOpacity style={styles.settingItem} onPress={() => navigation.navigate('LogoutScreen' as never)}>
           <FontAwesome name="sign-out" size={24} style={styles.icon} />
           <Text style={styles.settingText}>Logout</Text>
@@ -81,8 +78,13 @@ const styles = StyleSheet.create({
     color: 'white',
     fontFamily: 'Alkatra-VariableFront_wght',
   },
+  username: {
+    fontSize: 18,
+    color: 'white',
+    fontFamily: 'Alkatra-VariableFront_wght',
+  },
   email: {
-    fontSize: 20,
+    fontSize: 18,
     color: 'white',
     fontFamily: 'Alkatra-VariableFront_wght',
   },
@@ -99,9 +101,8 @@ const styles = StyleSheet.create({
   },
   settingText: {
     fontSize: 20,
-    color: 'white', 
+    color: 'white',
     fontFamily: 'Alkatra-VariableFront_wght',
-
   },
   icon: {
     marginRight: 10,
@@ -110,9 +111,3 @@ const styles = StyleSheet.create({
 });
 
 export default AccountProfileScreen;
-
-
-function setIsEditing(arg0: boolean) {
-  throw new Error('Function not implemented.');
-}
-
