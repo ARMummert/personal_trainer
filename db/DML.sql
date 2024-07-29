@@ -7,14 +7,14 @@
 -- Database: 'capstone_2024_ignite_db'
 --
 
--- Account Signup Generate UserID
-INSERT INTO UserLogins (Name, Username, Password) VALUES (%s, %s, %s)
+-- Insert a new user into the UserInfo table to generate the UserID
+INSERT INTO UserInfo (Name) VALUES (%s)
 
--- Account Signup Generate UserInfo
-INSERT INTO UserInfo (UserID, DateCreated) VALUES (%s, UNIX_TIMESTAMP())
+-- Insert user login data into the UserLogins table using the generated UserID
+INSERT INTO UserLogins (UserID, Username, Password) VALUES (%s, %s, %s)
 
---Reset password check if email exists
-SELECT * FROM UserLogins WHERE Email = %
+-- Check if the email exists in the database
+SELECT * FROM UserLogins WHERE Username = %s
 
 -- Reset password with token
 UPDATE UserLogins SET Password = %s WHERE Email = %s
@@ -23,7 +23,7 @@ UPDATE UserLogins SET Password = %s WHERE Email = %s
 SELECT UserID FROM UserLogins WHERE Username = %s
 
 --Reset username update username
-UPDATE UserLogins SET Username = %s WHERE UserID = %s
+UPDATE UserLogins SET Username = %s WHERE Username = %s
 
 --Get user data
 SELECT * FROM UserInfo WHERE UserID = %s
