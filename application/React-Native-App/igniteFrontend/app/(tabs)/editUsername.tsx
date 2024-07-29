@@ -10,6 +10,7 @@ interface SignUpProps {
 
 const AccountSignUpScreen: React.FC<SignUpProps> = ({ navigation }) => {
   const [Username, setUsername] = useState('');
+  const [newUsername, setNewUsername] = useState(''); 
   const [Email, setEmail] = useState('');
   const [Password, setPassword] = useState('');
   const [Fullname, setFullname] = useState('');
@@ -41,14 +42,14 @@ const AccountSignUpScreen: React.FC<SignUpProps> = ({ navigation }) => {
       alert('Please fill out all fields');
       return;
     }
-
+  
     try {
-      const response = await fetch('http://localhost:5000/api/user', {
+      const response = await fetch('http://localhost:5000/api/user/{userid}', {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: new Headers({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({ Fullname, Username, Email, Password, selectedAvatar }),
       });
-
+  
       if (response.ok) {
         const data = await response.json();
         if (data.success) {
@@ -82,19 +83,11 @@ const AccountSignUpScreen: React.FC<SignUpProps> = ({ navigation }) => {
   return (
     <ScrollView style={styles.scroll}>
     <View style={styles.container}>
-      <Text style={styles.title}>Edit Account Profile</Text>
+      <Text style={styles.title}>Edit Username</Text>
       <View style={styles.space}></View>
       <LinearGradient style={styles.inputContainer} colors={['#F83600', '#FE8C00']}>
         <TextInput
-          placeholder="Fullname"
-          value={Fullname}
-          onChangeText={setFullname}
-          style={styles.input}
-        />
-      </LinearGradient>
-      <LinearGradient style={styles.inputContainer} colors={['#F83600', '#FE8C00']}>
-        <TextInput
-          placeholder="Username"
+          placeholder="Enter Current Username"
           value={Username}
           onChangeText={setUsername}
           style={styles.input}
@@ -102,32 +95,14 @@ const AccountSignUpScreen: React.FC<SignUpProps> = ({ navigation }) => {
       </LinearGradient>
       <LinearGradient style={styles.inputContainer} colors={['#F83600', '#FE8C00']}>
         <TextInput
-          placeholder="Email"
-          value={Email}
-          onChangeText={setEmail}
+          placeholder="Enter New Username"
+          value={newUsername}
+          onChangeText={setNewUsername}
           style={styles.input}
         />
-      </LinearGradient>
-      <LinearGradient style={styles.inputContainer} colors={['#F83600', '#FE8C00']}>
-        <TextInput
-          placeholder="Password"
-          value={Password}
-          onChangeText={setPassword}
-          secureTextEntry={true}
-          style={styles.input}
-        />
-      </LinearGradient>
-      <LinearGradient style={styles.inputContainer} colors={['#F83600', '#FE8C00']}>
-        <TextInput
-          placeholder="Re-enter Password"
-          value={RePassword}
-          onChangeText={setRePassword}
-          secureTextEntry={true}
-          style={styles.input}
-        />
-      </LinearGradient>     
+      </LinearGradient> 
       <TouchableOpacity style={styles.picker} onPress={() => setModalVisible(true)}> 
-        <Text style={styles.pickerText}>{selectedAvatar || 'Select Avatar...'}</Text>
+        <Text style={styles.pickerText}>{selectedAvatar || 'Choose New Avatar'}</Text>
         <AntDesign style={styles.carrot} name="caretdown" size={24} color="white" />
       </TouchableOpacity>
       {selectedAvatar && (
@@ -223,9 +198,9 @@ const styles = StyleSheet.create({
     fontFamily: 'Alkatra-VariableFront_wght',
   },
   picker: {
-    backgroundColor: '#F83600',
-    width: '14%',
-    height: '10%',
+    backgroundColor: '#EB2000',
+    width: '13%',
+    height: '12%',
     borderRadius: 5,
     marginTop: 10,
   },
@@ -263,7 +238,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   signUpButton: {
-    backgroundColor: '#F83600',
+    backgroundColor: '#EB2000',
     padding: 10,
     borderRadius: 5,
   },

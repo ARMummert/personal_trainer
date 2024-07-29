@@ -65,8 +65,8 @@ const LoginScreen: React.FC<LoginProps> = ({ navigation }) => {
       </LinearGradient>
       <View style={styles.space}></View>
       <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 0, borderRadius: 5, }}>
-        <TouchableOpacity onPress={handleLogin} style={{ backgroundColor: '#F83600', paddingHorizontal: 15, paddingVertical: 10, borderRadius: 15 }}>
-          <Text style={{  color: 'white', fontSize: 20, textAlign: 'center' }}>Login</Text>
+        <TouchableOpacity onPress={handleLogin} style={{ backgroundColor: '#EB2000', paddingHorizontal: 15, paddingVertical: 10, borderRadius: 15 }}>
+          <Text style={{  color: 'white', fontSize: 20, fontWeight: 'bold', textAlign: 'center' }}>Login</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.containertwo}>  
@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     height: 40,
     width: 170,
-    backgroundColor: '#F83600',
+    textDecorationLine: 'underline',
   },
   signupButton: {
     justifyContent: 'center',
@@ -173,8 +173,7 @@ const styles = StyleSheet.create({
     marginBottom: 40,
     borderRadius: 15,
     height: 40,
-    width: 170,
-    backgroundColor: '#F83600',
+    width: 170, 
   },
 
   signupText: {
@@ -183,6 +182,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Alkatra-VariableFront_wght',
     padding: 10,
     textAlign: 'center',
+    textDecorationLine: 'underline',
   },
 
   Button: {
