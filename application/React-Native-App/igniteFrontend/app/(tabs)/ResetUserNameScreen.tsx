@@ -26,7 +26,7 @@ const ResetUserNameScreen: React.FC<ResetUserNameProps> = ({ navigation }) => {
       if (response.ok) {
         const data = await response.json();
         if (data.success) {
-          alert('Password reset link has been sent to your email');
+          alert('Email reset link has been sent to your email');
           navigation.navigate('LoginScreen');
         } else {
           alert('Email not found');
@@ -35,7 +35,7 @@ const ResetUserNameScreen: React.FC<ResetUserNameProps> = ({ navigation }) => {
         alert('Failed to send reset link');
       }
     } catch (error) {
-      console.error('Error during password reset:', error);
+      console.error('Error during username reset:', error);
       alert('An error occurred. Please try again.');
     }
   };
