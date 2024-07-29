@@ -71,6 +71,7 @@ const styles = StyleSheet.create({
       marginBottom: 20,
       color: 'black',
       backgroundColor: 'white',
+      fontFamily: 'Alkatra-VariableFront_wght',
     },
     input: {
       width: '100%',
@@ -79,6 +80,7 @@ const styles = StyleSheet.create({
       padding: 10,
       borderRadius: 5,
       color: 'white',
+      fontFamily: 'Alkatra-VariableFront_wght',
     },
     gradient: {
       width: '5%',
@@ -91,13 +93,14 @@ const styles = StyleSheet.create({
       borderRadius: 5,
       color: 'white',
       marginBottom: 15,
+      fontFamily: 'Alkatra-VariableFront_wght',
     },
     space: {
       height: 50,
     },
     reset: {
       color: 'white',
-      fontSize: 16,
+      fontSize: 20,
       textAlign: 'center',
       fontFamily: 'Alkatra-VariableFront_wght',
       margin: 10,
@@ -106,6 +109,7 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 20,
         marginBottom: 20,
+        fontFamily: 'Alkatra-VariableFront_wght',
     },
     navigationButton: {
         marginBottom: 10,

@@ -36,15 +36,15 @@ const AccountSignUpScreen: React.FC<SignUpProps> = ({ navigation }) => {
     loadAvatars();
   }, []);
 
-  const handleSignUp = async () => {
+  const handleEditProfile = async () => {
     if (!Fullname || !Username || !Email || !Password) {
       alert('Please fill out all fields');
       return;
     }
 
     try {
-      const response = await fetch('http://localhost:5000/accountEdit', {
-        method: 'POST',
+      const response = await fetch('http://localhost:5000/api/user', {
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ Fullname, Username, Email, Password, selectedAvatar }),
       });
@@ -149,15 +149,12 @@ const AccountSignUpScreen: React.FC<SignUpProps> = ({ navigation }) => {
       </Modal>
       <View style={styles.space}></View>
       <TouchableOpacity
-        onPress={handleSignUp}
+        onPress={handleEditProfile}
         style={styles.signUpButton}
       >
         <Text style={styles.signUpButtonText}>Save Profile</Text>
       </TouchableOpacity>
       <View style={styles.space}></View>
-      <TouchableOpacity onPress={() => navigation.navigate('LoginScreen')}>
-        <Text style={styles.backToLogin}>Back to Login</Text>
-      </TouchableOpacity>
     </View>
     </ScrollView> 
   );
@@ -244,7 +241,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   pickerLabel: {
-    color: '#F83600',
+    color: 'black',
     fontWeight: 'bold',
   },
   pickerText: {

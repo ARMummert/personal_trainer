@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
@@ -26,6 +26,28 @@ const AccountProfileScreen = () => {
     }
   };
   
+  useEffect(() => {
+    getUserData();
+  }, []);
+
+  const saveUserData = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/user', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: username, email: username.email, avatar: username.avatar }),
+      });
+      if (!response.ok) {
+        throw new Error(`Network response was not ok: ${response.statusText}`);
+      }
+      Alert.alert('Profile updated successfully');
+      setIsEditing(false);
+    } catch (error) {
+      console.error('Error updating user data:', error);
+      Alert.alert('Error updating profile');
+    }
+  };
+
   useEffect(() => {
     getUserData();
   }, []);
@@ -111,4 +133,8 @@ const styles = StyleSheet.create({
 
 export default AccountProfileScreen;
 
+
+function setIsEditing(arg0: boolean) {
+  throw new Error('Function not implemented.');
+}
 
