@@ -55,7 +55,7 @@ const ResetUserNameScreen: React.FC<ResetUserNameProps> = ({ navigation }) => {
       <View style={styles.space}></View>
       <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 0, borderRadius: 5, }}>
         <TouchableOpacity onPress={handleResetUserName} style={{ backgroundColor: '#F83600', paddingHorizontal: 15, paddingVertical: 10, borderRadius: 5 }}>
-          <Text style={{ color: 'white', fontSize: 20, textAlign: 'center' }}>Reset Username</Text>
+          <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold', textAlign: 'center' }}>Reset Username</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.space}></View>

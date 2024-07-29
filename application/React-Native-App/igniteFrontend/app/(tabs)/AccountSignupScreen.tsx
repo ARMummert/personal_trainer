@@ -127,7 +127,7 @@ const AccountSignUpScreen: React.FC<SignUpProps> = ({ navigation }) => {
         />
       </LinearGradient>     
       <TouchableOpacity style={styles.picker} onPress={() => setModalVisible(true)}> 
-        <Text style={styles.pickerText}>{selectedAvatar || 'Select Avatar...'}</Text>
+        <Text style={styles.pickerText}>{selectedAvatar || 'Select Avatar'}</Text>
         <AntDesign style={styles.carrot} name="caretdown" size={24} color="white" />
       </TouchableOpacity>
       {selectedAvatar && (
@@ -226,9 +226,9 @@ const styles = StyleSheet.create({
     fontFamily: 'Alkatra-VariableFront_wght',
   },
   picker: {
-    backgroundColor: '#F83600',
-    width: '14%',
-    height: '10%',
+    backgroundColor: '#EB2000',
+    width: '13%',
+    height: '12%',
     borderRadius: 5,
     marginTop: 10,
   },
@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   signUpButton: {
-    backgroundColor: '#F83600',
+    backgroundColor: '#EB2000',
     padding: 10,
     borderRadius: 5,
   },
