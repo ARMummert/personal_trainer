@@ -12,7 +12,7 @@ import AccountSignupScreen from './AccountSignupScreen';
 import FitnessSurveyScreen from './FitnessSurveyScreen';
 import ResetPasswordScreen from './ResetPasswordScreen';
 import ResetUserNameScreen from './ResetUserNameScreen';
-import editAccountProfileScreen from './editAccountProfileScreen';
+import editUsernameScreen from './editUsernameScreen';
 import { useFonts } from 'expo-font';
 import { FontAwesome } from '@expo/vector-icons'; 
 import { useColorScheme } from '@/components/useColorScheme';
@@ -230,10 +230,10 @@ export default function TabLayout() {
     }}
     />
         <Drawer.Screen
-    name="editAccountProfileScreen"
-    component={editAccountProfileScreen}
+    name="editUsernameScreen"
+    component={editUsernameScreen}
     options={{
-      title: 'Edit Account Profile',
+      title: 'Edit Username',
       drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
     }}
     />

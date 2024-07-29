@@ -8,46 +8,24 @@ const AccountProfileScreen = () => {
   const [Username, setUserName] = useState('');
 
   const navigation = useNavigation();
-  const username = { // Replace with your user data fetching logic
+  const username = {
     name: 'John Doe',
     email: 'johndoe@example.com',
-    avatar: 'https://placeimg.com/150/150/people', // Replace with your avatar URL
+    avatar: 'https://placeimg.com/150/150/people', 
   };
   const getUserData = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/user'); // Assuming the endpoint returns all user data
+      const response = await fetch('http://localhost:5000/api/user'); 
       if (!response.ok) {
         throw new Error(`Network response was not ok: ${response.status}`);
       }
       const fetchedUser = await response.json();
-      setUserName(fetchedUser); // Update user state with all fetched data
+      setUserName(fetchedUser); 
     } catch (error) {
       console.error('Error fetching user data:', error);
     }
   };
   
-  useEffect(() => {
-    getUserData();
-  }, []);
-
-  const saveUserData = async () => {
-    try {
-      const response = await fetch('http://localhost:5000/api/user', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: username, email: username.email, avatar: username.avatar }),
-      });
-      if (!response.ok) {
-        throw new Error(`Network response was not ok: ${response.statusText}`);
-      }
-      Alert.alert('Profile updated successfully');
-      setIsEditing(false);
-    } catch (error) {
-      console.error('Error updating user data:', error);
-      Alert.alert('Error updating profile');
-    }
-  };
-
   useEffect(() => {
     getUserData();
   }, []);
@@ -62,9 +40,9 @@ const AccountProfileScreen = () => {
         <Text style={styles.email}>{username.email}</Text>
       </View>
       <View style={styles.settingsList}>
-        <TouchableOpacity style={styles.settingItem} onPress={() => navigation.navigate('editAccountProfileScreen' as never)}>
+        <TouchableOpacity style={styles.settingItem} onPress={() => navigation.navigate('editUsername' as never)}>
           <FontAwesome name="edit" size={24} style={styles.icon} />
-          <Text style={styles.settingText}>Edit Profile</Text>
+          <Text style={styles.settingText}>Edit Username</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.settingItem} onPress={() => navigation.navigate('ResetPasswordScreen' as never)}>
           <FontAwesome name="lock" size={24} style={styles.icon} />
