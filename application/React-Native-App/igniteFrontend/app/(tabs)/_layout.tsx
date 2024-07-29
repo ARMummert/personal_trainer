@@ -19,6 +19,7 @@ import { useColorScheme } from '@/components/useColorScheme';
 import { LinearGradient } from 'expo-linear-gradient';
 import { DrawerActions } from '@react-navigation/native';
 import { useNavigation } from 'expo-router';
+import { AuthProvider } from './AuthContext';
 
 
 
@@ -27,6 +28,7 @@ const Footer = () => {
   const navigation = useNavigation();
 
   return (
+    <AuthProvider>
     <View style={styles.footer}>
       <TouchableOpacity onPress={() => navigation.navigate('Home' as never)}>
         <FontAwesome name="home" size={24} color='#F83600' />
@@ -38,6 +40,7 @@ const Footer = () => {
         <FontAwesome name="gear" size={24} color='#F83600' />
       </TouchableOpacity>
     </View>
+    </AuthProvider>
   );
 };
 
@@ -68,7 +71,7 @@ function DrawerContent(props: any) {
    <Text>Loading...</Text>;
   }
   return (
-   
+   <AuthProvider>
     <View style={styles.container}>   
       <TouchableOpacity style={styles.closeIcon} onPress={() => navigation.dispatch(DrawerActions.closeDrawer())}>
     <FontAwesome name="close" size={24} color="white" />
@@ -117,7 +120,7 @@ function DrawerContent(props: any) {
       </LinearGradient>
     </View>
     </View>
-    
+    </AuthProvider>
   );
 }
 
@@ -125,6 +128,7 @@ export default function TabLayout() {
   const colorScheme = useColorScheme();
 
   return (
+    <AuthProvider>
       <View style={{ flex: 1 }}>
       <Drawer.Navigator
         drawerContent={(props) => <DrawerContent {...props} />}
@@ -134,112 +138,113 @@ export default function TabLayout() {
         height: 100, // Adjust this value to your desired height
         backgroundColor: 'black', // Set background color
         borderBottomWidth: 0, // Remove bottom border
-      },
-      headerTintColor: '#fff',
-      headerTitleStyle: {
-      fontWeight: 'bold',
-      },
-      headerTitle: ({ children }) => ( // Custom header for Home screen
-      <View>
-        <Text style={styles.headerTitle}>Ignite</Text>
-      </View>
-      ),
-      headerLeft: (props) => (
-      <DrawerToggleButton {...props} tintColor="white" />
-      ),
-    }}
-    >
-    <Drawer.Screen
-    name="Home"
-    component={HomeScreen}
-    options={{
-      title: 'Dashboard',
-      drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-    }}
-    />
-    <Drawer.Screen
-    name="LoginScreen"
-    component={LoginScreen}
-    options={{
-      title: 'Login',
-      drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-    }}
-    />
-    <Drawer.Screen
-    name="AccountProfileScreen"
-    component={AccountProfileScreen}
-    options={{
-      title: 'Account Profile',
-      drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-    }}
-    />
-     <Drawer.Screen
-    name="AccountSignupScreen"
-    component={AccountSignupScreen}
-    options={{
-      title: 'Create an Account',
-      drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-    }}
-    />
-      <Drawer.Screen
-    name="FitnessSurveyScreen"
-    component={FitnessSurveyScreen}
-    options={{
-      title: 'Fitness Survey',
-      drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-    }}
-    />
-    <Drawer.Screen
-    name="SettingsScreen"
-    component={SettingsScreen}
-    options={{
-      title: 'Settings',
-      drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-    }}
-    />
-    <Drawer.Screen
-    name="PrivacyPolicy"
-    component={PrivacyPolicy}
-    options={{
-      title: 'Privacy Policy',
-      drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-    }}
-    />
-    <Drawer.Screen
-    name="LogoutScreen"
-    component={LogoutScreen}
-    options={{
-      title: 'Logout',
-      drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-    }}
-    />
-    <Drawer.Screen
-    name="ResetPasswordScreen"
-    component={ResetPasswordScreen}
-    options={{
-      title: 'Reset Password',
-      drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-    }}
-    />
-     <Drawer.Screen
-    name="ResetUserNameScreen"
-    component={ResetUserNameScreen}
-    options={{
-      title: 'Reset Username',
-      drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-    }}
-    />
+        },
+        headerTintColor: '#fff',
+        headerTitleStyle: {
+        fontWeight: 'bold',
+        },
+        headerTitle: ({ children }) => ( // Custom header for Home screen
+        <View>
+          <Text style={styles.headerTitle}>Ignite</Text>
+        </View>
+        ),
+        headerLeft: (props) => (
+        <DrawerToggleButton {...props} tintColor="white" />
+        ),
+      }}
+      >
         <Drawer.Screen
-    name="editUsernameScreen"
-    component={editUsernameScreen}
-    options={{
-      title: 'Edit Username',
-      drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-    }}
-    />
-  </Drawer.Navigator>
+        name="Home"
+        component={HomeScreen}
+        options={{
+        title: 'Dashboard',
+        drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+      }}
+      />
+        <Drawer.Screen
+        name="LoginScreen"
+        component={LoginScreen}
+        options={{
+        title: 'Login',
+        drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+      }}
+      />
+        <Drawer.Screen
+        name="AccountProfileScreen"
+        component={AccountProfileScreen}
+        options={{
+        title: 'Account Profile',
+        drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+      }}
+      />
+        <Drawer.Screen
+        name="AccountSignupScreen"
+        component={AccountSignupScreen}
+        options={{
+        title: 'Create an Account',
+        drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+      }}
+      />
+        <Drawer.Screen
+        name="FitnessSurveyScreen"
+        component={FitnessSurveyScreen}
+        options={{
+        title: 'Fitness Survey',
+        drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+      }}
+      />
+        <Drawer.Screen
+        name="SettingsScreen"
+        component={SettingsScreen}
+        options={{
+        title: 'Settings',
+        drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+     }}
+     />
+        <Drawer.Screen
+        name="PrivacyPolicy"
+        component={PrivacyPolicy}
+        options={{
+        title: 'Privacy Policy',
+        drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+      }}
+      />
+        <Drawer.Screen
+        name="LogoutScreen"
+        component={LogoutScreen}
+        options={{
+        title: 'Logout',
+        drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+      }}
+      />
+        <Drawer.Screen
+        name="ResetPasswordScreen"
+        component={ResetPasswordScreen}
+        options={{
+        title: 'Reset Password',
+        drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+      }}
+      />
+        <Drawer.Screen
+        name="ResetUserNameScreen"
+        component={ResetUserNameScreen}
+        options={{
+        title: 'Reset Username',
+        drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+      }}
+      />
+        <Drawer.Screen
+        name="editUsernameScreen"
+        component={editUsernameScreen}
+        options={{
+        title: 'Edit Username',
+        drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+      }}
+      />
+      </Drawer.Navigator>
     <Footer /> 
   </View>
+  </AuthProvider>
     );
   }
 
