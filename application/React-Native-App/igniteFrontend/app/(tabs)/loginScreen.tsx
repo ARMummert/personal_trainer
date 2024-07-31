@@ -29,15 +29,20 @@ const LoginScreen: React.FC<LoginProps> = ({ navigation }) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ Username, Password }),
       });
-
+      console.log('Response status:', response.status);
       if (response.ok) {
         const data = await response.json();
+        console.log('Response data:', data);
         await AsyncStorage.setItem('authToken', data.token);
+        Alert.alert('Login Successful');
         navigation.navigate('Home');
       } else {
+        const errorData = await response.json();
+        console.log('Error data:', errorData);
         Alert.alert('Login failed', 'Invalid username or password');
       }
     } catch (error) {
+      console.error('Login error:', error);
       Alert.alert('Login failed', 'An error occurred. Please try again.');
     } finally {
       setIsLoading(false);
