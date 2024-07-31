@@ -3,6 +3,8 @@ import { View, Text, TextInput, Button, StyleSheet, ScrollView, Alert, Touchable
 import { Picker } from '@react-native-picker/picker';
 import { CheckBox } from 'react-native-elements';
 import { NavigationProp } from '@react-navigation/native';
+import { LinearGradient } from 'expo-linear-gradient';
+
 
 const FitnessSurveyScreen = ({ navigation }: { navigation: NavigationProp<any> }) => {
   const [age, setAge] = useState('');
@@ -71,36 +73,33 @@ const FitnessSurveyScreen = ({ navigation }: { navigation: NavigationProp<any> }
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Fitness Survey</Text>
-    
-    
-      <Text style={styles.label}>This survey is designed to help you understand your current fitness level and goals.  The information you provide will be anonymous and will be used to improve fitness programs and resources.</Text>
+      <Text style={styles.fitnesswarning}><strong style={styles.strong}>Important Information:</strong> While Ignite provides personalized training plans, it's not a substitute for professional medical advice. Please consult your doctor before starting any new exercise program, especially if you have any health concerns.</Text>
+      <Text style={styles.fitnesswarning}>This survey is designed to help you understand your current fitness level and goals.  The information you provide will be anonymous and will be used to improve fitness programs and resources.</Text>
       <TextInput
         style={styles.age}
         placeholder="Age"
         value={age}
         onChangeText={setAge}
-        keyboardType="numeric"
-      />
-
+        keyboardType="numeric"/>
       <Text style={styles.label}>Gender</Text>
+      <LinearGradient style={styles.gradient} colors={['#F83600', '#FE8C00']}>
       <Picker
         selectedValue={gender}
         style={styles.picker}
-        onValueChange={(itemValue) => setGender(itemValue)}
-      >
+        onValueChange={(itemValue) => setGender(itemValue)}>
         <Picker.Item label="Select..." value="" />
-        <Picker.Item label="Female" value="Female" />
-        <Picker.Item label="Male" value="Male" />
-        <Picker.Item label="Non-Binary" value="Non-Binary" />
-        <Picker.Item label="Prefer not to say" value="Prefer not to say" />
+        <Picker.Item style={styles.picker} label="Female" value="Female" />
+        <Picker.Item style={styles.picker} label="Male" value="Male" />
+        <Picker.Item style={styles.picker} label="Non-Binary" value="Non-Binary" />
+        <Picker.Item style={styles.picker} label="Prefer not to say" value="Prefer not to say" />
       </Picker>
-
+      </LinearGradient>
       <Text style={styles.label}>Fitness Goals</Text>
+      <LinearGradient style={styles.gradient} colors={['#F83600', '#FE8C00']}>
       <Picker
         selectedValue={fitnessGoal}
         style={styles.picker}
-        onValueChange={(itemValue) => setFitnessGoal(itemValue)}
-      >
+        onValueChange={(itemValue) => setFitnessGoal(itemValue)}>
         <Picker.Item label="Select..." value="" />
         <Picker.Item label="Lose weight" value="Lose weight" />
         <Picker.Item label="Build muscle" value="Build muscle" />
@@ -110,44 +109,44 @@ const FitnessSurveyScreen = ({ navigation }: { navigation: NavigationProp<any> }
         <Picker.Item label="Improve overall health" value="Improve overall health" />
         <Picker.Item label="Other" value="Other" />
       </Picker>
-
+      </LinearGradient>
       <Text style={styles.label}>Body Type</Text>
+      <LinearGradient style={styles.gradient} colors={['#F83600', '#FE8C00']}>
       <Picker
         selectedValue={bodyType}
         style={styles.picker}
-        onValueChange={(itemValue) => setBodyType(itemValue)}
-      >
+        onValueChange={(itemValue) => setBodyType(itemValue)}>
         <Picker.Item style={styles.pickerItem} label="Select..." value="" />
         <Picker.Item label="I don’t know my body type (skip to next question)" value="I don’t know my body type" />
         <Picker.Item label="Endomorph" value="Endomorph" />
         <Picker.Item label="Ectomorph" value="Ectomorph" />
         <Picker.Item label="Mesomorph" value="Mesomorph" />
       </Picker>
-
+      </LinearGradient>
       <Text style={styles.label}>Fitness Level</Text>
+      <LinearGradient style={styles.gradient} colors={['#F83600', '#FE8C00']}>
       <Picker
         selectedValue={fitnessLevel}
         style={styles.picker}
-        onValueChange={(itemValue) => setFitnessLevel(itemValue)}
-      >
+        onValueChange={(itemValue) => setFitnessLevel(itemValue)}>
         <Picker.Item label="Select..." value="" />
         <Picker.Item label="Beginner" value="Beginner" />
         <Picker.Item label="Intermediate" value="Intermediate" />
         <Picker.Item label="Advanced" value="Advanced" />
       </Picker>
-
+      </LinearGradient>
       <Text style={styles.label}>Current Activity Level</Text>
+      <LinearGradient style={styles.gradient} colors={['#F83600', '#FE8C00']}>
       <Picker
         selectedValue={activityLevel}
         style={styles.picker}
-        onValueChange={(itemValue) => setActivityLevel(itemValue)}
-      >
+        onValueChange={(itemValue) => setActivityLevel(itemValue)}>
         <Picker.Item label="Select..." value="" />
         <Picker.Item label="0-2 days" value="0-2 days" />
         <Picker.Item label="3-5 days" value="3-5 days" />
         <Picker.Item label="6-7 days" value="6-7 days" />
       </Picker>
-
+      </LinearGradient>
       <Text style={styles.label}>What types of activities do you typically engage in? (Select all that apply)</Text>
       {['Running', 'Walking', 'Swimming', 'Weight Lifting', 'Team Sports', 'Yoga/Pilates', 'Other'].map((activity) => (
         <View key={activity} style={styles.checkboxContainer}>
@@ -163,12 +162,14 @@ const FitnessSurveyScreen = ({ navigation }: { navigation: NavigationProp<any> }
           <Text style={styles.checkboxLabel}>{challenge}</Text>
         </View>
       ))}
-
-      <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 0, borderRadius: 5, }}>
-        <TouchableOpacity onPress={handleSubmit} style={{ backgroundColor: '#F83600', paddingHorizontal: 15, paddingVertical: 10, borderRadius: 5 }}>
-          <Text style={{ color: 'white', fontSize: 16, textAlign: 'center' }}>Submit Survey</Text>
+       <LinearGradient style={styles.gradient2} colors={['#F83600', '#FE8C00']}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', borderRadius: 5, }}>
+        <TouchableOpacity onPress={handleSubmit} style={{ backgroundColor: 'transparent', paddingHorizontal: 15, paddingVertical: 10, width: 180, borderRadius: 5, justifyContent: 'center', alignItems: 'center'
+         }}>
+          <Text style={{ color: 'black', fontSize: 20, textAlign: 'center', fontWeight: 'bold' }}>Submit Survey</Text>
         </TouchableOpacity>
       </View>
+      </LinearGradient>
     </ScrollView>
   );
 };
@@ -219,14 +220,14 @@ const styles = StyleSheet.create({
     fontFamily: 'Alkatra-VariableFront_wght',
   },
   picker: {
-    height: 50,
-    width: '25%',
-    color: 'white',
-    backgroundColor: '#F83600',
-    marginBottom: 15,
-    borderRadius: 5,
-    fontSize: 20,
-    fontFamily: 'Alkatra-VariableFront_wght',
+      height: 50,
+      width: '100%',
+      color: 'black',
+      fontWeight: 600,
+      backgroundColor: 'transparent',
+      borderRadius: 5,
+      fontSize: 20,
+      fontFamily: 'Alkatra-VariableFront_wght',
   },
   checkboxContainer: {
     flexDirection: 'row',
@@ -239,8 +240,34 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   pickerItem: {
-    color: 'white',
+    backgroundColor: 'transparent',
+    color: 'black',
     fontSize: 20,
+  },
+  fitnesswarning: {
+    fontSize: 20,
+    width: 400,
+    alignItems: 'flex-start',
+    color: 'white',
+    marginBottom: 20,
+    fontFamily: 'Alkatra-VariableFront_wght',
+  },
+  strong: {
+    fontSize: 24,
+  },
+  gradient: {
+    width: '25%',
+    height: 50,
+    borderRadius: 5,
+    marginBottom: 15,
+    justifyContent: 'center',
+  },
+  gradient2: {
+    width: '13%',
+    height: 50,
+    borderRadius: 5,
+    marginBottom: 15,
+    justifyContent: 'center',
   },
 });
 
