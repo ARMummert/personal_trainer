@@ -19,7 +19,6 @@ import { useColorScheme } from '@/components/useColorScheme';
 import { LinearGradient } from 'expo-linear-gradient';
 import { DrawerActions } from '@react-navigation/native';
 import { useNavigation } from 'expo-router';
-import { AuthProvider } from './AuthContext';
 
 
 
@@ -28,7 +27,7 @@ const Footer = () => {
   const navigation = useNavigation();
 
   return (
-    <AuthProvider>
+
     <View style={styles.footer}>
       <TouchableOpacity onPress={() => navigation.navigate('Home' as never)}>
         <FontAwesome name="home" size={24} color='#F83600' />
@@ -40,7 +39,7 @@ const Footer = () => {
         <FontAwesome name="gear" size={24} color='#F83600' />
       </TouchableOpacity>
     </View>
-    </AuthProvider>
+
   );
 };
 
@@ -71,13 +70,13 @@ function DrawerContent(props: any) {
    <Text>Loading...</Text>;
   }
   return (
-   <AuthProvider>
+  
     <View style={styles.container}>   
       <TouchableOpacity style={styles.closeIcon} onPress={() => navigation.dispatch(DrawerActions.closeDrawer())}>
-    <FontAwesome name="close" size={24} color="white" />
-  </TouchableOpacity>
-    <View style={styles.navigationButtonContainer}>  
-      <Text style={styles.headerTitle}>Ignite</Text>
+        <FontAwesome name="close" size={24} color="white" />
+      </TouchableOpacity>
+        <View style={styles.navigationButtonContainer}>  
+        <Text style={styles.headerTitle}>Ignite</Text>
       <LinearGradient colors={['#F83600', '#FE8C00']} style={styles.gradient}>
       <TouchableOpacity style={styles.navigationButton} onPress={() => props.navigation.navigate('Home')}>
         <Text style={styles.buttonText}>Home</Text>
@@ -120,15 +119,14 @@ function DrawerContent(props: any) {
       </LinearGradient>
     </View>
     </View>
-    </AuthProvider>
   );
 }
 
 export default function TabLayout() {
+  
   const colorScheme = useColorScheme();
 
   return (
-    <AuthProvider>
       <View style={{ flex: 1 }}>
       <Drawer.Navigator
         drawerContent={(props) => <DrawerContent {...props} />}
@@ -244,7 +242,6 @@ export default function TabLayout() {
       </Drawer.Navigator>
     <Footer /> 
   </View>
-  </AuthProvider>
     );
   }
 

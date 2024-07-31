@@ -152,7 +152,7 @@ const AccountSignUpScreen: React.FC<SignUpProps> = ({ navigation }) => {
         <Text style={styles.signUpButtonText}>Create Account</Text>
       </TouchableOpacity>
       <View style={styles.space}></View>
-      <TouchableOpacity onPress={() => navigation.navigate('LoginScreen')}>
+      <TouchableOpacity onPress={() => navigation.navigate('FitnessSurveyScreen')}>
       </TouchableOpacity>
     </View>
     </ScrollView> 

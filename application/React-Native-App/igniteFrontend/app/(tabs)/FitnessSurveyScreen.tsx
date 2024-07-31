@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, ScrollView, Alert, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { CheckBox } from 'react-native-elements';
-import { LinearGradient } from 'expo-linear-gradient';
+import GradientText from '../GradientText';
 import { NavigationProp } from '@react-navigation/native';
 
 const FitnessSurveyScreen = ({ navigation }: { navigation: NavigationProp<any> }) => {
@@ -72,7 +72,14 @@ const FitnessSurveyScreen = ({ navigation }: { navigation: NavigationProp<any> }
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Fitness Survey</Text>
+      <GradientText
+        text="Gradient Text"
+        
+        colors={['#4c669f', '#3b5998', '#192f6a']}
+      />
       
+    
+      <Text style={styles.label}>This survey is designed to help you understand your current fitness level and goals.  The information you provide will be anonymous and will be used to improve fitness programs and resources.</Text>
       <TextInput
         style={styles.age}
         placeholder="Age"
