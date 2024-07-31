@@ -291,8 +291,10 @@ const styles = StyleSheet.create({
   chartContainer: {
     width: '100%',
     height: 100,
-    
-  }
+  }, 
+  chartTitle: {
+
+  },
 });
 
 export default AccountProfileScreen;
