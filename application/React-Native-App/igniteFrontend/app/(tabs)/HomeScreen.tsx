@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, Alert } from 'react-native';
 import { Button } from 'react-native-elements';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import ProtectedRoute from './ProtectedRoute';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const HomeScreen = () => {
