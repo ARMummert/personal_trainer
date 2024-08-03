@@ -485,6 +485,7 @@ def logout():
         # Here, you would typically invalidate the session token or clear user-specific session data
         # Since this example is simple, we assume the user is logged out successfully
         return jsonify({"success": True}), 200
+        
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
 
