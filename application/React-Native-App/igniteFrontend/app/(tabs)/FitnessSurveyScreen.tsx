@@ -60,7 +60,7 @@ const FitnessSurveyScreen = ({ navigation }: { navigation: NavigationProp<any> }
       const result = await response.json();
       if (result.success) {
         Alert.alert('Success', 'Survey submitted successfully');
-        navigation.navigate('HomeScreen');
+        navigation.navigate('Home');
       } else {
         Alert.alert('Error', result.message);
       }
