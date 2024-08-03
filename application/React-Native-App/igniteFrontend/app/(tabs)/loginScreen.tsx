@@ -35,7 +35,13 @@ const LoginScreen: React.FC<LoginProps> = ({ navigation }) => {
         console.log('Response data:', data);
         await AsyncStorage.setItem('authToken', data.token);
         Alert.alert('Login Successful');
-        navigation.navigate('Home');
+
+        await new Promise(resolve => setTimeout(resolve, 1000)); 
+        await AsyncStorage.setItem('isLoggedIn', 'true');
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Home' }],
+        });
       } else {
         const errorData = await response.json();
         console.log('Error data:', errorData);
