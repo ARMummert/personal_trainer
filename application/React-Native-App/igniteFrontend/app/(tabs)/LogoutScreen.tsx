@@ -2,9 +2,10 @@
 import * as SecureStore from 'expo-secure-store';
 import { useState } from 'react';
 import * as React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { useNavigation } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface LogoutProps {
     navigation: any;
@@ -23,25 +24,26 @@ const LogoutScreen: React.FC<LogoutProps> = ({ navigation }) => {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-            body: JSON.stringify({ Username, Password }),
+            credentials: 'include', // Include credentials for cross-origin requests
             },
         });
 
       if (response.ok) {
         // Clear stored credentials
-        await SecureStore.deleteItemAsync('Username');
-        await SecureStore.deleteItemAsync('Password');
+        await AsyncStorage.removeItem('authToken');
+        Alert.alert('Logout Successful');
         // Redirect to login screen
-        onLogoutSuccess(navigation.navigate('LoginScreen'));
+        navigation.navigate('LoginScreen');
         } else {
-        console.error('Logout failed:', response.statusText);
-        alert('Logout failed');
+          const errorData = await response.json();
+          console.log('Error data:', errorData);
+          Alert.alert('Logout failed', 'An error occurred while logging out.');
+        }
+      } catch (error) {
+        console.error('Logout error:', error);
+        Alert.alert('Logout error', 'An error occurred. Please try again.');
       }
-    } catch (error) {
-      console.error('Error during logout:', error);
-      alert('Logout failed');
-    }
-  };
+    };
 
   return (
     <View style={styles.container}>
@@ -124,7 +126,4 @@ const styles = StyleSheet.create({
     },
   });
 export default LogoutScreen;
-function onLogoutSuccess(navigation: any) {
-    throw new Error('Function not implemented.');
-}
 
