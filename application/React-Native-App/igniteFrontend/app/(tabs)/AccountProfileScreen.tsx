@@ -21,7 +21,7 @@ const AccountProfileScreen = () => {
         return;
       }
 
-      const response = await fetch('http://localhost:5000/api/user', {  // Replace with your server IP
+      const response = await fetch('http://localhost:5000/api/user/${UserID}', {  // Replace with your server IP
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

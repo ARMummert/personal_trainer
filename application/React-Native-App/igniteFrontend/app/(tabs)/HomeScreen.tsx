@@ -29,7 +29,7 @@ const HomeScreen = () => {
   useEffect(() => {
     const fetchWorkouts = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/workouts{UserID}');
+        const response = await fetch('http://localhost:5000/api/workouts${UserID}');
         const data = await response.json();
         setWorkouts(data);
       } catch (error) {
@@ -50,8 +50,10 @@ const HomeScreen = () => {
     if (!isLoggedIn) {
     return (
       <View style={styles.container}>
-        <Text>Please log in to access this page.</Text>
-        <Button title="Login" onPress={() => navigation.navigate('LoginScreen' as never)} />
+        <Text style={{  padding: 20, color: 'white', fontSize: 20, textAlign: 'center' }}>You must be logged in to access this page.</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('LoginScreen' as never)} style={{ backgroundColor: '#EB2000', paddingHorizontal: 15, paddingVertical: 10, borderRadius: 15 }}>
+          <Text style={{  color: 'white', fontSize: 20, fontWeight: 'bold', textAlign: 'center' }}>Login </Text>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -83,6 +85,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'black',
   },
+ 
   card: {
     backgroundColor: 'white',
     padding: 20,
@@ -125,6 +128,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontFamily: 'Alkatra-VariableFront_wght',
   },
-
+ 
 });
 export default HomeScreen;
