@@ -1,11 +1,37 @@
 import * as React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 
 import { NavigationProp } from '@react-navigation/native';
+import { useEffect, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const SettingsScreen = ({ navigation }: { navigation: NavigationProp<any> }) => {
 const navigateTo = (screen: string) => navigation.navigate(screen);
+const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+useEffect(() => {
+  const checkLoginStatus = async () => {
+    const token = await AsyncStorage.getItem('authToken');
+    if (token) {
+      setIsLoggedIn(true);
+    } else {
+      Alert.alert('You must be logged in to view this page');
+    }
+  };
+
+  checkLoginStatus();
+}, []);
+
+if (!isLoggedIn) {
+  return (
+    <View style={styles.container}>
+      <Text style={{  padding: 20, color: 'white', fontSize: 20, textAlign: 'center' }}>You must be logged in to access this page.</Text>
+      <TouchableOpacity onPress={() => navigation.navigate('LoginScreen' as never)} style={{ backgroundColor: '#EB2000', paddingHorizontal: 15, paddingVertical: 10, borderRadius: 15, width: 90, alignSelf: 'center' }}>
+        <Text style={{  color: 'white', fontSize: 20, fontWeight: 'bold', textAlign: 'center' }}>Login </Text>
+      </TouchableOpacity>
+    </View>
+  );
+}
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.settingItem} onPress={() => navigateTo('AccountProfileScreen')}>
@@ -44,6 +70,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'black',
+    justifyContent: 'center',
   },
   settingItem: {
     flexDirection: 'row',

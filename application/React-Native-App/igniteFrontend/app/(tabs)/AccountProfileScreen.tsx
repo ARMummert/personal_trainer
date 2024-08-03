@@ -11,6 +11,20 @@ const AccountProfileScreen = () => {
   const navigation = useNavigation();
   const [currentWeight, setCurrentWeight] = useState('');
   const [weightHistory, setWeightHistory] = useState<number[]>([]);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  
+  useEffect(() => {
+    const checkLoginStatus = async () => {
+      const token = await AsyncStorage.getItem('authToken');
+      if (token) {
+        setIsLoggedIn(true);
+      } else {
+        Alert.alert('You must be logged in to view this page');
+      }
+    };
+
+    checkLoginStatus();
+  }, []);
 
   const getUserData = async () => {
     try {
@@ -86,6 +100,17 @@ const AccountProfileScreen = () => {
       Alert.alert('Error', 'Unable to save weight data.');
     }
   };
+
+  if (!isLoggedIn) {
+    return (
+      <View style={styles.container}>
+        <Text style={{  padding: 20, color: 'white', fontSize: 20, textAlign: 'center' }}>You must be logged in to access this page.</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('LoginScreen' as never)} style={{ backgroundColor: '#EB2000', paddingHorizontal: 15, paddingVertical: 10, borderRadius: 15, width: 90, alignSelf: 'center'}}>
+          <Text style={{  color: 'white', fontSize: 20, fontWeight: 'bold', textAlign: 'center' }}>Login </Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
 
   return (
     <ScrollView>
@@ -174,7 +199,7 @@ const AccountProfileScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    justifyContent: 'center',
     backgroundColor: 'black',
   },
   profileHeader: {
