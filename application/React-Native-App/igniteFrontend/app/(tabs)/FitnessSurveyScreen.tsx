@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, ScrollView, Alert, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { CheckBox } from 'react-native-elements';
 import { NavigationProp } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const FitnessSurveyScreen = ({ navigation }: { navigation: NavigationProp<any> }) => {
@@ -15,6 +16,20 @@ const FitnessSurveyScreen = ({ navigation }: { navigation: NavigationProp<any> }
   const [activityLevel, setActivityLevel] = useState('');
   const [activities, setActivities] = useState<string[]>([]);
   const [challenges, setChallenges] = useState<string[]>([]);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const checkLoginStatus = async () => {
+      const token = await AsyncStorage.getItem('authToken');
+      if (token) {
+        setIsLoggedIn(true);
+      } else {
+        Alert.alert('You must be logged in to view this page');
+      }
+    };
+
+    checkLoginStatus();
+  }, []);
 
   const toggleActivity = (activity: string) => {
     setActivities(prev => {
@@ -69,6 +84,18 @@ const FitnessSurveyScreen = ({ navigation }: { navigation: NavigationProp<any> }
       Alert.alert('Error', 'An error occurred while submitting the survey');
     }
   };
+  
+  
+  if (!isLoggedIn) {
+    return (
+      <View style={styles.container}>
+        <Text style={{  padding: 20, color: 'white', fontSize: 20, textAlign: 'center' }}>You must be logged in to access this page.</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('LoginScreen' as never)} style={{ backgroundColor: '#EB2000', paddingHorizontal: 15, paddingVertical: 10, borderRadius: 15, width: 90, alignSelf: 'center'}}>
+          <Text style={{  color: 'white', fontSize: 20, fontWeight: 'bold', textAlign: 'center' }}>Login </Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -177,11 +204,8 @@ const FitnessSurveyScreen = ({ navigation }: { navigation: NavigationProp<any> }
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    justifyContent: 'flex-start',
-    alignItems: 'flex-start',
-    paddingTop: 50,
-    paddingBottom: 100,
-    paddingLeft: 150,
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: 'black',
   },
   title: {
