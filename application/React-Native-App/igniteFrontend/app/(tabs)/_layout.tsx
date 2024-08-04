@@ -327,5 +327,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'black',
     padding: 10,
   },
+  body : {
+    backgroundColor: 'black',
+  },
 });
 

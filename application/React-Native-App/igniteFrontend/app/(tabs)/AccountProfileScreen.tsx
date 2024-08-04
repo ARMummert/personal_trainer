@@ -1,16 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, Alert, TextInput, Button, Dimensions } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ScrollView } from 'react-native-gesture-handler';
-import { LineChart } from 'react-native-chart-kit'; // Add this line to import LineChart
 
 const AccountProfileScreen = () => {
-  const [userData, setUserData] = useState({ name: '', username: '', email: '', avatar: '', workoutStreak: 0, completedWorkouts: 0, });
+  const [userData, setUserData] = useState({Username: '', Email: '' });
   const navigation = useNavigation();
-  const [currentWeight, setCurrentWeight] = useState('');
-  const [weightHistory, setWeightHistory] = useState<number[]>([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   
   useEffect(() => {
@@ -18,6 +14,7 @@ const AccountProfileScreen = () => {
       const token = await AsyncStorage.getItem('authToken');
       if (token) {
         setIsLoggedIn(true);
+        await getUserData(token);
       } else {
         Alert.alert('You must be logged in to view this page');
       }
@@ -26,21 +23,15 @@ const AccountProfileScreen = () => {
     checkLoginStatus();
   }, []);
 
-  const getUserData = async () => {
+  const getUserData = async (token: string = '') => {
     try {
-      // Assume token is stored after login
-      const token = await AsyncStorage.getItem('authToken');
-      if (!token) {
-        Alert.alert('Error', 'No token found');
-        return;
-      }
-
-      const response = await fetch('http://localhost:5000/api/user/${UserID}', {  // Replace with your server IP
+      const response = await fetch('http://localhost:5000/api/userinfo', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
+         credentials: 'include',
       });
 
       if (!response.ok) {
@@ -48,56 +39,11 @@ const AccountProfileScreen = () => {
       }
 
       const fetchedUser = await response.json();
-      setUserData(fetchedUser);
+      console.log('Fetched user data:', fetchedUser);
+      setUserData(fetchedUser.data);
     } catch (error) {
       console.error('Error fetching user data:', error);
       Alert.alert('Error', 'Unable to fetch user data.');
-    }
-  };
-
-  useEffect(() => {
-    getUserData();
-  }, []);
-  
-  const saveWeight = async () => {
-    if (!currentWeight) {
-      Alert.alert('Error', 'Please enter your weight');
-      return;
-    }
-
-    const newWeight = parseFloat(currentWeight);
-    if (isNaN(newWeight) || newWeight <= 0) {
-      Alert.alert('Error', 'Please enter a valid weight');
-      return;
-    }
-
-    const updatedWeightHistory = [...weightHistory, newWeight];
-    setWeightHistory(updatedWeightHistory);
-    setCurrentWeight('');
-    try {
-      const token = await AsyncStorage.getItem('authToken');
-      if (!token) {
-        Alert.alert('Error', 'No token found');
-        return;
-      }
-
-      const response = await fetch('http://localhost:5000/api/user/weight', {  // Replace with your server IP
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify({ weightHistory: updatedWeightHistory }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Network response was not ok: ${response.status}`);
-      }
-
-      Alert.alert('Success', 'Weight updated successfully');
-    } catch (error) {
-      console.error('Error saving weight data:', error);
-      Alert.alert('Error', 'Unable to save weight data.');
     }
   };
 
@@ -113,29 +59,13 @@ const AccountProfileScreen = () => {
   }
 
   return (
-    <ScrollView>
     <View style={styles.container}>
       <View style={styles.profileHeader}>
-        {userData.avatar && (
-          <Image source={{ uri: userData.avatar }} style={styles.avatar} />
-        )}
-        <Text style={styles.welcomeText}>Welcome, {userData.name}</Text>
-        <Text style={styles.username}>Username: {userData.username}</Text>
-        <Text style={styles.email}>Email: {userData.email}</Text>
+        <Text style={styles.username}>Username: {userData.Username}</Text>
+        <Text style={styles.email}>Email: {userData.Email}</Text>
       </View>
       <View>
         <Text style={styles.welcomeText}>Track your progress</Text>
-        <Text style={styles.workoutStreak}>Workout Streak: {userData.workoutStreak}</Text>
-        <Text style={styles.completedWorkouts}>Completed Workouts: {userData.completedWorkouts}</Text>
-        <Text style={styles.welcomeText}>Weight Tracker</Text>
-        <Text style={styles.workoutStreak}>Current Weight</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter your weight"
-          value={currentWeight}
-          onChangeText={setCurrentWeight}
-          keyboardType="numeric" />
-        <Button title="Save Weight" onPress={saveWeight} /> 
       </View>
       <View style={styles.settingsList}>
         <TouchableOpacity style={styles.settingItem} onPress={() => navigation.navigate('ResetUserNameScreen' as never)}>
@@ -152,47 +82,6 @@ const AccountProfileScreen = () => {
         </TouchableOpacity>
       </View>
     </View>
-    {weightHistory.length > 0 && (
-        <View style={styles.chartContainer}>
-          <Text style={styles.chartTitle}>Weight Loss Progress</Text>
-          <LineChart
-            data={{
-              labels: weightHistory.map((_, index) => `Day ${index + 1}`),
-              datasets: [
-                {
-                  data: weightHistory,
-                },
-              ],
-            }}
-            width={Dimensions.get('window').width - 40} // from react-native
-            height={220}
-            yAxisLabel=""
-            yAxisSuffix="kg"
-            yAxisInterval={1} // optional, defaults to 1
-            chartConfig={{
-              backgroundColor: '#000',
-              backgroundGradientFrom: '#1E2923',
-              backgroundGradientTo: '#08130D',
-              decimalPlaces: 1, // optional, defaults to 2dp
-              color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-              labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-              style: {
-                borderRadius: 16,
-              },
-              propsForDots: {
-                r: '6',
-                strokeWidth: '2',
-                stroke: '#ffa726',
-              },
-            }}
-            style={{
-              marginVertical: 8,
-              borderRadius: 16,
-            }}
-          />
-        </View>
-      )}
-    </ScrollView>
   );
 };
 
@@ -225,7 +114,10 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: 'white',
   },
-  settingsList: {},
+  settingsList: {
+    backgroundColor: 'black',
+    paddingBottom: 100,
+  },
   settingItem: {
     flexDirection: 'row',
     alignItems: 'center',
