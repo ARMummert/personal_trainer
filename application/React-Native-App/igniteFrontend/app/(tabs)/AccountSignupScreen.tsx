@@ -53,7 +53,8 @@ const AccountSignUpScreen: React.FC<SignUpProps> = ({ navigation }) => {
         const data = await response.json();
         if (data.success) {
           alert('Account created successfully');
-          navigation.navigate('FitnessSurveyScreen');
+            navigation.navigate('FitnessSurveyScreen', {Username});
+            console.log(`Account created successfully. Username: ${Username}`);
         } else {
           alert('Failed to create account');
         }
@@ -152,7 +153,7 @@ const AccountSignUpScreen: React.FC<SignUpProps> = ({ navigation }) => {
         <Text style={styles.signUpButtonText}>Create Account</Text>
       </TouchableOpacity>
       <View style={styles.space}></View>
-      <TouchableOpacity onPress={() => navigation.navigate('FitnessSurveyScreen')}>
+      <TouchableOpacity onPress={() => navigation.navigate('FitnessSurveyScreen', {Username})}>
       </TouchableOpacity>
     </View>
     </ScrollView> 
