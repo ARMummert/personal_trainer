@@ -23,9 +23,9 @@ const FitnessSurveyScreen = ({ navigation }: { navigation: NavigationProp<any> }
       const token = await AsyncStorage.getItem('authToken');
       if (token) {
         setIsLoggedIn(true);
-        const Username = await AsyncStorage.getItem('Username');
-        setUsername(Username);
-        console.log(Username);
+        const username = await AsyncStorage.getItem('Username');
+        setUsername(username);
+        console.log(`Username: ${username}`);
       } else {
         Alert.alert('You must be logged in to view this page');
       }
