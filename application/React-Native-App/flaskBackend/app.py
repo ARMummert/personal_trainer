@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, url_for, render_template_string
+from flask import Flask, request, jsonify, send_from_directory, session, url_for, render_template_string
 from flask_cors import CORS, cross_origin
 import mysql.connector
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -6,6 +6,8 @@ from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 from flask_mail import Mail, Message
 import logging
 from datetime import datetime
+import jwt
+from flask_session import Session
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -25,8 +27,6 @@ app.config.update(
     MAIL_USERNAME='ignitepasswordreset@outlook.com',
     MAIL_PASSWORD='Capstone123'
 )
-
-
 
 mail = Mail(app)
 serializer = URLSafeTimedSerializer(app.secret_key)
@@ -426,26 +426,27 @@ def reset_username_with_token(token):
                 conn.close()
 
 
-@app.route('/api/user', methods=['POST', 'GET', 'OPTIONS'])
+@app.route('/api/user/<username>', methods=['GET', 'OPTIONS'])
 @cross_origin(origin='http://localhost:8081', supports_credentials=True)
-def get_user_data():
+def get_user_data(username):
     if request.method == 'OPTIONS':
         response = app.make_default_options_response()
         response.headers.add("Access-Control-Allow-Origin", "http://localhost:8081")
         response.headers.add("Access-Control-Allow-Credentials", "true")
-        response.headers.add("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        response.headers.add("Access-Control-Allow-Methods", "GET, OPTIONS")
         response.headers.add("Access-Control-Allow-Headers", "Content-Type")
         return response
-    if request.method == 'POST':
+
+    if request.method == 'GET':
         try:
             # Connect to the database
             conn = mysql.connector.connect(**db_config)
             cursor = conn.cursor(dictionary=True)
-            
-            # Fetch user data, you might need to modify the SQL query based on your schema
-            cursor.execute("SELECT * FROM Users WHERE user_id = %s", (1,))  # Adjust based on how you identify users
+
+            # Fetch user data based on the provided username
+            cursor.execute("SELECT * FROM UserLogins WHERE Username = %s", (username,))
             user_data = cursor.fetchone()
-            
+
             if user_data:
                 return jsonify(user_data), 200
             else:
@@ -593,11 +594,50 @@ def get_workouts():
 @cross_origin(origin='http://localhost:8081', supports_credentials=True)  # Ensure correct origin
 def logout():
     try:
-        # Here, you would typically invalidate the session token or clear user-specific session data
-        # Since this example is simple, we assume the user is logged out successfully
         return jsonify({"success": True}), 200
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
+
+
+@app.route('/api/token', methods=['POST', 'OPTIONS'])
+@cross_origin(origin='http://localhost:8081', supports_credentials=True) 
+def generate_token_route():
+    if request.method == 'OPTIONS':
+        response = app.make_default_options_response()
+        response.headers.add("Access-Control-Allow-Origin", "http://localhost:8081")
+        response.headers.add("Access-Control-Allow-Credentials", "true")
+        response.headers.add("Access-Control-Allow-Methods", "GET, OPTIONS")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+        return response
+    if request.method == 'GET':
+        username = identify_logged_in_user()
+        if not username:
+            return jsonify({'message': 'User not authenticated'}), 401
+        user_data = get_user_data(username)
+        token = create_access_token(identity=user_data)
+        print(token)
+        return jsonify({'token': token})
+   
+
+def identify_logged_in_user():
+    
+    return session.get('Username')
+
+# Function to generate a token
+def create_access_token(user_data):
+    # Payload can include user information
+    payload = {
+        'username': user_data['Username'],
+        'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)
+    }
+
+    # Generate the token
+    token = jwt.encode(payload, app.config['SECRET_KEY'], algorithm='HS256')
+    print(token)
+    return token
+def get_username(username):
+    
+    return {'username': username}
 
 if __name__ == '__main__':
     app.run(debug=True)

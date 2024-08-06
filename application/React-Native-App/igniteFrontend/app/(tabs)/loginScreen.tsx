@@ -35,12 +35,13 @@ const LoginScreen: React.FC<LoginProps> = ({ navigation }) => {
         console.log('Response data:', data);
         await AsyncStorage.setItem('authToken', data.token);
         Alert.alert('Login Successful');
-
+        console.log('Logging in...', Username);
         await new Promise(resolve => setTimeout(resolve, 1000)); 
         await AsyncStorage.setItem('isLoggedIn', 'true');
+        await AsyncStorage.setItem('Username', Username);
         navigation.reset({
           index: 0,
-          routes: [{ name: 'Home' }],
+          routes: [{ name: 'Home', params: { Username } }],
         });
       } else {
         const errorData = await response.json();
@@ -215,4 +216,3 @@ const styles = StyleSheet.create({
 });
 
 export default LoginScreen;
-

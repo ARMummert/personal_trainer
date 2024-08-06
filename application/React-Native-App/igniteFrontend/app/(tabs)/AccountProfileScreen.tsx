@@ -1,90 +1,91 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import * as React from 'react';
+import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+import { useState, useEffect } from 'react';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const AccountProfileScreen = () => {
-  const [userData, setUserData] = useState({Username: '', Email: '' });
-  const navigation = useNavigation();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  
-  useEffect(() => {
-    const checkLoginStatus = async () => {
-      const token = await AsyncStorage.getItem('authToken');
-      if (token) {
-        setIsLoggedIn(true);
-        await getUserData(token);
-      } else {
-        Alert.alert('You must be logged in to view this page');
-      }
-    };
+interface AccountProfileProps {
+  navigation: NavigationProp<any>;
+}
+const AccountProfileScreen: React.FC<AccountProfileProps> = ({ navigation }) => {
+  const [Username, setUserName] = useState('');
+  const [Email, setEmail] = useState('');
+  const [Avatar, setAvatar] = useState('');
 
-    checkLoginStatus();
-  }, []);
-
-  const getUserData = async (token: string = '') => {
+  const username = {  // Default user data
+    name: 'John Doe',
+    email: 'johndoe@example.com',
+    avatar: 'https://placeimg.com/150/150/people', 
+  };
+  const getUserData = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/userinfo', {
+      const storedUsername = await AsyncStorage.getItem('Username');
+      console.log('Stored username:', storedUsername);
+      if (!storedUsername) {
+        throw new Error('No username found in storage');
+      }
+      setUserName(storedUsername);
+
+      const response = await fetch(`http://localhost:5000/api/user/${storedUsername}`, {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-         credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
       });
 
       if (!response.ok) {
         throw new Error(`Network response was not ok: ${response.status}`);
       }
-
       const fetchedUser = await response.json();
-      console.log('Fetched user data:', fetchedUser);
-      setUserData(fetchedUser.data);
+      setUserName(fetchedUser.Username);
+      console.log('Fetched user:', fetchedUser);
+      setEmail(fetchedUser.Email);
+      setAvatar(fetchedUser.Avatar);
     } catch (error) {
       console.error('Error fetching user data:', error);
-      Alert.alert('Error', 'Unable to fetch user data.');
     }
   };
 
-  if (!isLoggedIn) {
-    return (
-      <View style={styles.container}>
-        <Text style={{  padding: 20, color: 'white', fontSize: 20, textAlign: 'center' }}>You must be logged in to access this page.</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('LoginScreen' as never)} style={{ backgroundColor: '#EB2000', paddingHorizontal: 15, paddingVertical: 10, borderRadius: 15, width: 90, alignSelf: 'center'}}>
-          <Text style={{  color: 'white', fontSize: 20, fontWeight: 'bold', textAlign: 'center' }}>Login </Text>
-        </TouchableOpacity>
-      </View>
-    );
-  }
+  useEffect(() => {
+    getUserData();
+  }, []);
 
   return (
     <View style={styles.container}>
       <View style={styles.profileHeader}>
-        <Text style={styles.username}>Username: {userData.Username}</Text>
-        <Text style={styles.email}>Email: {userData.Email}</Text>
-      </View>
-      <View>
-        <Text style={styles.welcomeText}>Track your progress</Text>
+        {username.avatar && (
+          <Image source={{ uri: username.avatar }} style={styles.avatar} />
+        )}
+        <Text style={styles.name}>{Username}</Text>
+        <Text style={styles.email}>{Email}</Text>
       </View>
       <View style={styles.settingsList}>
-        <TouchableOpacity style={styles.settingItem} onPress={() => navigation.navigate('ResetUserNameScreen' as never)}>
+        <TouchableOpacity style={styles.settingItem} onPress={() => navigation.navigate('EditProfileScreen' as never)}>
           <FontAwesome name="edit" size={24} style={styles.icon} />
-          <Text style={styles.settingText}>Reset Username</Text>
+          <Text style={styles.settingText}>Edit Profile</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.settingItem} onPress={() => navigation.navigate('ResetPasswordScreen' as never)}>
           <FontAwesome name="lock" size={24} style={styles.icon} />
-          <Text style={styles.settingText}>Reset Password</Text>
-        </TouchableOpacity>
+          <Text style={styles.settingText}>Change Password</Text>
+        </TouchableOpacity> 
         <TouchableOpacity style={styles.settingItem} onPress={() => navigation.navigate('LogoutScreen' as never)}>
           <FontAwesome name="sign-out" size={24} style={styles.icon} />
           <Text style={styles.settingText}>Logout</Text>
         </TouchableOpacity>
+
+        <View style={styles.statsContainer}>
+          <View style={styles.stat}>
+            <Text style={styles.statNumber}>0</Text>
+            <Text style={styles.statLabel}>Workouts Completed</Text>
+          </View>
+          <View style={styles.stat}>
+            <Text style={styles.statNumber2}>0</Text>
+            <Text style={styles.statLabel2}>Workout Streak</Text>
+          </View>
+        </View>
       </View>
     </View>
   );
-};
-
+}
 const styles = StyleSheet.create({
   container: {
     flex: 1,
