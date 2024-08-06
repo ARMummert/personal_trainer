@@ -3,41 +3,41 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, Alert } from 'react-native';
 import { Button } from 'react-native-elements';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { NavigationProp, useRoute } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const HomeScreen = () => {
-  const navigation = useNavigation(); 
-  const route = useRoute();
-  const {Username} = route.params as { Username: string } || { Username: '' };
-  const [workouts, setWorkouts] = useState([]);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+interface Homeprops {
+  navigation: NavigationProp<any>;
+}
+const HomeScreen: React.FC<Homeprops> = ({ navigation }) => {
+  const [Username, setUserName] = useState('');
+  const [Workouts, setWorkouts] = useState([]);
 
-  useEffect(() => {
-    const checkLoginStatus = async () => {
-      const token = await AsyncStorage.getItem('authToken');
-      if (token) {
-        setIsLoggedIn(true);
-      } else {
-        Alert.alert('You must be logged in to view this page');
+  const getWorkouts = async () => {
+    try {
+      const storedUsername = await AsyncStorage.getItem('Username');
+      console.log('Stored username:', storedUsername);
+      if (!storedUsername) {
+        throw new Error('No username found in storage');
       }
-    };
+      setUserName(storedUsername);
 
-    checkLoginStatus();
-  }, []);
+      const response = await fetch(`http://localhost:5000/api/workouts/${storedUsername}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      });
 
-  useEffect(() => {
-    const fetchWorkouts = async () => {
-      try {
-        const response = await fetch('http://localhost:5000/api/workouts${UserID}');
-        const data = await response.json();
-        setWorkouts(data);
-      } catch (error) {
-        console.error('Error fetching workouts:', error);
+      if (!response.ok) {
+        throw new Error(`Network response was not ok: ${response.status}`);
       }
-    };
-
-    fetchWorkouts();
+      const data = await response.json();
+      setWorkouts(data);
+    } catch (error) {
+      console.error('Error fetching workouts:', error);
+    }
+  };
+  useEffect(() => {
+    getWorkouts();
   }, []);
 
   const renderWorkout = ({ item }: { item: any }) => (
@@ -46,18 +46,7 @@ const HomeScreen = () => {
       <Button title="Start Workout" />
     </View>
   );
-
-    if (!isLoggedIn) {
-    return (
-      <View style={styles.container}>
-        <Text style={{  padding: 20, color: 'white', fontSize: 20, textAlign: 'center' }}>You must be logged in to access this page.</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('LoginScreen' as never)} style={{ backgroundColor: '#EB2000', paddingHorizontal: 15, paddingVertical: 10, borderRadius: 15 }}>
-          <Text style={{  color: 'white', fontSize: 20, fontWeight: 'bold', textAlign: 'center' }}>Login </Text>
-        </TouchableOpacity>
-      </View>
-    );
-  }
-
+  
   return (
     <View style={styles.container}>
       <Image source={require('../../assets/images/fitappimage.jpg')} style={styles.headerImage} resizeMode="cover"  />
@@ -66,14 +55,10 @@ const HomeScreen = () => {
         Track your fitness journey and your daily workouts, all in one place.
       </Text>
       <FlatList
-        data={workouts}
+        data={Workouts}
         renderItem={renderWorkout}
         keyExtractor={(item) => item.id.toString()}
       />
-      <View style={styles.card}>
-        <Text style={styles.cardText}>Welcome to the Home Screen!</Text>
-      </View>
-   
     </View>
   );
 };
