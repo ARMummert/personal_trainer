@@ -8,7 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const FitnessSurveyScreen = ({ navigation }: { navigation: NavigationProp<any> }) => {
-  const [username, setUsername] = useState<string | null>(null);
+  const [Username, setUsername] = useState<string | null>(null);
   const [gender, setGender] = useState('');
   const [fitnessGoal, setFitnessGoal] = useState('');
   const [bodyType, setBodyType] = useState('');
@@ -23,9 +23,9 @@ const FitnessSurveyScreen = ({ navigation }: { navigation: NavigationProp<any> }
       const token = await AsyncStorage.getItem('authToken');
       if (token) {
         setIsLoggedIn(true);
-        const username = await AsyncStorage.getItem('username');
-        setUsername(username);
-        console.log(username);
+        const Username = await AsyncStorage.getItem('Username');
+        setUsername(Username);
+        console.log(Username);
       } else {
         Alert.alert('You must be logged in to view this page');
       }
@@ -56,7 +56,7 @@ const FitnessSurveyScreen = ({ navigation }: { navigation: NavigationProp<any> }
 
   const handleSubmit = async () => {
     const surveyData = {
-      username,
+      Username,
       gender,
       fitnessGoal,
       bodyType,
@@ -79,7 +79,6 @@ const FitnessSurveyScreen = ({ navigation }: { navigation: NavigationProp<any> }
       if (result.success) {
         Alert.alert('Success', 'Survey submitted successfully');
         navigation.navigate('Home');
-        console.log(username);
       } else {
         Alert.alert('Error', result.message);
       }
@@ -102,7 +101,7 @@ const FitnessSurveyScreen = ({ navigation }: { navigation: NavigationProp<any> }
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text>Welcome, {username}!</Text>
+      <Text>Welcome, {Username}!</Text>
       <Text style={styles.title}>Fitness Survey</Text>
       <Text style={styles.fitnesswarning}><strong style={styles.strong}>Important Information:</strong> While Ignite provides personalized training plans, it's not a substitute for professional medical advice. Please consult your doctor before starting any new exercise program, especially if you have any health concerns.</Text>
       <Text style={styles.fitnesswarning}>This survey is designed to help you understand your current fitness level and goals.  The information you provide will be anonymous and will be used to improve fitness programs and resources.</Text>
