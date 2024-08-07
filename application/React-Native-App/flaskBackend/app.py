@@ -461,7 +461,7 @@ def get_user_data(username):
             conn.close()
 
 
-@app.route('/submitSurvey', methods=['POST'])
+@app.route('/submitSurvey<username>', methods=['POST'])
 @cross_origin(origin='http://localhost:8081', supports_credentials=True)  # Ensure correct origin
 def submit_survey():
     try:
@@ -569,7 +569,7 @@ def submit_survey():
         return jsonify({"success": False, "error": str(err)}), 500
 
 
-@app.route('/api/workouts', methods=['GET'])
+@app.route('/api/workouts<username>', methods=['GET'])
 @cross_origin(origin='http://localhost:8081', supports_credentials=True)  # Ensure correct origin
 def get_workouts():
     try:
@@ -589,55 +589,14 @@ def get_workouts():
         conn.close()
 
 
-
 @app.route('/api/logout', methods=['POST'])
 @cross_origin(origin='http://localhost:8081', supports_credentials=True)  # Ensure correct origin
 def logout():
-    try:
-        return jsonify({"success": True}), 200
-    except Exception as e:
-        return jsonify({"success": False, "error": str(e)}), 500
-
-
-@app.route('/api/token', methods=['POST', 'OPTIONS'])
-@cross_origin(origin='http://localhost:8081', supports_credentials=True) 
-def generate_token_route():
-    if request.method == 'OPTIONS':
-        response = app.make_default_options_response()
-        response.headers.add("Access-Control-Allow-Origin", "http://localhost:8081")
-        response.headers.add("Access-Control-Allow-Credentials", "true")
-        response.headers.add("Access-Control-Allow-Methods", "GET, OPTIONS")
-        response.headers.add("Access-Control-Allow-Headers", "Content-Type")
-        return response
-    if request.method == 'GET':
-        username = identify_logged_in_user()
-        if not username:
-            return jsonify({'message': 'User not authenticated'}), 401
-        user_data = get_user_data(username)
-        token = create_access_token(identity=user_data)
-        print(token)
-        return jsonify({'token': token})
-   
-
-def identify_logged_in_user():
-    
-    return session.get('Username')
-
-# Function to generate a token
-def create_access_token(user_data):
-    # Payload can include user information
-    payload = {
-        'username': user_data['Username'],
-        'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)
-    }
-
-    # Generate the token
-    token = jwt.encode(payload, app.config['SECRET_KEY'], algorithm='HS256')
-    print(token)
-    return token
-def get_username(username):
-    
-    return {'username': username}
+    if request.method == 'POST':
+        try:
+            return jsonify({"success": True}), 200
+        except Exception as e:
+            return jsonify({"success": False, "error": str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)

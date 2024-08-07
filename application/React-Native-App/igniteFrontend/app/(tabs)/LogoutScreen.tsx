@@ -1,26 +1,22 @@
-// import { useNavigation } from 'expo-router';
-import * as SecureStore from 'expo-secure-store';
+
 import { useState } from 'react';
 import * as React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { useNavigation } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { NavigationProp } from '@react-navigation/native';
 
 interface LogoutProps {
-    navigation: any;
+  navigation: NavigationProp<any>;
 }
 
 const LogoutScreen: React.FC<LogoutProps> = ({ navigation }) => {
-    const [Username] = useState('');
-    const [Password] = useState('');
-
-    useNavigation();
 
     const handleLogout = async () => {
         try {
-        // Send logout request to backend
-        const response = await fetch('http://localhost:5000/api/logout', {
+          // Send logout request to backend
+          const response = await fetch(`http://localhost:5000/api/logout`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -30,7 +26,7 @@ const LogoutScreen: React.FC<LogoutProps> = ({ navigation }) => {
 
       if (response.ok) {
         // Clear stored credentials
-        await AsyncStorage.removeItem('authToken');
+        await AsyncStorage.removeItem('Username');
         Alert.alert('Logout Successful');
         // Redirect to login screen
         navigation.navigate('LoginScreen');
@@ -56,6 +52,7 @@ const LogoutScreen: React.FC<LogoutProps> = ({ navigation }) => {
   </View>
   );
 };
+
 const styles = StyleSheet.create({
     container: {
       flex: 1,
