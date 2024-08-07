@@ -12,7 +12,6 @@ import AccountSignupScreen from './AccountSignupScreen';
 import FitnessSurveyScreen from './FitnessSurveyScreen';
 import ResetPasswordScreen from './ResetPasswordScreen';
 import ResetUserNameScreen from './ResetUserNameScreen';
-import editUsernameScreen from './editUsernameScreen';
 import DailyWorkoutScreen from './DailyWorkoutScreen';
 import { useFonts } from 'expo-font';
 import { FontAwesome } from '@expo/vector-icons'; 
@@ -234,14 +233,6 @@ export default function TabLayout() {
         component={ResetUserNameScreen}
         options={{
         title: 'Reset Username',
-        drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-      }}
-      />
-        <Drawer.Screen
-        name="editUsernameScreen"
-        component={editUsernameScreen}
-        options={{
-        title: 'Edit Username',
         drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
       }}
       />
