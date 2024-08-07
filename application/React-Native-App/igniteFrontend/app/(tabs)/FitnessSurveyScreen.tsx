@@ -254,7 +254,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
   },
   gradient: {
-    width: '15%',
+    width: 200,
     height: 50,
     borderRadius: 5,
     marginBottom: 15,

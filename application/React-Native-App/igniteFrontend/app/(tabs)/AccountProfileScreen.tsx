@@ -2,7 +2,7 @@ import * as React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { useState, useEffect } from 'react';
-import { NavigationProp } from '@react-navigation/native';
+import { NavigationProp} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface AccountProfileProps {

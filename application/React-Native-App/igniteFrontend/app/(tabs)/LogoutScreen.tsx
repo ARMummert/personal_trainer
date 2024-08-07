@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
       fontFamily: 'Alkatra-VariableFront_wght',
     },
     gradient: {
-      width: '5%',
+      width: 100,
       borderRadius: 5,
       marginBottom: 15,
     },
