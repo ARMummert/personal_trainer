@@ -7,10 +7,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ScrollView } from 'react-native-gesture-handler';
 import { LinearGradient } from 'expo-linear-gradient';
 
-interface Homeprops {
+interface DailyWorkoutprops {
   navigation: NavigationProp<any>;
 }
-const HomeScreen: React.FC<Homeprops> = ({ navigation }) => {
+const DailyWorkoutScreen: React.FC<DailyWorkoutprops> = ({ navigation }) => {
     const [Username, setUserName] = useState('');
     const [Workouts, setWorkouts] = useState([]);
 
@@ -136,4 +136,4 @@ const styles = StyleSheet.create({
   },
  
 });
-export default HomeScreen;
+export default DailyWorkoutScreen;
