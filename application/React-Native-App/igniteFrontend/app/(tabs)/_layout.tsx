@@ -13,6 +13,7 @@ import FitnessSurveyScreen from './FitnessSurveyScreen';
 import ResetPasswordScreen from './ResetPasswordScreen';
 import ResetUserNameScreen from './ResetUserNameScreen';
 import editUsernameScreen from './editUsernameScreen';
+import DailyWorkoutScreen from './DailyWorkoutScreen';
 import { useFonts } from 'expo-font';
 import { FontAwesome } from '@expo/vector-icons'; 
 import { useColorScheme } from '@/components/useColorScheme';
@@ -115,6 +116,11 @@ function DrawerContent(props: any) {
       <LinearGradient colors={['#F83600', '#FE8C00']} style={styles.gradient}>
       <TouchableOpacity style={styles.navigationButton} onPress={() => props.navigation.navigate('LogoutScreen')}>
         <Text style={styles.buttonText}>Logout</Text>
+      </TouchableOpacity>
+      </LinearGradient>
+      <LinearGradient colors={['#F83600', '#FE8C00']} style={styles.gradient}>
+      <TouchableOpacity style={styles.navigationButton} onPress={() => props.navigation.navigate('DailyWorkoutScreen')}>
+        <Text style={styles.buttonText}>Daily Workouts</Text>
       </TouchableOpacity>
       </LinearGradient>
     </View>
@@ -236,6 +242,14 @@ export default function TabLayout() {
         component={editUsernameScreen}
         options={{
         title: 'Edit Username',
+        drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+      }}
+      />
+      <Drawer.Screen
+        name="DailyWorkoutScreen"
+        component={DailyWorkoutScreen}
+        options={{
+        title: 'Daily Workout',
         drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
       }}
       />
