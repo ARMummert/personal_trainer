@@ -13,6 +13,7 @@ import FitnessSurveyScreen from './FitnessSurveyScreen';
 import ResetPasswordScreen from './ResetPasswordScreen';
 import ResetUserNameScreen from './ResetUserNameScreen';
 import DailyWorkoutScreen from './DailyWorkoutScreen';
+import PostWorkoutScreen from './PostWorkoutScreen';
 import { useFonts } from 'expo-font';
 import { FontAwesome } from '@expo/vector-icons'; 
 import { useColorScheme } from '@/components/useColorScheme';
@@ -20,14 +21,11 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { DrawerActions } from '@react-navigation/native';
 import { useNavigation } from 'expo-router';
 
-
-
 // Footer component
 const Footer = () => {
   const navigation = useNavigation();
 
   return (
-
     <View style={styles.footer}>
       <TouchableOpacity onPress={() => navigation.navigate('Home' as never)}>
         <FontAwesome name="home" size={24} color='#F83600' />
@@ -39,10 +37,8 @@ const Footer = () => {
         <FontAwesome name="gear" size={24} color='#F83600' />
       </TouchableOpacity>
     </View>
-
   );
 };
-
 
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>['name'];
@@ -241,6 +237,14 @@ export default function TabLayout() {
         component={DailyWorkoutScreen}
         options={{
         title: 'Daily Workout',
+        drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+      }}
+      />
+      <Drawer.Screen
+        name="PostWorkoutScreen"
+        component={PostWorkoutScreen}
+        options={{
+        title: 'Post Workout',
         drawerIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
       }}
       />
