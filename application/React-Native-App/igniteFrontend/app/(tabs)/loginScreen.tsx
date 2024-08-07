@@ -76,10 +76,12 @@ const LoginScreen: React.FC<LoginProps> = ({ navigation }) => {
           style={styles.input} />
       </LinearGradient>
       <View style={styles.space}></View>
-      <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 0, borderRadius: 5, }}>
-        <TouchableOpacity onPress={handleLogin} style={{ backgroundColor: '#EB2000', paddingHorizontal: 15, paddingVertical: 10, borderRadius: 15 }}>
-          <Text style={{  color: 'white', fontSize: 20, fontWeight: 'bold', textAlign: 'center' }}>Login</Text>
-        </TouchableOpacity>
+      <View style={{ flexDirection: 'row', alignItems: 'center', padding: 5, borderRadius: 5, }}>
+      <LinearGradient colors={['#F83600', '#FE8C00']} style={styles.gradient}>
+      <TouchableOpacity onPress={handleLogin}>
+        <Text style={styles.buttonText}>Login</Text>
+      </TouchableOpacity>
+      </LinearGradient>
       </View>
       <View style={styles.containertwo}>  
       <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 0, borderRadius: 5, }}>

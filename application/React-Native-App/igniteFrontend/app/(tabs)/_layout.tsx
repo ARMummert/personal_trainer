@@ -84,6 +84,11 @@ function DrawerContent(props: any) {
       </TouchableOpacity>
       </LinearGradient>
       <LinearGradient colors={['#F83600', '#FE8C00']} style={styles.gradient}>
+      <TouchableOpacity style={styles.navigationButton} onPress={() => props.navigation.navigate('DailyWorkoutScreen')}>
+        <Text style={styles.buttonText}>Daily Workout</Text>
+      </TouchableOpacity>
+      </LinearGradient>
+      <LinearGradient colors={['#F83600', '#FE8C00']} style={styles.gradient}>
       <TouchableOpacity style={styles.navigationButton} onPress={() => props.navigation.navigate('LoginScreen')}>
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
@@ -116,11 +121,6 @@ function DrawerContent(props: any) {
       <LinearGradient colors={['#F83600', '#FE8C00']} style={styles.gradient}>
       <TouchableOpacity style={styles.navigationButton} onPress={() => props.navigation.navigate('LogoutScreen')}>
         <Text style={styles.buttonText}>Logout</Text>
-      </TouchableOpacity>
-      </LinearGradient>
-      <LinearGradient colors={['#F83600', '#FE8C00']} style={styles.gradient}>
-      <TouchableOpacity style={styles.navigationButton} onPress={() => props.navigation.navigate('DailyWorkoutScreen')}>
-        <Text style={styles.buttonText}>Daily Workouts</Text>
       </TouchableOpacity>
       </LinearGradient>
     </View>

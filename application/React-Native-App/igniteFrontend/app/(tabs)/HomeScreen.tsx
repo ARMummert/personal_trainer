@@ -47,7 +47,7 @@ const HomeScreen: React.FC<Homeprops> = ({ navigation }) => {
         style={{ backgroundColor: 'transparent', justifyContent: 'center', borderRadius: 5 }}
         onPress={() => navigation.navigate('DailyWorkoutScreen')}
       >
-        <Text style={{ color: 'white', fontSize: 18, width: 200, textAlign: 'center', fontWeight: 'bold' }}>
+        <Text style={{ color: 'white', fontSize: 18, width: 180, textAlign: 'center', fontWeight: 'bold' }}>
           Start Daily Workout
         </Text>
       </TouchableOpacity>
@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   gradient2: {
-    width: '20%',
+    width: 200,
     padding: 10,
     marginBottom: 55,
     borderRadius: 5,
