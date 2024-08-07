@@ -7,8 +7,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
-const FitnessSurveyScreen = ({ navigation }: { navigation: NavigationProp<any> }) => {
-  const [Username, setUsername] = useState<string | null>(null);
+const FitnessSurveyScreen: React.FC<{ navigation: NavigationProp<any> }> = ({ navigation }) => {
+  const [Username, setUsername] = useState<string>();
   const [gender, setGender] = useState('');
   const [fitnessGoal, setFitnessGoal] = useState('');
   const [bodyType, setBodyType] = useState('');
@@ -16,23 +16,6 @@ const FitnessSurveyScreen = ({ navigation }: { navigation: NavigationProp<any> }
   const [activityLevel, setActivityLevel] = useState('');
   const [activities, setActivities] = useState<string[]>([]);
   const [challenges, setChallenges] = useState<string[]>([]);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  useEffect(() => {
-    const checkLoginStatus = async () => {
-      const token = await AsyncStorage.getItem('authToken');
-      if (token) {
-        setIsLoggedIn(true);
-        const username = await AsyncStorage.getItem('Username');
-        setUsername(username);
-        console.log(`Username: ${username}`);
-      } else {
-        Alert.alert('You must be logged in to view this page');
-      }
-    };
-
-    checkLoginStatus();
-  }, []);
 
   const toggleActivity = (activity: string) => {
     setActivities(prev => {
@@ -54,9 +37,8 @@ const FitnessSurveyScreen = ({ navigation }: { navigation: NavigationProp<any> }
     });
   };
 
-  const handleSubmit = async () => {
+  
     const surveyData = {
-      Username,
       gender,
       fitnessGoal,
       bodyType,
@@ -66,8 +48,27 @@ const FitnessSurveyScreen = ({ navigation }: { navigation: NavigationProp<any> }
       challenges,
     };
 
+    useEffect(() => {
+      const fetchUsername = async () => {
+        try {
+          const storedUsername = await AsyncStorage.getItem('Username');
+          console.log('Stored username:', storedUsername);
+          if (!storedUsername) {
+            throw new Error('No username found in storage');
+          }
+          setUsername(storedUsername);
+          console.log('Username:', storedUsername);
+        } catch (error) {
+          console.error('Error fetching username:', error);
+        }
+      };
+  
+      fetchUsername();
+    }, []);
+
+    const submitSurvey = async () => {
     try {
-      const response = await fetch('http://localhost:5000/submitSurvey', {
+      const response = await fetch(`http://localhost:5000/submitSurvey/${Username}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -75,33 +76,20 @@ const FitnessSurveyScreen = ({ navigation }: { navigation: NavigationProp<any> }
         body: JSON.stringify(surveyData),
       });
 
-      const result = await response.json();
-      if (result.success) {
-        Alert.alert('Success', 'Survey submitted successfully');
-        navigation.navigate('Home');
-      } else {
-        Alert.alert('Error', result.message);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
       }
+
+      const result = await response.json();
+      console.log('Survey submitted successfully:', result);
     } catch (error) {
       console.error('Error submitting survey:', error);
-      Alert.alert('Error', 'An error occurred while submitting the survey');
     }
   };
   
-  if (!isLoggedIn) {
-    return (
-      <View style={styles.container}>
-        <Text style={{  padding: 20, color: 'white', fontSize: 20, textAlign: 'center' }}>You must be logged in to access this page.</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('LoginScreen' as never)} style={{ backgroundColor: '#EB2000', paddingHorizontal: 15, paddingVertical: 10, borderRadius: 15, width: 90, alignSelf: 'center'}}>
-          <Text style={{  color: 'white', fontSize: 20, fontWeight: 'bold', textAlign: 'center' }}>Login </Text>
-        </TouchableOpacity>
-      </View>
-    );
-  }
-
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text>Welcome, {Username}!</Text>
+      <Text style={styles.title}>Welcome, {Username}!</Text>
       <Text style={styles.title}>Fitness Survey</Text>
       <Text style={styles.fitnesswarning}><strong style={styles.strong}>Important Information:</strong> While Ignite provides personalized training plans, it's not a substitute for professional medical advice. Please consult your doctor before starting any new exercise program, especially if you have any health concerns.</Text>
       <Text style={styles.fitnesswarning}>This survey is designed to help you understand your current fitness level and goals.  The information you provide will be anonymous and will be used to improve fitness programs and resources.</Text>
@@ -188,7 +176,7 @@ const FitnessSurveyScreen = ({ navigation }: { navigation: NavigationProp<any> }
       ))}
       <LinearGradient style={styles.gradient2} colors={['#F83600', '#FE8C00']}>
         <View style={{ flexDirection: 'row', alignItems: 'center', borderRadius: 5, }}>
-          <TouchableOpacity onPress={handleSubmit} style={{ backgroundColor: 'transparent', paddingHorizontal: 15, paddingVertical: 10, width: 140, borderRadius: 5, justifyContent: 'center', alignItems: 'center' }}>
+          <TouchableOpacity onPress={submitSurvey} style={{ backgroundColor: 'transparent', paddingHorizontal: 15, paddingVertical: 10, width: 140, borderRadius: 5, justifyContent: 'center', alignItems: 'center' }}>
             <Text style={{ color: 'black', fontSize: 18, width: 140, textAlign: 'center', fontWeight: 'bold' }}>Submit Survey</Text>
           </TouchableOpacity>
         </View>

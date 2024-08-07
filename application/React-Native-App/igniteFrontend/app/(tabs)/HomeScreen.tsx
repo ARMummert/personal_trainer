@@ -3,7 +3,7 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, Alert } from 'react-native';
 import { Button } from 'react-native-elements';
-import { NavigationProp, useRoute } from '@react-navigation/native';
+import { NavigationProp } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface Homeprops {
@@ -50,6 +50,7 @@ const HomeScreen: React.FC<Homeprops> = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Image source={require('../../assets/images/fitappimage.jpg')} style={styles.headerImage} resizeMode="cover"  />
+      <Text style={[styles.welcomeText, { fontFamily: 'AguafinaScript-Regular', }]}>Get Fit, Feel Fierce</Text>
       <Text style={styles.welcomeText}>Welcome, {Username}</Text>
       <Text style={styles.descriptionText}>
         Track your fitness journey and your daily workouts, all in one place.
