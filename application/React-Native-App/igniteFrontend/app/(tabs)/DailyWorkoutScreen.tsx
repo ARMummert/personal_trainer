@@ -1,18 +1,20 @@
-// Filename: HomeScreen.tsx
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, Alert, Button } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, Alert } from 'react-native';
+import { Button } from 'react-native-elements';
 import { NavigationProp } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ScrollView } from 'react-native-gesture-handler';
 import { LinearGradient } from 'expo-linear-gradient';
 
 interface Homeprops {
   navigation: NavigationProp<any>;
 }
 const HomeScreen: React.FC<Homeprops> = ({ navigation }) => {
-  const [Username, setUserName] = useState('');
+    const [Username, setUserName] = useState('');
+    const [Workouts, setWorkouts] = useState([]);
 
-  const getUsername = async () => {
+    const getWorkouts = async () => {
     try {
       const storedUsername = await AsyncStorage.getItem('Username');
       console.log('Stored username:', storedUsername);
@@ -20,16 +22,34 @@ const HomeScreen: React.FC<Homeprops> = ({ navigation }) => {
         throw new Error('No username found in storage');
       }
       setUserName(storedUsername);
-  } catch (error) {
-    console.error('Error getting username:', error);
-    Alert.alert('Error', 'An error occurred. Please try again.');
-  }
-};
+
+      const response = await fetch(`http://localhost:5000/api/workouts/${storedUsername}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Network response was not ok: ${response.status}`);
+      }
+      const data = await response.json();
+      setWorkouts(data);
+    } catch (error) {
+      console.error('Error fetching workouts:', error);
+    }
+  };
   useEffect(() => {
-    getUsername();
+    getWorkouts();
   }, []);
 
+  const renderWorkout = ({ item }: { item: any }) => (
+    <View style={styles.workoutCard}>
+      <Text style={styles.workoutName}>{item.WorkoutName}</Text>
+      <Button title="Start Workout" />
+    </View>
+  );
+  
   return (
+    <ScrollView>
     <View style={styles.container}>
       <Image source={require('../../assets/images/fitappimage.jpg')} style={styles.headerImage} resizeMode="cover"  />
       <LinearGradient style={styles.gradient} colors={['#F83600', '#FE8C00']}>
@@ -39,21 +59,15 @@ const HomeScreen: React.FC<Homeprops> = ({ navigation }) => {
       </LinearGradient>
       <Text style={styles.welcomeText}>Welcome, {Username}</Text>
       <Text style={styles.descriptionText}>
-        Start your fitness journey today with our daily workouts.{'\n'}{'\n'}
+       Enjoy Today's Workout!{'\n'}{'\n'}
       </Text>
-      <LinearGradient style={styles.gradient2} colors={['#F83600', '#FE8C00']}>
-        <View>
-        <TouchableOpacity 
-        style={{ backgroundColor: 'transparent', justifyContent: 'center', borderRadius: 5 }}
-        onPress={() => navigation.navigate('DailyWorkoutScreen')}
-      >
-        <Text style={{ color: 'white', fontSize: 18, width: 200, textAlign: 'center', fontWeight: 'bold' }}>
-          Start Daily Workout
-        </Text>
-      </TouchableOpacity>
-        </View>
-      </LinearGradient>
+      <FlatList
+        data={Workouts}
+        renderItem={renderWorkout}
+        keyExtractor={(item) => item.id.toString()}
+      />
     </View>
+    </ScrollView>
   );
 };
 
@@ -80,6 +94,14 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 200,
   },
+  welcomeText: {
+    fontSize: 44,
+    color: 'white',
+    marginTop: 20,
+    fontFamily: 'Alkatra-VariableFront_wght',
+    textAlign: 'center',
+    justifyContent: 'center',
+  },
   workoutCard: {
     backgroundColor: 'white',
     padding: 20,
@@ -92,25 +114,14 @@ const styles = StyleSheet.create({
     fontFamily: 'Alkatra-VariableFront_wght',
   },
 
-  welcomeText: {
-    fontSize: 44,
-    color: 'white',
-    marginTop: 20,
-    fontFamily: 'Alkatra-VariableFront_wght',
-    textAlign: 'center',
-    justifyContent: 'center',
-  },
   descriptionText: {
     fontSize: 20,
     color: 'white',
     marginHorizontal: 20,
-    marginBottom: 20,
     marginTop: 20,
+    marginBottom: 20,
     textAlign: 'center',
     fontFamily: 'Alkatra-VariableFront_wght',
-  },
-  button: {
-    backgroundColor: 'transparent',
   },
   paragraphText: {
     fontSize: 45,
@@ -123,11 +134,6 @@ const styles = StyleSheet.create({
     width: '100%',
     marginBottom: 15,
   },
-  gradient2: {
-    width: '20%',
-    padding: 10,
-    marginBottom: 55,
-    borderRadius: 5,
-  },
+ 
 });
 export default HomeScreen;

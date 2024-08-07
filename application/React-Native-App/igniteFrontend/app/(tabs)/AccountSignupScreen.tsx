@@ -85,31 +85,24 @@ const AccountSignUpScreen: React.FC<SignUpProps> = ({ navigation }) => {
     <View style={styles.container}>
       <Text style={styles.title}>Sign Up</Text>
       <View style={styles.space}></View>
-      <LinearGradient style={styles.inputContainer} colors={['#F83600', '#FE8C00']}>
         <TextInput
           placeholder="Fullname"
           value={Fullname}
           onChangeText={setFullname}
           style={styles.input}
         />
-      </LinearGradient>
-      <LinearGradient style={styles.inputContainer} colors={['#F83600', '#FE8C00']}>
         <TextInput
           placeholder="Username"
           value={Username}
           onChangeText={setUsername}
           style={styles.input}
         />
-      </LinearGradient>
-      <LinearGradient style={styles.inputContainer} colors={['#F83600', '#FE8C00']}>
         <TextInput
           placeholder="Email"
           value={Email}
           onChangeText={setEmail}
           style={styles.input}
         />
-      </LinearGradient>
-      <LinearGradient style={styles.inputContainer} colors={['#F83600', '#FE8C00']}>
         <TextInput
           placeholder="Password"
           value={Password}
@@ -117,8 +110,6 @@ const AccountSignUpScreen: React.FC<SignUpProps> = ({ navigation }) => {
           secureTextEntry={true}
           style={styles.input}
         />
-      </LinearGradient>
-      <LinearGradient style={styles.inputContainer} colors={['#F83600', '#FE8C00']}>
         <TextInput
           placeholder="Re-enter Password"
           value={RePassword}
@@ -126,11 +117,12 @@ const AccountSignUpScreen: React.FC<SignUpProps> = ({ navigation }) => {
           secureTextEntry={true}
           style={styles.input}
         />
-      </LinearGradient>     
+      <LinearGradient style={styles.gradient} colors={['#F83600', '#FE8C00']}>
       <TouchableOpacity style={styles.picker} onPress={() => setModalVisible(true)}> 
         <Text style={styles.pickerText}>{selectedAvatar || 'Select Avatar'}</Text>
         <AntDesign style={styles.carrot} name="caretdown" size={24} color="white" />
       </TouchableOpacity>
+      </LinearGradient>
       {selectedAvatar && (
         <Image
           source={loadedAvatarOptions.find(option => option.label === selectedAvatar)?.value}
@@ -149,9 +141,11 @@ const AccountSignUpScreen: React.FC<SignUpProps> = ({ navigation }) => {
         </View>
       </Modal>
       <View style={styles.space}></View>
+      <LinearGradient style={styles.signUpButton} colors={['#F83600', '#FE8C00']}>
       <TouchableOpacity onPress={handleSignUp} style={styles.signUpButton}>
         <Text style={styles.signUpButtonText}>Create Account</Text>
       </TouchableOpacity>
+      </LinearGradient>
       <View style={styles.space}></View>
       <TouchableOpacity onPress={() => navigation.navigate('FitnessSurveyScreen')}>
       </TouchableOpacity>
@@ -182,14 +176,16 @@ const styles = StyleSheet.create({
     fontFamily: 'Alkatra-VariableFront_wght',
   },
   input: {
-    width: '100%',
+    width: '20%',
     fontSize: 20,
     height: 40,
     borderWidth: 1,
+    marginBottom: 15,
     padding: 10,
     borderRadius: 5,
-    color: 'white',
+    color: 'black',
     borderColor: 'white',
+    backgroundColor: 'white',
     fontFamily: 'Alkatra-VariableFront_wght',
   },
   inputContainer: {
@@ -223,8 +219,8 @@ const styles = StyleSheet.create({
     fontFamily: 'Alkatra-VariableFront_wght',
   },
   picker: {
-    backgroundColor: '#EB2000',
-    width: '13%',
+    backgroundColor: 'transparent',
+    width: '100%',
     height: '12%',
     borderRadius: 5,
     marginTop: 10,
@@ -245,6 +241,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   pickerText: {
+    width: '100%', 
     fontSize: 20,
     textAlign: 'center',
     fontFamily: 'Alkatra-VariableFront_wght',
@@ -263,8 +260,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   signUpButton: {
-    backgroundColor: '#EB2000',
-    padding: 10,
+    backgroundColor: 'transparent',
+    padding: 5,
     borderRadius: 5,
   },
   signUpButtonText: {
@@ -280,6 +277,12 @@ const styles = StyleSheet.create({
     color: 'white',
     marginBottom: 10,
   },
+  gradient: {
+    width: '20%',
+    marginBottom: 15,
+    borderRadius: 5,
+  },
+ 
 });
 
 export default AccountSignUpScreen;

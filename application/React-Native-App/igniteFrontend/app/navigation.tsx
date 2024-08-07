@@ -8,6 +8,7 @@ import ResetUserNameScreen from '../app/(tabs)/ResetUserNameScreen';
 import HomeScreen from '../app/(tabs)/HomeScreen';
 import AccountSignUpScreen from '../app/(tabs)/AccountSignupScreen';
 import FitnessSurveyScreen from '../app/(tabs)/FitnessSurveyScreen';
+import DailyWorkoutScreen from '../app/(tabs)/DailyWorkoutScreen';
 
 const Stack = createStackNavigator<any>();
 
@@ -21,6 +22,7 @@ const Navigation = () => {
         <Stack.Screen name="AccountSignUpScreen" component={AccountSignUpScreen} />
         <Stack.Screen name="FitnessSurveyScreen" component={FitnessSurveyScreen} />
         <Stack.Screen name="HomeScreen" component={HomeScreen} />
+        <Stack.Screen name="DailyWorkoutScreen" component={DailyWorkoutScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

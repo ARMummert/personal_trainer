@@ -94,7 +94,6 @@ const FitnessSurveyScreen: React.FC<{ navigation: NavigationProp<any> }> = ({ na
       <Text style={styles.fitnesswarning}><strong style={styles.strong}>Important Information:</strong> While Ignite provides personalized training plans, it's not a substitute for professional medical advice. Please consult your doctor before starting any new exercise program, especially if you have any health concerns.</Text>
       <Text style={styles.fitnesswarning}>This survey is designed to help you understand your current fitness level and goals.  The information you provide will be anonymous and will be used to improve fitness programs and resources.</Text>
       <Text style={styles.label}>Gender</Text>
-      <LinearGradient style={styles.gradient} colors={['#F83600', '#FE8C00']}>
         <Picker
           selectedValue={gender}
           style={styles.picker}
@@ -104,10 +103,8 @@ const FitnessSurveyScreen: React.FC<{ navigation: NavigationProp<any> }> = ({ na
           <Picker.Item style={styles.picker} label="Male" value="Male" />
           <Picker.Item style={styles.picker} label="Non-Binary" value="Non-Binary" />
           <Picker.Item style={styles.picker} label="Prefer not to say" value="Prefer not to say" />
-        </Picker>
-      </LinearGradient>
+        </Picker>  
       <Text style={styles.label}>Fitness Goals</Text>
-      <LinearGradient style={styles.gradient} colors={['#F83600', '#FE8C00']}>
         <Picker
           selectedValue={fitnessGoal}
           style={styles.picker}
@@ -121,9 +118,7 @@ const FitnessSurveyScreen: React.FC<{ navigation: NavigationProp<any> }> = ({ na
           <Picker.Item label="Improve overall health" value="Improve overall health" />
           <Picker.Item label="Other" value="Other" />
         </Picker>
-      </LinearGradient>
       <Text style={styles.label}>Body Type</Text>
-      <LinearGradient style={styles.gradient} colors={['#F83600', '#FE8C00']}>
         <Picker
           selectedValue={bodyType}
           style={styles.picker}
@@ -134,9 +129,7 @@ const FitnessSurveyScreen: React.FC<{ navigation: NavigationProp<any> }> = ({ na
           <Picker.Item label="Ectomorph" value="Ectomorph" />
           <Picker.Item label="Mesomorph" value="Mesomorph" />
         </Picker>
-      </LinearGradient>
       <Text style={styles.label}>Fitness Level</Text>
-      <LinearGradient style={styles.gradient} colors={['#F83600', '#FE8C00']}>
         <Picker
           selectedValue={fitnessLevel}
           style={styles.picker}
@@ -146,9 +139,7 @@ const FitnessSurveyScreen: React.FC<{ navigation: NavigationProp<any> }> = ({ na
           <Picker.Item label="Intermediate" value="Intermediate" />
           <Picker.Item label="Advanced" value="Advanced" />
         </Picker>
-      </LinearGradient>
       <Text style={styles.label}>Current Activity Level</Text>
-      <LinearGradient style={styles.gradient} colors={['#F83600', '#FE8C00']}>
         <Picker
           selectedValue={activityLevel}
           style={styles.picker}
@@ -158,7 +149,6 @@ const FitnessSurveyScreen: React.FC<{ navigation: NavigationProp<any> }> = ({ na
           <Picker.Item label="3-5 days" value="3-5 days" />
           <Picker.Item label="6-7 days" value="6-7 days" />
         </Picker>
-      </LinearGradient>
       <Text style={styles.label}>What types of activities do you typically engage in? (Select all that apply)</Text>
       {['Running', 'Walking', 'Swimming', 'Weight Lifting', 'Team Sports', 'Yoga/Pilates', 'Other'].map((activity) => (
         <View key={activity} style={styles.checkboxContainer}>
@@ -166,7 +156,6 @@ const FitnessSurveyScreen: React.FC<{ navigation: NavigationProp<any> }> = ({ na
           <Text style={styles.checkboxLabel}>{activity}</Text>
         </View>
       ))}
-
       <Text style={styles.label}>What are the biggest challenges you face in reaching your fitness goals? (Select all that apply)</Text>
       {['Lack of motivation', 'Time constraints', 'Access to equipment or facilities', 'Difficulty with certain exercises', 'Pain or injury', 'Nutrition difficulties', 'Other'].map((challenge) => (
         <View key={challenge} style={styles.checkboxContainer}>
@@ -174,10 +163,10 @@ const FitnessSurveyScreen: React.FC<{ navigation: NavigationProp<any> }> = ({ na
           <Text style={styles.checkboxLabel}>{challenge}</Text>
         </View>
       ))}
-      <LinearGradient style={styles.gradient2} colors={['#F83600', '#FE8C00']}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', borderRadius: 5, }}>
-          <TouchableOpacity onPress={submitSurvey} style={{ backgroundColor: 'transparent', paddingHorizontal: 15, paddingVertical: 10, width: 140, borderRadius: 5, justifyContent: 'center', alignItems: 'center' }}>
-            <Text style={{ color: 'black', fontSize: 18, width: 140, textAlign: 'center', fontWeight: 'bold' }}>Submit Survey</Text>
+      <LinearGradient style={styles.gradient} colors={['#F83600', '#FE8C00']}>
+        <View>
+          <TouchableOpacity onPress={submitSurvey} style={{ backgroundColor: 'transparent', width: 140, justifyContent: 'center', borderRadius: 5 }}>
+            <Text style={{ color: 'white', fontSize: 18, width: 140, textAlign: 'center', fontWeight: 'bold' }}>Submit Survey</Text>
           </TouchableOpacity>
         </View>
       </LinearGradient>
@@ -229,13 +218,14 @@ const styles = StyleSheet.create({
   },
   picker: {
       height: 50,
-      width: '100%',
+      width: '20%',
       color: 'black',
       fontWeight: 600,
-      backgroundColor: 'transparent',
+      backgroundColor: 'white',
       borderRadius: 5,
       fontSize: 20,
       fontFamily: 'Alkatra-VariableFront_wght',
+      marginBottom: 25,
   },
   checkboxContainer: {
     flexDirection: 'row',
@@ -264,18 +254,18 @@ const styles = StyleSheet.create({
     fontSize: 24,
   },
   gradient: {
-    width: '25%',
+    width: '15%',
     height: 50,
     borderRadius: 5,
     marginBottom: 15,
     justifyContent: 'center',
+    alignItems: 'center',
   },
   gradient2: {
     width: '13%',
     height: 50,
     borderRadius: 5,
     marginBottom: 15,
-    justifyContent: 'center',
   },
 });
 
