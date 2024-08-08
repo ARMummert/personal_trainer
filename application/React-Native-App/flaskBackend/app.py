@@ -460,10 +460,10 @@ def get_user_data(username):
             cursor.close()
             conn.close()
 
-
-@app.route('/submitSurvey/<username>', methods=['GET', 'POST', 'OPTIONS'])
-@cross_origin(origin='http://localhost:8081', supports_credentials=True)  # Ensure correct origin
-def submit_survey(username):
+@app.route('/submitSurvey/<username>', methods=['POST', 'GET', 'OPTIONS'])
+@cross_origin(origin='http://localhost:8081', supports_credentials=True)
+def rsubmit_survey(username):
+    
     if request.method == 'OPTIONS':
         response = app.make_default_options_response()
         response.headers.add("Access-Control-Allow-Origin", "http://localhost:8081")
@@ -471,7 +471,6 @@ def submit_survey(username):
         response.headers.add("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
         response.headers.add("Access-Control-Allow-Headers", "Content-Type")
         return response
-    
     
     if request.method == 'POST':
         try:

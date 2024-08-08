@@ -69,7 +69,7 @@ const FitnessSurveyScreen: React.FC<{ navigation: NavigationProp<any> }> = ({ na
     const submitSurvey = async () => {
     try {
       const response = await fetch(`http://localhost:5000/submitSurvey/${username}`, {
-        method: 'POST',
+        method: 'POst',
         headers: {
           'Content-Type': 'application/json',
         },
