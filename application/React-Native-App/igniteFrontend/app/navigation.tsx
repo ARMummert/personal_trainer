@@ -21,8 +21,7 @@ const Navigation = () => {
         <Stack.Screen name="ResetUserNameScreen" component={ResetUserNameScreen} />
         <Stack.Screen name="AccountSignUpScreen" component={AccountSignUpScreen} />
         <Stack.Screen name="FitnessSurveyScreen" component={FitnessSurveyScreen} />
-        <Stack.Screen name="HomeScreen" component={HomeScreen} />
-        <Stack.Screen name="DailyWorkoutScreen" component={DailyWorkoutScreen} />
+        <Stack.Screen name="Home" component={HomeScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
