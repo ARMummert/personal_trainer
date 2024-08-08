@@ -462,8 +462,9 @@ def get_user_data(username):
 
 @app.route('/submitSurvey/<username>', methods=['POST', 'GET', 'OPTIONS'])
 @cross_origin(origin='http://localhost:8081', supports_credentials=True)
-def rsubmit_survey(username):
-    
+def submit_survey(username):
+
+
     if request.method == 'OPTIONS':
         response = app.make_default_options_response()
         response.headers.add("Access-Control-Allow-Origin", "http://localhost:8081")
@@ -490,7 +491,9 @@ def rsubmit_survey(username):
             challenges = survey_data['challenges']
             survey_id = 0
 
-            app.logger.debug(username, gender, fitness_goal, body_type, fitness_level, activity_level, activities, challenges, survey_id)
+            app.logger.debug("Received survey data for user: %s", username)
+            app.logger.debug("Gender: %s, Fitness Goal: %s, Body Type: %s, Fitness Level: %s, Activity Level: %s, Activities: %s, Challenges: %s", 
+                             gender, fitness_goal, body_type, fitness_level, activity_level, activities, challenges)
 
             # Fetch GenderID
             cursor.execute("SELECT GenderID FROM Genders WHERE GenderName = %s;", (gender,))
@@ -522,51 +525,59 @@ def rsubmit_survey(username):
             user_id_row = cursor.fetchone()
             user_id = user_id_row[0] if user_id_row else None
 
-            if user_id:
+            # Fetch UserInfoID
+            cursor.execute("SELECT UserInfoID FROM UserInfo WHERE UserID = %s", (user_id,))
+            user_info_id_row = cursor.fetchone()
+            user_info_id = user_info_id_row[0] if user_info_id_row else None
+
+            if user_info_id:
                 # Execute the query to fetch the survey ID
-                cursor.execute("SELECT SurveyID FROM UserInfo WHERE UserID = %s", (user_id,))
+                cursor.execute("SELECT SurveyID FROM UserInfo WHERE UserInfoID = %s", (user_info_id,))
                 survey_id_row = cursor.fetchone()
                 survey_id = survey_id_row[0] if survey_id_row else None
 
-                if not survey_id:
+                if survey_id is None:
                     # Insert new survey info if it doesn't exist
                     cursor.execute(
-                        "INSERT INTO SurveyInfo (user_id, gender_id, fitness_goal_id, body_type_id, fitness_level_id, activity_level_id) "
+                        "INSERT INTO SurveyInfo (UserID, GenderID, FitnessGoalID, BodyTypeID, FitnessLevelID, ActivityLevelID) "
                         "VALUES (%s, %s, %s, %s, %s, %s)",
-                        (user_id, gender_id, fitness_goal_id, body_type_id, fitness_level_id, activity_level_id)
+                        (user_info_id, gender_id, fitness_goal_id, body_type_id, fitness_level_id, activity_level_id)
                     )
-                else:
+                    app.logger.debug("Inserted new survey info for user ID: %s", user_id)
+
+                    
+                else: 
                     # Update existing survey info
                     cursor.execute(
-                        "UPDATE SurveyInfo SET gender_id = %s, fitness_goal_id = %s, body_type_id = %s, fitness_level_id = %s, activity_level_id = %s "
-                        "WHERE UserID = %s",
-                        (gender_id, fitness_goal_id, body_type_id, fitness_level_id, activity_level_id, user_id)
+                        "UPDATE SurveyInfo SET GenderID = %s, FitnessGoalID = %s, BodyTypeID = %s, FitnessLevelID = %s, ActivityLevelID = %s "
+                        "WHERE SurveyID = %s",
+                        (gender_id, fitness_goal_id, body_type_id, fitness_level_id, activity_level_id, survey_id)
                     )
+                    app.logger.debug("Updated survey info for user ID: %s", user_id)
             else:
                 raise ValueError("User ID not found for the given username.")
                         
-            
-            # Insert challenges
-            for challenge in challenges:
-                cursor.execute("SELECT ChallengeID FROM Challenges WHERE ChallengeName = %s;", (challenge,))
-                challenge_id_row = cursor.fetchone()
-                challenge_id = challenge_id_row[0] if challenge_id_row else None
-                if challenge_id:
-                    cursor.execute("INSERT INTO SurveyToChallenges (SurveyID, ChallengeID) VALUES (%s, %s)",
-                                (survey_id, challenge_id)
-                                )
+            # # Insert challenges
+            # for challenge in challenges:
+            #     cursor.execute("SELECT ChallengeID FROM Challenges WHERE ChallengeName = %s;", (challenge,))
+            #     challenge_id_row = cursor.fetchone()
+            #     challenge_id = challenge_id_row[0] if challenge_id_row else None
+            #     if challenge_id:
+            #         cursor.execute("INSERT INTO SurveyToChallenges (SurveyID, ChallengeID) VALUES (%s, %s)",
+            #                     (survey_id, challenge_id)
+            #                     )
+            #         app.logger.debug("Inserted challenge ID: %s for survey ID: %s", challenge_id, survey_id)
 
-            # Insert activities
-            for activity in activities:
-                cursor.execute("SELECT ActivityID FROM Activities WHERE ActivityName = %s;", (activity,))
-                activity_id_row = cursor.fetchone()
-                activity_id = activity_id_row[0] if activity_id_row else None
-                if activity_id:
-                    cursor.execute("INSERT INTO SurveyToActivities (SurveyID, ActivityID) VALUES (%s, %s)",
-                                (survey_id, activity_id)
-                                )
-                
-            
+            # # Insert activities
+            # for activity in activities:
+            #     cursor.execute("SELECT ActivityID FROM Activities WHERE ActivityName = %s;", (activity,))
+            #     activity_id_row = cursor.fetchone()
+            #     activity_id = activity_id_row[0] if activity_id_row else None
+            #     if activity_id:
+            #         cursor.execute("INSERT INTO SurveyToActivities (SurveyID, ActivityID) VALUES (%s, %s)",
+            #                     (survey_id, activity_id)
+            #                     )
+            #         app.logger.debug("Inserted activity ID: %s for survey ID: %s", activity_id, survey_id)
 
             conn.commit()
             cursor.close()
