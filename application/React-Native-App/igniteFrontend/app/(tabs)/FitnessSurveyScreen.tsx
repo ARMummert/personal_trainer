@@ -8,7 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const FitnessSurveyScreen: React.FC<{ navigation: NavigationProp<any> }> = ({ navigation }) => {
-  const [Username, setUsername] = useState<string>();
+  const [username, setUsername] = useState<string>();
   const [gender, setGender] = useState('');
   const [fitnessGoal, setFitnessGoal] = useState('');
   const [bodyType, setBodyType] = useState('');
@@ -68,7 +68,7 @@ const FitnessSurveyScreen: React.FC<{ navigation: NavigationProp<any> }> = ({ na
 
     const submitSurvey = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/submitSurvey/${Username}`, {
+      const response = await fetch(`http://localhost:5000/submitSurvey/${username}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -89,7 +89,7 @@ const FitnessSurveyScreen: React.FC<{ navigation: NavigationProp<any> }> = ({ na
   
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Welcome, {Username}!</Text>
+      <Text style={styles.title}>Welcome, {username}!</Text>
       <Text style={styles.title}>Fitness Survey</Text>
       <Text style={styles.fitnesswarning}><strong style={styles.strong}>Important Information:</strong> While Ignite provides personalized training plans, it's not a substitute for professional medical advice. Please consult your doctor before starting any new exercise program, especially if you have any health concerns.</Text>
       <Text style={styles.fitnesswarning}>This survey is designed to help you understand your current fitness level and goals.  The information you provide will be anonymous and will be used to improve fitness programs and resources.</Text>
