@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, Alert } from 'react-native';
-import { Button } from 'react-native-elements';
 import { NavigationProp } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -12,7 +11,12 @@ interface DailyWorkoutprops {
 }
 const DailyWorkoutScreen: React.FC<DailyWorkoutprops> = ({ navigation }) => {
     const [Username, setUserName] = useState('');
-    const [Workouts, setWorkouts] = useState([]);
+    interface Workout {
+      _id: string;
+      name: string;
+    }
+    
+    const [Workouts, setWorkouts] = useState<Workout[]>([]);
 
     const getWorkouts = async () => {
     try {
@@ -41,13 +45,6 @@ const DailyWorkoutScreen: React.FC<DailyWorkoutprops> = ({ navigation }) => {
     getWorkouts();
   }, []);
 
-  const renderWorkout = ({ item }: { item: any }) => (
-    <View style={styles.workoutCard}>
-      <Text style={styles.workoutName}>{item.WorkoutName}</Text>
-      <Button title="Start Workout" />
-    </View>
-  );
-  
   return (
     <ScrollView>
     <View style={styles.container}>
@@ -63,8 +60,17 @@ const DailyWorkoutScreen: React.FC<DailyWorkoutprops> = ({ navigation }) => {
       </Text>
       <FlatList
         data={Workouts}
-        renderItem={renderWorkout}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => item._id}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            style={styles.workoutCard}
+            onPress={() => {
+              navigation.navigate('WorkoutDetails', { workoutId: item._id });
+            }}
+          >
+            <Text style={styles.workoutName}>{item.name}</Text>
+          </TouchableOpacity>
+        )}
       />
     </View>
     </ScrollView>
