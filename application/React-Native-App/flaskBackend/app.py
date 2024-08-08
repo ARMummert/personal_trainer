@@ -461,125 +461,178 @@ def get_user_data(username):
             conn.close()
 
 
-@app.route('/submitSurvey<username>', methods=['POST'])
+@app.route('/submitSurvey/<username>', methods=['GET', 'POST', 'OPTIONS'])
 @cross_origin(origin='http://localhost:8081', supports_credentials=True)  # Ensure correct origin
-def submit_survey():
-    try:
-        survey_data = request.json  # Expecting surveyData to be a JSON object
-        app.logger.debug(survey_data)
+def submit_survey(username):
+    if request.method == 'OPTIONS':
+        response = app.make_default_options_response()
+        response.headers.add("Access-Control-Allow-Origin", "http://localhost:8081")
+        response.headers.add("Access-Control-Allow-Credentials", "true")
+        response.headers.add("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+        return response
+    
+    
+    if request.method == 'POST':
+        try:
+            survey_data = request.json  # Expecting surveyData to be a JSON object
 
-        conn = mysql.connector.connect(**db_config)
-        cursor = conn.cursor()
+            conn = mysql.connector.connect(**db_config)
+            cursor = conn.cursor()
 
-        # Insert survey data into the database
-        username = survey_data['Username']
-        age = survey_data['age']
-        gender = survey_data['gender']
-        fitness_goal = survey_data['fitnessGoal']
-        body_type = survey_data['bodyType']
-        fitness_level = survey_data['fitnessLevel']
-        activity_level = survey_data['activityLevel']
-        activities = survey_data['activities']
-        challenges = survey_data['challenges']
-        survey_id = 0
+            # Insert survey data into the database
+            username = username
+            gender = survey_data['gender']
+            fitness_goal = survey_data['fitnessGoal']
+            body_type = survey_data['bodyType']
+            fitness_level = survey_data['fitnessLevel']
+            activity_level = survey_data['activityLevel']
+            activities = survey_data['activities']
+            challenges = survey_data['challenges']
+            survey_id = 0
 
-        # Fetch GenderID
-        cursor.execute("SELECT GenderID FROM Genders WHERE GenderName = %s;", (gender,))
-        gender_id_row = cursor.fetchone()
-        gender_id = gender_id_row[0] if gender_id_row else None
+            app.logger.debug(username, gender, fitness_goal, body_type, fitness_level, activity_level, activities, challenges, survey_id)
 
-        # Fetch FitnessGoalID
-        cursor.execute("SELECT FitnessGoalID FROM FitnessGoals WHERE FitnessGoalName = %s;", (fitness_goal,))
-        fitness_goal_id_row = cursor.fetchone()
-        fitness_goal_id = fitness_goal_id_row[0] if fitness_goal_id_row else None
+            # Fetch GenderID
+            cursor.execute("SELECT GenderID FROM Genders WHERE GenderName = %s;", (gender,))
+            gender_id_row = cursor.fetchone()
+            gender_id = gender_id_row[0] if gender_id_row else None
 
-        # Fetch BodyTypeID
-        cursor.execute("SELECT BodyTypeID FROM BodyTypes WHERE BodyTypeName = %s;", (body_type,))
-        body_type_id_row = cursor.fetchone()
-        body_type_id = body_type_id_row[0] if body_type_id_row else None
+            # Fetch FitnessGoalID
+            cursor.execute("SELECT FitnessGoalID FROM FitnessGoals WHERE FitnessGoalName = %s;", (fitness_goal,))
+            fitness_goal_id_row = cursor.fetchone()
+            fitness_goal_id = fitness_goal_id_row[0] if fitness_goal_id_row else None
 
-        # Fetch FitnessLevelID
-        cursor.execute("SELECT FitnessLevelID FROM FitnessLevels WHERE FitnessLevelName = %s;", (fitness_level,))
-        fitness_level_id_row = cursor.fetchone()
-        fitness_level_id = fitness_level_id_row[0] if fitness_level_id_row else None
+            # Fetch BodyTypeID
+            cursor.execute("SELECT BodyTypeID FROM BodyTypes WHERE BodyTypeName = %s;", (body_type,))
+            body_type_id_row = cursor.fetchone()
+            body_type_id = body_type_id_row[0] if body_type_id_row else None
 
-        # Fetch ActivityLevelID
-        cursor.execute("SELECT ActivityLevelID FROM ActivityLevels WHERE ActivityLevelName = %s;", (activity_level,))
-        activity_level_id_row = cursor.fetchone()
-        activity_level_id = activity_level_id_row[0] if activity_level_id_row else None
+            # Fetch FitnessLevelID
+            cursor.execute("SELECT FitnessLevelID FROM FitnessLevels WHERE FitnessLevelName = %s;", (fitness_level,))
+            fitness_level_id_row = cursor.fetchone()
+            fitness_level_id = fitness_level_id_row[0] if fitness_level_id_row else None
+
+            # Fetch ActivityLevelID
+            cursor.execute("SELECT ActivityLevelID FROM ActivityLevels WHERE ActivityLevelName = %s;", (activity_level,))
+            activity_level_id_row = cursor.fetchone()
+            activity_level_id = activity_level_id_row[0] if activity_level_id_row else None
 
 
-        cursor.execute("SELECT UserID FROM UserLogins WHERE Username = %s", (username,))
-        user_id_row = cursor.fetchone()
-        user_id = user_id_row[0] if user_id_row else None
+            cursor.execute("SELECT UserID FROM UserLogins WHERE Username = %s", (username,))
+            user_id_row = cursor.fetchone()
+            user_id = user_id_row[0] if user_id_row else None
 
-        if user_id:
-            # Execute the query to fetch the survey ID
-            cursor.execute("SELECT SurveyID FROM UserInfo WHERE UserID = %s", (user_id,))
-            survey_id_row = cursor.fetchone()
-            survey_id = survey_id_row[0] if survey_id_row else None
+            if user_id:
+                # Execute the query to fetch the survey ID
+                cursor.execute("SELECT SurveyID FROM UserInfo WHERE UserID = %s", (user_id,))
+                survey_id_row = cursor.fetchone()
+                survey_id = survey_id_row[0] if survey_id_row else None
 
-            if not survey_id:
-                # Insert new survey info if it doesn't exist
-                cursor.execute(
-                    "INSERT INTO SurveyInfo (user_id, gender_id, fitness_goal_id, body_type_id, fitness_level_id, activity_level_id) "
-                    "VALUES (%s, %s, %s, %s, %s, %s)",
-                    (user_id, gender_id, fitness_goal_id, body_type_id, fitness_level_id, activity_level_id)
-                )
+                if not survey_id:
+                    # Insert new survey info if it doesn't exist
+                    cursor.execute(
+                        "INSERT INTO SurveyInfo (user_id, gender_id, fitness_goal_id, body_type_id, fitness_level_id, activity_level_id) "
+                        "VALUES (%s, %s, %s, %s, %s, %s)",
+                        (user_id, gender_id, fitness_goal_id, body_type_id, fitness_level_id, activity_level_id)
+                    )
+                else:
+                    # Update existing survey info
+                    cursor.execute(
+                        "UPDATE SurveyInfo SET gender_id = %s, fitness_goal_id = %s, body_type_id = %s, fitness_level_id = %s, activity_level_id = %s "
+                        "WHERE UserID = %s",
+                        (gender_id, fitness_goal_id, body_type_id, fitness_level_id, activity_level_id, user_id)
+                    )
             else:
-                # Update existing survey info
-                cursor.execute(
-                    "UPDATE SurveyInfo SET gender_id = %s, fitness_goal_id = %s, body_type_id = %s, fitness_level_id = %s, activity_level_id = %s "
-                    "WHERE UserID = %s",
-                    (gender_id, fitness_goal_id, body_type_id, fitness_level_id, activity_level_id, user_id)
-                )
-        else:
-            raise ValueError("User ID not found for the given username.")
-                    
-        
-        # Insert challenges
-        for challenge in challenges:
-            cursor.execute("SELECT ChallengeID FROM Challenges WHERE ChallengeName = %s;", (challenge,))
-            challenge_id_row = cursor.fetchone()
-            challenge_id = challenge_id_row[0] if challenge_id_row else None
-            if challenge_id:
-                cursor.execute("INSERT INTO SurveyToChallenges (SurveyID, ChallengeID) VALUES (%s, %s)",
-                               (survey_id, challenge_id)
-                               )
-
-        # Insert activities
-        for activity in activities:
-            cursor.execute("SELECT ActivityID FROM Activities WHERE ActivityName = %s;", (activity,))
-            activity_id_row = cursor.fetchone()
-            activity_id = activity_id_row[0] if activity_id_row else None
-            if activity_id:
-                cursor.execute("INSERT INTO SurveyToActivities (SurveyID, ActivityID) VALUES (%s, %s)",
-                               (survey_id, activity_id)
-                               )
+                raise ValueError("User ID not found for the given username.")
+                        
             
-        
+            # Insert challenges
+            for challenge in challenges:
+                cursor.execute("SELECT ChallengeID FROM Challenges WHERE ChallengeName = %s;", (challenge,))
+                challenge_id_row = cursor.fetchone()
+                challenge_id = challenge_id_row[0] if challenge_id_row else None
+                if challenge_id:
+                    cursor.execute("INSERT INTO SurveyToChallenges (SurveyID, ChallengeID) VALUES (%s, %s)",
+                                (survey_id, challenge_id)
+                                )
 
-        conn.commit()
-        cursor.close()
-        conn.close()
+            # Insert activities
+            for activity in activities:
+                cursor.execute("SELECT ActivityID FROM Activities WHERE ActivityName = %s;", (activity,))
+                activity_id_row = cursor.fetchone()
+                activity_id = activity_id_row[0] if activity_id_row else None
+                if activity_id:
+                    cursor.execute("INSERT INTO SurveyToActivities (SurveyID, ActivityID) VALUES (%s, %s)",
+                                (survey_id, activity_id)
+                                )
+                
+            
 
-        return jsonify({"success": True}), 201
+            conn.commit()
+            cursor.close()
+            conn.close()
 
-    except mysql.connector.Error as err:
-        return jsonify({"success": False, "error": str(err)}), 500
+            return jsonify({"success": True}), 201
+
+        except mysql.connector.Error as err:
+            return jsonify({"success": False, "error": str(err)}), 500
+    
 
 
-@app.route('/api/workouts<username>', methods=['GET'])
-@cross_origin(origin='http://localhost:8081', supports_credentials=True)  # Ensure correct origin
-def get_workouts():
+
+@app.route('/api/workouts/<username>', methods=['GET', 'POST'])
+@cross_origin(origin='http://localhost:8081', supports_credentials=True)
+def get_workouts(username):
     try:
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor(dictionary=True)
 
-        cursor.execute("SELECT * FROM Workouts;")
-        workouts = cursor.fetchall()
+        cursor.execute("SELECT UserID FROM UserLogins WHERE Username = %s;", (username,))
+        user_id = cursor.fetchone()
+        
 
-        return jsonify(workouts), 200
+        if request.method == "GET":
+            if user_id:
+                user_id = user_id['UserID']
+                cursor.execute("SELECT BodyTypeID FROM SurveyInfo WHERE UserID = %s;", (user_id,))
+                body_type = cursor.fetchone()
+
+                cursor.execute("SELECT FitnessGoalID FROM SurveyInfo WHERE UserID = %s;", (user_id,))
+                fitness_goal = cursor.fetchone()
+
+                if body_type and fitness_goal:
+                    cursor.execute(
+                        "SELECT WorkoutName FROM Workouts WHERE BodyTypeID = %s AND FitnessGoalID = %s;",
+                        (body_type['BodyTypeID'], fitness_goal['FitnessGoalID'])
+                    )
+                    workouts = cursor.fetchall()
+                    return jsonify(workouts), 200
+                else:
+                    return jsonify({"error": "Body type or fitness goal not found"}), 404
+
+            else:
+                return jsonify({"error": "User not found"}), 404
+        
+        elif request.method == "POST":
+            if user_id:
+                user_id = user_id['UserID']
+                cursor.execute("SELECT WorkoutsCompleted FROM UserInfo WHERE UserID = %s;", (user_id,))
+                num_complete = cursor.fetchone()
+
+                if num_complete is not None:
+                    num_complete = num_complete['WorkoutsCompleted'] + 1
+
+                    cursor.execute("UPDATE UserInfo SET WorkoutsCompleted = %s WHERE UserID = %s;", (num_complete, user_id))
+                    conn.commit()
+
+                    return jsonify({"message": "Workouts completed updated successfully"}), 200
+                else:
+                    return jsonify({"error": "User info not found"}), 404
+
+            else:
+                return jsonify({"error": "User not found"}), 404
+            
 
     except mysql.connector.Error as err:
         return jsonify({"error": str(err)}), 500
