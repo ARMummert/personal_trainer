@@ -81,6 +81,10 @@ const FitnessSurveyScreen: React.FC<{ navigation: NavigationProp<any> }> = ({ na
       }
 
       const result = await response.json();
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'DailyWorkoutScreen', params: { username } }],
+      });
       console.log('Survey submitted successfully:', result);
     } catch (error) {
       console.error('Error submitting survey:', error);
