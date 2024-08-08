@@ -591,32 +591,49 @@ def submit_survey(username):
 
 
 
-@app.route('/api/workouts/<username>', methods=['GET', 'POST'])
+@app.route('/api/workouts/<username>', methods=['GET', 'POST', 'OPTIONS'])
 @cross_origin(origin='http://localhost:8081', supports_credentials=True)
 def get_workouts(username):
     try:
         conn = mysql.connector.connect(**db_config)
-        cursor = conn.cursor(dictionary=True)
+        cursor = conn.cursor()
 
         cursor.execute("SELECT UserID FROM UserLogins WHERE Username = %s;", (username,))
-        user_id = cursor.fetchone()
+        user_id_row = cursor.fetchone()
+        app.logger.debug(user_id_row)
+        user_id = user_id_row[0] if user_id_row else None
+        app.logger.debug(user_id)
+
+        cursor.execute("SELECT UserInfoID FROM UserInfo WHERE UserID = %s", (user_id,))
+        user_info_id_row = cursor.fetchone()
+        app.logger.debug(user_info_id_row)
+        user_info_id = user_info_id_row[0] if user_info_id_row else None
+        app.logger.debug(user_info_id)
+
+        if request.method == "OPTIONS":
+            response = app.make_default_options_response()
+            response.headers.add("Access-Control-Allow-Origin", "http://localhost:8081")
+            response.headers.add("Access-Control-Allow-Credentials", "true")
+            response.headers.add("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+            response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+            return response
         
 
-        if request.method == "GET":
+        elif request.method == "GET":
             if user_id:
-                user_id = user_id['UserID']
-                cursor.execute("SELECT BodyTypeID FROM SurveyInfo WHERE UserID = %s;", (user_id,))
+                cursor.execute("SELECT BodyTypeID FROM SurveyInfo WHERE UserID = %s;", (user_info_id,))
                 body_type = cursor.fetchone()
 
-                cursor.execute("SELECT FitnessGoalID FROM SurveyInfo WHERE UserID = %s;", (user_id,))
+                cursor.execute("SELECT FitnessGoalID FROM SurveyInfo WHERE UserID = %s;", (user_info_id,))
                 fitness_goal = cursor.fetchone()
 
                 if body_type and fitness_goal:
                     cursor.execute(
                         "SELECT WorkoutName FROM Workouts WHERE BodyTypeID = %s AND FitnessGoalID = %s;",
-                        (body_type['BodyTypeID'], fitness_goal['FitnessGoalID'])
+                        (body_type[0], fitness_goal[0])
                     )
                     workouts = cursor.fetchall()
+                    app.logger.debug(workouts)
                     return jsonify(workouts), 200
                 else:
                     return jsonify({"error": "Body type or fitness goal not found"}), 404
@@ -626,7 +643,6 @@ def get_workouts(username):
         
         elif request.method == "POST":
             if user_id:
-                user_id = user_id['UserID']
                 cursor.execute("SELECT WorkoutsCompleted FROM UserInfo WHERE UserID = %s;", (user_id,))
                 num_complete = cursor.fetchone()
 
