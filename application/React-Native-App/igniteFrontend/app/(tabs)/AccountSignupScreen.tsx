@@ -7,6 +7,7 @@ import { ScrollView } from 'react-native';
 interface SignUpProps {
   navigation: NavigationProp<any>;
 }
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const AccountSignUpScreen: React.FC<SignUpProps> = ({ navigation }) => {
   const [Username, setUsername] = useState('');
@@ -51,8 +52,10 @@ const AccountSignUpScreen: React.FC<SignUpProps> = ({ navigation }) => {
 
       if (response.ok) {
         const data = await response.json();
+        await AsyncStorage.setItem('Username', Username);
         if (data.success) {
           alert('Account created successfully');
+          
             navigation.navigate('FitnessSurveyScreen', {Username});
             console.log(`Account created successfully. Username: ${Username}`);
         } else {
