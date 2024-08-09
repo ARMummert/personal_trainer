@@ -56,22 +56,21 @@ const DailyWorkoutScreen: React.FC<DailyWorkoutprops> = ({ navigation }) => {
       </LinearGradient>
       <Text style={styles.welcomeText}>Welcome, {Username}</Text>
       <Text style={styles.descriptionText}>
-       Enjoy Today's Workout!{'\n'}{'\n'}
+       Enjoy Your Workout!{'\n'}{'\n'}
       </Text>
+      <View style={styles.cardcontainer}>
       <FlatList
         data={Workouts}
         keyExtractor={(item) => item._id}
         renderItem={({ item }) => (
           <TouchableOpacity
             style={styles.workoutCard}
-            onPress={() => {
-              navigation.navigate('WorkoutDetails', { workoutId: item._id });
-            }}
           >
             <Text style={styles.workoutName}>{item.name}</Text>
           </TouchableOpacity>
         )}
       />
+      </View>
     </View>
     </ScrollView>
   );
@@ -90,6 +89,12 @@ const styles = StyleSheet.create({
     padding: 20,
     marginVertical: 10,
     borderRadius: 5,
+  },
+  cardcontainer: {
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 20,
   },
   cardText: {
     fontSize: 20,
@@ -113,11 +118,14 @@ const styles = StyleSheet.create({
     padding: 20,
     marginVertical: 10,
     borderRadius: 5,
+    width: '90%',
+    height: '90%',
   },
   workoutName: {
     fontSize: 20,
     fontWeight: 'bold',
     fontFamily: 'Alkatra-VariableFront_wght',
+    color: 'black',
   },
 
   descriptionText: {

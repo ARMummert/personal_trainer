@@ -554,6 +554,7 @@ def submit_survey(username):
                         (gender_id, fitness_goal_id, body_type_id, fitness_level_id, activity_level_id, survey_id)
                     )
                     app.logger.debug("Updated survey info for user ID: %s", user_id)
+                    cursor.fetchall()
             else:
                 raise ValueError("User ID not found for the given username.")
                         
