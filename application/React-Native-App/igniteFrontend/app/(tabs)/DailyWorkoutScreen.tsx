@@ -11,12 +11,10 @@ interface DailyWorkoutprops {
 }
 const DailyWorkoutScreen: React.FC<DailyWorkoutprops> = ({ navigation }) => {
     const [Username, setUserName] = useState('');
-    interface Workout {
-      _id: string;
-      name: string;
-    }
+    const [Workouts, setWorkouts] = useState('');
+    const [WorkoutID, setWorkoutID] = useState('');
+    const [WorkoutName, setWorkoutName] = useState('');
     
-    const [Workouts, setWorkouts] = useState<Workout[]>([]);
 
     const getWorkouts = async () => {
     try {
@@ -37,6 +35,12 @@ const DailyWorkoutScreen: React.FC<DailyWorkoutprops> = ({ navigation }) => {
       }
       const data = await response.json();
       setWorkouts(data);
+      setWorkoutID(data.WorkoutID);
+      setWorkoutName(data.WorkoutName);
+      console.log('Fetched workouts:', data);
+      console.log('WorkoutID:', WorkoutID);
+      console.log('WorkoutName:', WorkoutName);
+
     } catch (error) {
       console.error('Error fetching workouts:', error);
     }
@@ -46,32 +50,17 @@ const DailyWorkoutScreen: React.FC<DailyWorkoutprops> = ({ navigation }) => {
   }, []);
 
   return (
-    <ScrollView>
-    <View style={styles.container}>
-      <Image source={require('../../assets/images/fitappimage.jpg')} style={styles.headerImage} resizeMode="cover"  />
-      <LinearGradient style={styles.gradient} colors={['#F83600', '#FE8C00']}>
-        <Text style={[styles.welcomeText, { display: 'flex', fontFamily: 'AguafinaScript-Regular', fontSize: 55 }]}>
-          <Text style={styles.paragraphText}>Get</Text> <Text>Fit</Text>, <Text style={styles.paragraphText}>Feel</Text> <Text>Fierce</Text>
+    <ScrollView style={{ flex: 1, backgroundColor: 'black'}}>
+      <View style={styles.container}>
+        <Text style={styles.welcomeHeader}>Daily Workout</Text>
+        <Text style={styles.welcomeText}>Welcome, {Username}</Text>
+        <Text style={styles.descriptionText}>
+          Enjoy Your Workout!{'\n'}{'\n'}
         </Text>
-      </LinearGradient>
-      <Text style={styles.welcomeText}>Welcome, {Username}</Text>
-      <Text style={styles.descriptionText}>
-       Enjoy Your Workout!{'\n'}{'\n'}
-      </Text>
-      <View style={styles.cardcontainer}>
-      <FlatList
-        data={Workouts}
-        keyExtractor={(item) => item._id}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={styles.workoutCard}
-          >
-            <Text style={styles.workoutName}>{item.name}</Text>
-          </TouchableOpacity>
-        )}
-      />
+        <View style={styles.cardcontainer}>
+         <Text style={styles.workoutName}>{Workouts}</Text>
+        </View>
       </View>
-    </View>
     </ScrollView>
   );
 };
@@ -82,39 +71,41 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'black',
-  },
- 
-  card: {
-    backgroundColor: 'white',
-    padding: 20,
-    marginVertical: 10,
-    borderRadius: 5,
+    color: 'white',
+    marginBottom: 50, 
   },
   cardcontainer: {
-    width: '100%',
+    width: '80%',
     alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 20,
+    textAlign: 'center',
+    borderRadius: 5,
+    backgroundColor: 'white',
+    height: 200,
   },
   cardText: {
     fontSize: 20,
-    fontWeight: 'bold',
     fontFamily: 'Alkatra-VariableFront_wght',
-  },
-  headerImage: {
-    width: '100%',
-    height: 200,
+    color: 'black',
   },
   welcomeText: {
     fontSize: 44,
     color: 'white',
+    fontFamily: 'Alkatra-VariableFront_wght',
+    textAlign: 'center',
+    justifyContent: 'center',
+  },
+  welcomeHeader: {
+    fontSize: 50,
+    color: 'white',
     marginTop: 20,
+    marginBottom: 45,
     fontFamily: 'Alkatra-VariableFront_wght',
     textAlign: 'center',
     justifyContent: 'center',
   },
   workoutCard: {
     backgroundColor: 'white',
+    color: 'black',
     padding: 20,
     marginVertical: 10,
     borderRadius: 5,
@@ -126,6 +117,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontFamily: 'Alkatra-VariableFront_wght',
     color: 'black',
+    alignItems: 'center',
+    textAlign: 'center',
+    marginTop: 20,
   },
 
   descriptionText: {
