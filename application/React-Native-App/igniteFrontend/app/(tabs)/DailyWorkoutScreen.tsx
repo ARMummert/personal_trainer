@@ -103,15 +103,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     justifyContent: 'center',
   },
-  workoutCard: {
-    backgroundColor: 'white',
-    color: 'black',
-    padding: 20,
-    marginVertical: 10,
-    borderRadius: 5,
-    width: '90%',
-    height: '90%',
-  },
   workoutName: {
     fontSize: 20,
     fontWeight: 'bold',
@@ -121,7 +112,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 20,
   },
-
   descriptionText: {
     fontSize: 20,
     color: 'white',

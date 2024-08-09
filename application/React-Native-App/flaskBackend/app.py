@@ -635,6 +635,32 @@ def get_workouts(username):
                     )
                     workouts = cursor.fetchall()
                     app.logger.debug(workouts)
+                if workouts:   
+                    # Fetch exercise IDs
+                    cursor.execute("SELECT ExerciseID FROM ExercisesToBodyTypes WHERE BodyTypeID = %s;", (user_info_id,))
+                    exercise_ids_body_type = [row[0] for row in cursor.fetchall()]
+
+                    cursor.execute("SELECT ExerciseID FROM ExercisesToFitnessGoals WHERE FitnessGoalID = %s;", (user_info_id,))
+                    exercise_ids_fitness_goal = [row[0] for row in cursor.fetchall()]
+
+                    # Combine exercise IDs
+                    exercise_ids = list(set(exercise_ids_body_type + exercise_ids_fitness_goal))
+
+                    # Fetch exercises
+                    if exercise_ids:  # Ensure there are exercise IDs to avoid empty IN clause
+                        format_strings = ','.join(['%s'] * len(exercise_ids))
+                        cursor.execute(f"SELECT ExerciseName FROM Exercises WHERE ExerciseID IN ({format_strings})", tuple(exercise_ids))
+                        exercises = [row[0] for row in cursor.fetchall()]
+                    else:
+                        exercises = []
+
+                    # Create response
+                    response = {
+                        "workouts": workouts,
+                        "exercises": exercises
+                    }
+
+                    cursor.close()
                     return jsonify(workouts), 200
                 else:
                     return jsonify({"error": "Body type or fitness goal not found"}), 404
