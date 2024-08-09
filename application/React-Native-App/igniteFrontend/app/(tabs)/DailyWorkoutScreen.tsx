@@ -1,29 +1,27 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, FlatList, ScrollView } from 'react-native';
 import { NavigationProp } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ScrollView } from 'react-native-gesture-handler';
 import { LinearGradient } from 'expo-linear-gradient';
 
 interface DailyWorkoutprops {
   navigation: NavigationProp<any>;
 }
-const DailyWorkoutScreen: React.FC<DailyWorkoutprops> = ({ navigation }) => {
-    const [Username, setUserName] = useState('');
-    const [Workouts, setWorkouts] = useState('');
-    const [WorkoutID, setWorkoutID] = useState('');
-    const [WorkoutName, setWorkoutName] = useState('');
-    
 
-    const getWorkouts = async () => {
+const DailyWorkoutScreen: React.FC<DailyWorkoutprops> = ({ navigation }) => {
+  const [username, setUsername] = useState('');
+  const [workouts, setWorkouts] = useState<string[]>([]);
+  const [exercises, setExercises] = useState<any[]>([]);
+
+  const getWorkouts = async () => {
     try {
       const storedUsername = await AsyncStorage.getItem('Username');
       console.log('Stored username:', storedUsername);
       if (!storedUsername) {
         throw new Error('No username found in storage');
       }
-      setUserName(storedUsername);
+      setUsername(storedUsername);
 
       const response = await fetch(`http://localhost:5000/api/workouts/${storedUsername}`, {
         method: 'GET',
@@ -34,31 +32,57 @@ const DailyWorkoutScreen: React.FC<DailyWorkoutprops> = ({ navigation }) => {
         throw new Error(`Network response was not ok: ${response.status}`);
       }
       const data = await response.json();
-      setWorkouts(data);
-      setWorkoutID(data.WorkoutID);
-      setWorkoutName(data.WorkoutName);
-      console.log('Fetched workouts:', data);
-      console.log('WorkoutID:', WorkoutID);
-      console.log('WorkoutName:', WorkoutName);
-
+      setWorkouts(data.workouts); // Ensure these are lowercase as they match the response structure
+      setExercises(data.exercises); 
+      console.log('Fetched workouts:', data.workouts);
+      console.log('Fetched exercises:', data.exercises);
+      
     } catch (error) {
       console.error('Error fetching workouts:', error);
     }
   };
+
   useEffect(() => {
     getWorkouts();
   }, []);
 
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: 'black'}}>
+    <ScrollView style={{ flex: 1, backgroundColor: 'black' }}>
       <View style={styles.container}>
         <Text style={styles.welcomeHeader}>Daily Workout</Text>
-        <Text style={styles.welcomeText}>Welcome, {Username}</Text>
+        <Text style={styles.welcomeText}>Welcome, {username}</Text>
         <Text style={styles.descriptionText}>
           Enjoy Your Workout!{'\n'}{'\n'}
         </Text>
+
         <View style={styles.cardcontainer}>
-         <Text style={styles.workoutName}>{Workouts}</Text>
+          {/* Render Workout Names */}
+          {workouts.length > 0 ? (
+            workouts.map((workout, index) => (
+              <Text key={index} style={styles.workoutName}>{workout}</Text>
+            ))
+          ) : (
+            <Text style={styles.workoutName}>No Workouts Found</Text>
+          )}
+
+          {/* Render Exercises */}
+          {exercises.length > 0 ? (
+            exercises.map((exercise, index) => (
+              <View key={index} style={styles.exerciseContainer}>
+                <Text style={styles.exerciseName}>{exercise.ExerciseName}</Text>
+                <Text style={styles.paragraphText}>Sets: {exercise.Sets}</Text>
+                <Text style={styles.paragraphText}>Reps: {exercise.Reps}</Text>
+                <Text style={styles.paragraphText}>{exercise.ExerciseDescription}</Text>
+              </View>
+            ))
+          ) : (
+            <Text style={styles.paragraphText}>No Exercises Found</Text>
+          )}
+
+          <LinearGradient
+            colors={['#4c669f', '#3b5998', '#192f6a']}
+            style={styles.gradient}
+          />
         </View>
       </View>
     </ScrollView>
@@ -127,10 +151,27 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     marginRight: 10,
     marginTop: 10,
+    color: 'black',
   },
   gradient: {
     width: '100%',
     marginBottom: 15,
+  },
+  exerciseContainer: {
+    width: '100%',
+    padding: 20,
+    marginVertical: 10,
+    borderRadius: 5,
+    backgroundColor: 'white',
+  },
+  exerciseName: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    fontFamily: 'Alkatra-VariableFront_wght',
+    color: 'black',
+    alignItems: 'center',
+    textAlign: 'center',
+    marginTop: 20,
   },
  
 });
