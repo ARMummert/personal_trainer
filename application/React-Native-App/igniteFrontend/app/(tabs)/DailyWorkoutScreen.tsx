@@ -32,10 +32,7 @@ const DailyWorkoutScreen: React.FC<DailyWorkoutprops> = ({ navigation }) => {
         throw new Error(`Network response was not ok: ${response.status}`);
       }
       const data = await response.json();
-      setWorkouts(data.workouts); // Ensure these are lowercase as they match the response structure
-      setExercises(data.exercises); 
-      console.log('Fetched workouts:', data.workouts);
-      console.log('Fetched exercises:', data.exercises);
+      setWorkouts(data); // Ensure these are lowercase as they match the response structure
       
     } catch (error) {
       console.error('Error fetching workouts:', error);
@@ -56,28 +53,9 @@ const DailyWorkoutScreen: React.FC<DailyWorkoutprops> = ({ navigation }) => {
         </Text>
 
         <View style={styles.cardcontainer}>
-          {/* Render Workout Names */}
-          {workouts.length > 0 ? (
-            workouts.map((workout, index) => (
-              <Text key={index} style={styles.workoutName}>{workout}</Text>
-            ))
-          ) : (
-            <Text style={styles.workoutName}>No Workouts Found</Text>
-          )}
-
-          {/* Render Exercises */}
-          {exercises.length > 0 ? (
-            exercises.map((exercise, index) => (
-              <View key={index} style={styles.exerciseContainer}>
-                <Text style={styles.exerciseName}>{exercise.ExerciseName}</Text>
-                <Text style={styles.paragraphText}>Sets: {exercise.Sets}</Text>
-                <Text style={styles.paragraphText}>Reps: {exercise.Reps}</Text>
-                <Text style={styles.paragraphText}>{exercise.ExerciseDescription}</Text>
-              </View>
-            ))
-          ) : (
-            <Text style={styles.paragraphText}>No Exercises Found</Text>
-          )}
+          
+            <Text style={styles.workoutName}> {workouts}</Text>
+         
 
           <LinearGradient
             colors={['#4c669f', '#3b5998', '#192f6a']}

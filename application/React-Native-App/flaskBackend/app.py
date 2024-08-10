@@ -544,7 +544,8 @@ def submit_survey(username):
                         (user_info_id, gender_id, fitness_goal_id, body_type_id, fitness_level_id, activity_level_id)
                     )
                     app.logger.debug("Inserted new survey info for user ID: %s", user_id)
-
+                    
+                    cursor.execute("UPDATE UserInfo SET SurveyID = %s WHERE UserInfoID = %s", (survey_id, user_info_id))
                     
                 else: 
                     # Update existing survey info
@@ -588,10 +589,7 @@ def submit_survey(username):
 
         except mysql.connector.Error as err:
             return jsonify({"success": False, "error": str(err)}), 500
-    
-
-
-
+        
 @app.route('/api/workouts/<username>', methods=['GET', 'POST', 'OPTIONS'])
 @cross_origin(origin='http://localhost:8081', supports_credentials=True)
 def get_workouts(username):
@@ -603,12 +601,15 @@ def get_workouts(username):
         cursor.execute("SELECT UserID FROM UserLogins WHERE Username = %s;", (username,))
         user_id_row = cursor.fetchone()
         user_id = user_id_row[0] if user_id_row else None
+        app.logger.debug(f"User ID: {user_id}")
+        
 
         # Fetch the UserInfoID
         cursor.execute("SELECT UserInfoID FROM UserInfo WHERE UserID = %s;", (user_id,))
         user_info_id_row = cursor.fetchone()
         user_info_id = user_info_id_row[0] if user_info_id_row else None
-
+        app.logger.debug(f"User Info ID: {user_info_id}")
+        
         if request.method == "OPTIONS":
             response = app.make_default_options_response()
             response.headers.add("Access-Control-Allow-Origin", "http://localhost:8081")
@@ -620,49 +621,34 @@ def get_workouts(username):
         elif request.method == "GET":
             if user_info_id:
                 # Fetch BodyTypeID and FitnessGoalID from SurveyInfo
-                cursor.execute("SELECT BodyTypeID, FitnessGoalID FROM SurveyInfo WHERE UserID = %s;", (user_info_id,))
-                survey_info = cursor.fetchone()
-
-                if survey_info:
-                    body_type_id, fitness_goal_id = survey_info
-
-                    # Fetch workouts based on BodyTypeID and FitnessGoalID
+                cursor.execute("SELECT SurveyID FROM UserInfo WHERE UserID = %s;", (user_id,))
+                survey_id_row = cursor.fetchone()
+                survey_id = survey_id_row[0] if survey_id_row else None
+                app.logger.debug(f"Survey ID: {survey_id}")
+                if survey_id:
                     cursor.execute(
-                        "SELECT WorkoutID, WorkoutName FROM Workouts WHERE BodyTypeID = %s AND FitnessGoalID = %s;",
-                        (body_type_id, fitness_goal_id)
+                        "SELECT BodyTypeID, FitnessGoalID FROM SurveyInfo WHERE SurveyID = %s;", (survey_id,)
                     )
-                    workouts = cursor.fetchall()
-                    
-                    response = {
-                        "workouts": [],
-                        "exercises": []
-                    }
-                    for workout in workouts:
-                        workout_id, workout_name = workout
-                        response["workouts"].append(workout_name)
-                    # Fetch exercises associated with the selected BodyTypeID and FitnessGoalID
-                    cursor.execute(
-                            "SELECT e.ExerciseName, e.Sets, e.Reps, e.ExerciseDescription FROM Exercises e "
-                            "JOIN WorkoutsToExercises wte ON e.ExerciseID = wte.ExerciseID "
-                            "WHERE wte.WorkoutID = %s;",
-                            (workout_id,)
-                        )
-                    exercises = cursor.fetchall()
+                    survey_info_row = cursor.fetchone()
 
-                    for exercise in exercises:
-                            response["exercises"].append({
-                                "workout": workout_name,
-                                "exerciseName": exercise[0],
-                                "sets": exercise[1],
-                                "reps": exercise[2],
-                                "description": exercise[3]
-                            })
+                    if survey_info_row:
+                        body_type_id = survey_info_row[0]
+                        fitness_goal_id = survey_info_row[1]
+
+                        # Fetch workouts based on BodyTypeID and FitnessGoalID
+                        cursor.execute(
+                            "SELECT * FROM Workouts WHERE BodyTypeID = %s AND FitnessGoalID = %s;", (body_type_id, fitness_goal_id)
+                        )
+                        workouts = cursor.fetchall()
+                        app.logger.debug(f"Workouts: {workouts}")
+                        return jsonify(workouts), 200
+                    else:
+                        return jsonify({"error": "Survey info not found"}), 404
+                    
                 else:
-                    response = {"workouts": [], "exercises": []}
+                    return jsonify({"error": "Survey ID not found"}), 404
             else:
-                response = {"error": "User not found"}, 404
-            
-            return jsonify(response), 200
+                return jsonify({"error": "User info not found"}), 404
         
         elif request.method == "POST":
             if user_id:
@@ -691,6 +677,7 @@ def get_workouts(username):
             cursor.close()
         if conn:
             conn.close()
+
 
 @app.route('/api/logout', methods=['POST'])
 @cross_origin(origin='http://localhost:8081', supports_credentials=True)  # Ensure correct origin
