@@ -12,6 +12,7 @@ interface DailyWorkoutprops {
 const DailyWorkoutScreen: React.FC<DailyWorkoutprops> = ({ navigation }) => {
   const [username, setUsername] = useState('');
   interface Workout {
+    Exercises: any[];
     WorkoutName: string;
     Description: string;
     Sets: number;
@@ -22,6 +23,7 @@ const DailyWorkoutScreen: React.FC<DailyWorkoutprops> = ({ navigation }) => {
   const [workouts, setWorkouts] = useState<Workout[]>([]);
   const [exercises, setExercises] = useState<any[]>([]);
   const [workoutName, setWorkoutName] = useState('');
+
   const getWorkouts = async () => {
     try {
       const storedUsername = await AsyncStorage.getItem('Username');
@@ -42,6 +44,8 @@ const DailyWorkoutScreen: React.FC<DailyWorkoutprops> = ({ navigation }) => {
       const data = await response.json();
       setWorkouts(data); // Ensure these are lowercase as they match the response structure
       setWorkoutName(data.workoutName);
+      setExercises(data.exercises);
+      setExercises(data.exerciseName);
       console.log('Fetched workouts:', data.workouts);
       
       
@@ -64,29 +68,41 @@ const DailyWorkoutScreen: React.FC<DailyWorkoutprops> = ({ navigation }) => {
         </Text>
 
         <View style={styles.cardcontainer}>
-          {/* Render Workout Names */}  
-          {workouts.length > 0 ? (
-            workouts.map((workout, index) => (
-              <View key={index}>
-              <Text key={index}>{workout.WorkoutName}</Text>
-              <Text>{workout.Description}</Text>
-              <Text>
-                Sets: {workout.Sets} | Reps: {workout.Reps}
-              </Text>
-              <Text>
-                Duration: {workout.Duration} mins
-              </Text>
-              </View>
-            ))
-          ) : (
-            <Text style={styles.workoutName}>No Workouts Found</Text>
-          )}
+  {/* Render Workout Names */}
+  {workouts.length > 0 ? (
+    workouts.map((workout, index) => (
+      <View key={index}>
+        <Text style={styles.workoutName}>{workout.WorkoutName}</Text>
+        <Text>{workout.Description}</Text>  
+        <Text>
+          Duration: {workout.Duration} mins
+        </Text>
 
-          <LinearGradient
-            colors={['#4c669f', '#3b5998', '#192f6a']}
-            style={styles.gradient}
-          />
-        </View>
+        {/* Render Exercises for each Workout */}
+        {workout.Exercises && workout.Exercises.length > 0 ? (
+          workout.Exercises.map((exercise: any, exIndex) => (
+            <View key={exIndex} style={styles.exerciseContainer}>
+              <Text style={styles.exerciseName}>{exercise.ExerciseName}</Text>
+              <Text>
+                Sets: {exercise.Sets} | Reps: {exercise.Reps}
+              </Text>
+              <Text>{exercise.Description}</Text>
+            </View>
+          ))
+        ) : (
+          <Text style={styles.noExercises}>No Exercises Found</Text>
+        )}
+      </View>
+    ))
+  ) : (
+    <Text style={styles.workoutName}>No Workouts Found</Text>
+  )}
+
+  <LinearGradient
+    colors={['#4c669f', '#3b5998', '#192f6a']}
+    style={styles.gradient}
+  />
+</View>
       </View>
     </ScrollView>
   );
@@ -170,6 +186,14 @@ const styles = StyleSheet.create({
   exerciseName: {
     fontSize: 20,
     fontWeight: 'bold',
+    fontFamily: 'Alkatra-VariableFront_wght',
+    color: 'black',
+    alignItems: 'center',
+    textAlign: 'center',
+    marginTop: 20,
+  },
+  noExercises: {
+    fontSize: 20,
     fontFamily: 'Alkatra-VariableFront_wght',
     color: 'black',
     alignItems: 'center',
