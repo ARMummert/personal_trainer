@@ -627,21 +627,51 @@ def get_workouts(username):
                 app.logger.debug(f"Survey ID: {survey_id}")
                 if survey_id:
                     cursor.execute(
-                        "SELECT BodyTypeID, FitnessGoalID FROM SurveyInfo WHERE SurveyID = %s;", (survey_id,)
-                    )
+                """
+                SELECT 
+                    BodyTypes.BodyTypeName, 
+                    FitnessGoals.FitnessGoalName 
+                FROM 
+                    SurveyInfo 
+                JOIN 
+                    BodyTypes ON SurveyInfo.BodyTypeID = BodyTypes.BodyTypeID 
+                JOIN 
+                    FitnessGoals ON SurveyInfo.FitnessGoalID = FitnessGoals.FitnessGoalID 
+                WHERE 
+                    SurveyInfo.SurveyID = %s;
+                """, 
+                (survey_id,)
+                )
                     survey_info_row = cursor.fetchone()
 
                     if survey_info_row:
-                        body_type_id = survey_info_row[0]
-                        fitness_goal_id = survey_info_row[1]
+                        body_type_name = survey_info_row[0]
+                        fitness_goal_name = survey_info_row[1]
 
                         # Fetch workouts based on BodyTypeID and FitnessGoalID
                         cursor.execute(
-                            "SELECT * FROM Workouts WHERE BodyTypeID = %s AND FitnessGoalID = %s;", (body_type_id, fitness_goal_id)
+                         """
+                        SELECT 
+                            Workouts.WorkoutName 
+                        FROM 
+                            Workouts 
+                        JOIN 
+                            BodyTypes ON Workouts.BodyTypeID = BodyTypes.BodyTypeID 
+                        JOIN 
+                            FitnessGoals ON Workouts.FitnessGoalID = FitnessGoals.FitnessGoalID 
+                        WHERE 
+                            BodyTypes.BodyTypeName = %s AND FitnessGoals.FitnessGoalName = %s;
+                        """, 
+                        (body_type_name, fitness_goal_name)
                         )
                         workouts = cursor.fetchall()
                         app.logger.debug(f"Workouts: {workouts}")
-                        return jsonify(workouts), 200
+                         # Create response with only workout names
+                        workout_names = [workout[0] for workout in workouts]
+                        response = jsonify(workout_names)
+            
+                        
+                        return jsonify(workout_names), 200
                     else:
                         return jsonify({"error": "Survey info not found"}), 404
                     
