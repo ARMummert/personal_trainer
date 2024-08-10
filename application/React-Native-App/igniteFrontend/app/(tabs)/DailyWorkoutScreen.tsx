@@ -62,46 +62,39 @@ const DailyWorkoutScreen: React.FC<DailyWorkoutprops> = ({ navigation }) => {
     <ScrollView style={{ flex: 1, backgroundColor: 'black' }}>
       <View style={styles.container}>
         <Text style={styles.welcomeHeader}>Daily Workout</Text>
-        <Text style={styles.welcomeText}>Welcome, {username}</Text>
-        <Text style={styles.descriptionText}>
-          Enjoy Your Workout!{'\n'}{'\n'}
-        </Text>
-
-        <View style={styles.cardcontainer}>
-  {/* Render Workout Names */}
-  {workouts.length > 0 ? (
-    workouts.map((workout, index) => (
+        <Text style={styles.welcomeText}>Enjoy Your Workout, {username}!</Text>
+      <View style={styles.cardcontainer}>
+      {/* Render Workout Names */}
+      {workouts.length > 0 ? (
+      workouts.map((workout, index) => (
       <View key={index}>
+        <LinearGradient style={styles.gradient} colors={['#F83600', '#FE8C00']}>
         <Text style={styles.workoutName}>{workout.WorkoutName}</Text>
-        <Text>{workout.Description}</Text>  
-        <Text>
+        </LinearGradient>
+        <Text style={styles.workoutDescription}>{workout.Description}</Text>  
+        <Text style={styles.workoutDescription}>
           Duration: {workout.Duration} mins
         </Text>
-
         {/* Render Exercises for each Workout */}
         {workout.Exercises && workout.Exercises.length > 0 ? (
           workout.Exercises.map((exercise: any, exIndex) => (
             <View key={exIndex} style={styles.exerciseContainer}>
-              <Text style={styles.exerciseName}>{exercise.ExerciseName}</Text>
-              <Text>
+              <Text style={styles.workoutDescription}>{exercise.ExerciseName}</Text>
+              <Text style={styles.workoutDescription}>
                 Sets: {exercise.Sets} | Reps: {exercise.Reps}
               </Text>
-              <Text>{exercise.Description}</Text>
+              <Text style={styles.exerciseDescription}>{exercise.Description}</Text>
             </View>
           ))
         ) : (
           <Text style={styles.noExercises}>No Exercises Found</Text>
         )}
       </View>
-    ))
-  ) : (
-    <Text style={styles.workoutName}>No Workouts Found</Text>
-  )}
+      ))
+    ) : (
+      <Text style={styles.workoutName}>No Workouts Found</Text>
+    )}
 
-  <LinearGradient
-    colors={['#4c669f', '#3b5998', '#192f6a']}
-    style={styles.gradient}
-  />
 </View>
       </View>
     </ScrollView>
@@ -121,12 +114,11 @@ const styles = StyleSheet.create({
     width: '80%',
     alignItems: 'center',
     textAlign: 'center',
-    borderRadius: 5,
+    borderRadius: 15,
     backgroundColor: 'white',
-    height: 200,
   },
   cardText: {
-    fontSize: 20,
+    fontSize: 24,
     fontFamily: 'Alkatra-VariableFront_wght',
     color: 'black',
   },
@@ -136,6 +128,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Alkatra-VariableFront_wght',
     textAlign: 'center',
     justifyContent: 'center',
+    marginBottom: 20,
   },
   welcomeHeader: {
     fontSize: 50,
@@ -147,13 +140,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   workoutName: {
-    fontSize: 20,
+    fontSize: 44,
     fontWeight: 'bold',
-    fontFamily: 'Alkatra-VariableFront_wght',
+    fontFamily: 'AguafinaScript-Regular',
     color: 'black',
     alignItems: 'center',
     textAlign: 'center',
     marginTop: 20,
+    marginBottom: 20,
   },
   descriptionText: {
     fontSize: 20,
@@ -175,6 +169,8 @@ const styles = StyleSheet.create({
   gradient: {
     width: '100%',
     marginBottom: 15,
+    borderTopLeftRadius: 15,
+    borderTopRightRadius: 15,
   },
   exerciseContainer: {
     width: '100%',
@@ -200,6 +196,24 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 20,
   },
- 
+  workoutDescription: {
+    fontSize: 24,
+    fontFamily: 'Alkatra-VariableFront_wght',
+    color: 'black',
+    alignItems: 'center',
+    textAlign: 'center',
+    marginBottom: 20,
+    fontWeight: 'bold',
+    marginLeft: 20,
+    marginRight: 20,
+  },
+  exerciseDescription: {
+    fontSize: 24,
+    fontFamily: 'Alkatra-VariableFront_wght',
+    color: 'black',
+    alignItems: 'center',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
 });
 export default DailyWorkoutScreen;
