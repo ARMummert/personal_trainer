@@ -13,7 +13,7 @@ const DailyWorkoutScreen: React.FC<DailyWorkoutprops> = ({ navigation }) => {
   const [username, setUsername] = useState('');
   const [workouts, setWorkouts] = useState<string[]>([]);
   const [exercises, setExercises] = useState<any[]>([]);
-
+  const [workoutName, setWorkoutName] = useState('');
   const getWorkouts = async () => {
     try {
       const storedUsername = await AsyncStorage.getItem('Username');
@@ -33,6 +33,9 @@ const DailyWorkoutScreen: React.FC<DailyWorkoutprops> = ({ navigation }) => {
       }
       const data = await response.json();
       setWorkouts(data); // Ensure these are lowercase as they match the response structure
+      setWorkoutName(data.workoutName);
+      console.log('Fetched workouts:', data.workouts);
+      
       
     } catch (error) {
       console.error('Error fetching workouts:', error);
@@ -53,9 +56,15 @@ const DailyWorkoutScreen: React.FC<DailyWorkoutprops> = ({ navigation }) => {
         </Text>
 
         <View style={styles.cardcontainer}>
-          
-            <Text style={styles.workoutName}> {workouts}</Text>
-         
+          {/* Render Workout Names */}
+          {workouts.length > 0 ? (
+            workouts.map((workout, index) => (
+              <Text key={index} style={styles.workoutName}>{workout}</Text>
+            
+            ))
+          ) : (
+            <Text style={styles.workoutName}>No Workouts Found</Text>
+          )}
 
           <LinearGradient
             colors={['#4c669f', '#3b5998', '#192f6a']}
