@@ -600,16 +600,21 @@ def get_workouts(username):
         # Fetch the UserID
         cursor.execute("SELECT UserID FROM UserLogins WHERE Username = %s;", (username,))
         user_id_row = cursor.fetchone()
-        user_id = user_id_row[0] if user_id_row else None
+        if not user_id_row:
+            app.logger.error(f"User '{username}' not found.")
+            return jsonify({"error": "User not found"}), 404
+        user_id = user_id_row[0]
         app.logger.debug(f"User ID: {user_id}")
-        
 
         # Fetch the UserInfoID
         cursor.execute("SELECT UserInfoID FROM UserInfo WHERE UserID = %s;", (user_id,))
         user_info_id_row = cursor.fetchone()
-        user_info_id = user_info_id_row[0] if user_info_id_row else None
+        if not user_info_id_row:
+            app.logger.error(f"User info for UserID '{user_id}' not found.")
+            return jsonify({"error": "User info not found"}), 404
+        user_info_id = user_info_id_row[0]
         app.logger.debug(f"User Info ID: {user_info_id}")
-        
+
         if request.method == "OPTIONS":
             response = app.make_default_options_response()
             response.headers.add("Access-Control-Allow-Origin", "http://localhost:8081")
@@ -617,16 +622,19 @@ def get_workouts(username):
             response.headers.add("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
             response.headers.add("Access-Control-Allow-Headers", "Content-Type")
             return response
-        
+
         elif request.method == "GET":
-            if user_info_id:
-                # Fetch BodyTypeID and FitnessGoalID from SurveyInfo
-                cursor.execute("SELECT SurveyID FROM UserInfo WHERE UserID = %s;", (user_id,))
-                survey_id_row = cursor.fetchone()
-                survey_id = survey_id_row[0] if survey_id_row else None
-                app.logger.debug(f"Survey ID: {survey_id}")
-                if survey_id:
-                    cursor.execute(
+            # Fetch SurveyID
+            cursor.execute("SELECT SurveyID FROM UserInfo WHERE UserID = %s;", (user_id,))
+            survey_id_row = cursor.fetchone()
+            if not survey_id_row:
+                app.logger.error(f"Survey ID for UserID '{user_id}' not found.")
+                return jsonify({"error": "Survey ID not found"}), 404
+            survey_id = survey_id_row[0]
+            app.logger.debug(f"Survey ID: {survey_id}")
+
+            # Fetch BodyTypeID and FitnessGoalID from SurveyInfo
+            cursor.execute(
                 """
                 SELECT 
                     BodyTypes.BodyTypeName, 
@@ -639,75 +647,111 @@ def get_workouts(username):
                     FitnessGoals ON SurveyInfo.FitnessGoalID = FitnessGoals.FitnessGoalID 
                 WHERE 
                     SurveyInfo.SurveyID = %s;
-                """, 
+                """,
                 (survey_id,)
+            )
+            survey_info_row = cursor.fetchone()
+            if not survey_info_row:
+                app.logger.error(f"Survey info for SurveyID '{survey_id}' not found.")
+                return jsonify({"error": "Survey info not found"}), 404
+            body_type_name = survey_info_row[0]
+            fitness_goal_name = survey_info_row[1]
+            app.logger.debug(f"BodyType: {body_type_name}, FitnessGoal: {fitness_goal_name}")
+
+            # Fetch full workout details based on BodyTypeID and FitnessGoalID
+            cursor.execute(
+                """
+                SELECT 
+                    Workouts.WorkoutID,
+                    Workouts.WorkoutName,
+                    Workouts.WorkoutDescription,
+                    Workouts.WorkoutSets,
+                    Workouts.WorkoutReps,
+                    Workouts.WorkoutDuration
+                FROM 
+                    Workouts 
+                JOIN 
+                    BodyTypes ON Workouts.BodyTypeID = BodyTypes.BodyTypeID 
+                JOIN 
+                    FitnessGoals ON Workouts.FitnessGoalID = FitnessGoals.FitnessGoalID 
+                WHERE 
+                    BodyTypes.BodyTypeName = %s AND FitnessGoals.FitnessGoalName = %s;
+                """,
+                (body_type_name, fitness_goal_name)
+            )
+            workouts = cursor.fetchall()
+            if not workouts:
+                app.logger.error(f"No workouts found for BodyType '{body_type_name}' and FitnessGoal '{fitness_goal_name}'.")
+                return jsonify({"error": "No workouts found"}), 404
+            app.logger.debug(f"Workouts: {workouts}")
+
+            workout_details = []
+            for workout in workouts:
+                workout_id = workout[0]
+                workout_detail = {
+                    "WorkoutID": workout[0],
+                    "WorkoutName": workout[1],
+                    "Description": workout[2],
+                    "Sets": workout[3],
+                    "Reps": workout[4],
+                    "Duration": workout[5],
+                }
+
+                # Fetch exercises for each workout
+                cursor.execute(
+                    """
+                    SELECT 
+                        Exercises.ExerciseID,
+                        Exercises.ExerciseName,
+                        Exercises.Sets,
+                        Exercises.Reps,
+                        Exercises.ExerciseDescription
+                    FROM 
+                        Exercises
+                    JOIN 
+                        WorkoutsExercises ON Exercises.ExerciseID = WorkoutsExercises.ExerciseID
+                    WHERE 
+                        WorkoutsExercises.WorkoutID = %s
+                    LIMIT 5;
+                    """,
+                    (workout_id,)
                 )
-                    survey_info_row = cursor.fetchone()
-
-                    if survey_info_row:
-                        body_type_name = survey_info_row[0]
-                        fitness_goal_name = survey_info_row[1]
-
-                        # Fetch full workout details based on BodyTypeID and FitnessGoalID
-                        cursor.execute(
-                        """
-                            SELECT 
-                                Workouts.WorkoutName,
-                                Workouts.WorkoutDescription,
-                                Workouts.WorkoutSets,
-                                Workouts.WorkoutReps,
-                                Workouts.WorkoutDuration
-                            FROM 
-                                Workouts 
-                            JOIN 
-                                BodyTypes ON Workouts.BodyTypeID = BodyTypes.BodyTypeID 
-                            JOIN 
-                                FitnessGoals ON Workouts.FitnessGoalID = FitnessGoals.FitnessGoalID 
-                            WHERE 
-                                BodyTypes.BodyTypeName = %s AND FitnessGoals.FitnessGoalName = %s;
-                            """, 
-                            (body_type_name, fitness_goal_name)
-                    )
-                        workouts = cursor.fetchall()
-                        app.logger.debug(f"Workouts: {workouts}")
-                          # Create response with full workout details
-                        workout_details = [
-                        {
-                        "WorkoutID": workout[0],
-                        "WorkoutName": workout[1],
-                        "Description": workout[2],
-                        "Duration": workout[3],
-                        "Intensity": workout[4]
-                        }
-                        for workout in workouts
-                        ]
-                       
-                        return jsonify(workout_details), 200
-                    else:
-                        return jsonify({"error": "Survey info not found"}), 404
-                    
+                exercises = cursor.fetchall()
+                if not exercises:
+                    app.logger.debug(f"No exercises found for WorkoutID '{workout_id}'.")
                 else:
-                    return jsonify({"error": "Survey ID not found"}), 404
+                    app.logger.debug(f"Exercises for Workout {workout_id}: {exercises}")
+
+                exercise_details = [
+                    {
+                        "ExerciseID": exercise[0],
+                        "ExerciseName": exercise[1],
+                        "Sets": exercise[2],
+                        "Reps": exercise[3],
+                        "Description": exercise[4],
+                    }
+                    for exercise in exercises
+                ]
+
+                # Combine workout and exercise details
+                workout_detail["Exercises"] = exercise_details
+                workout_details.append(workout_detail)
+
+            return jsonify(workout_details), 200
+
+        elif request.method == "POST":
+            cursor.execute("SELECT WorkoutsCompleted FROM UserInfo WHERE UserID = %s;", (user_id,))
+            num_complete = cursor.fetchone()
+
+            if num_complete:
+                num_complete = num_complete[0] + 1
+
+                cursor.execute("UPDATE UserInfo SET WorkoutsCompleted = %s WHERE UserID = %s;", (num_complete, user_id))
+                conn.commit()
+
+                return jsonify({"message": "Workouts completed updated successfully"}), 200
             else:
                 return jsonify({"error": "User info not found"}), 404
-        
-        elif request.method == "POST":
-            if user_id:
-                cursor.execute("SELECT WorkoutsCompleted FROM UserInfo WHERE UserID = %s;", (user_id,))
-                num_complete = cursor.fetchone()
-
-                if num_complete:
-                    num_complete = num_complete[0] + 1
-
-                    cursor.execute("UPDATE UserInfo SET WorkoutsCompleted = %s WHERE UserID = %s;", (num_complete, user_id))
-                    conn.commit()
-
-                    return jsonify({"message": "Workouts completed updated successfully"}), 200
-                else:
-                    return jsonify({"error": "User info not found"}), 404
-
-            else:
-                return jsonify({"error": "User not found"}), 404
 
     except mysql.connector.Error as err:
         app.logger.error(f"Database error: {err}")
@@ -718,6 +762,7 @@ def get_workouts(username):
             cursor.close()
         if conn:
             conn.close()
+
 
 
 @app.route('/api/logout', methods=['POST'])
