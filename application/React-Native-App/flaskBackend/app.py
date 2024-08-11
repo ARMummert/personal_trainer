@@ -736,19 +736,20 @@ def get_workouts(username):
                 # Combine workout and exercise details
                 workout_detail["Exercises"] = exercise_details
                 workout_details.append(workout_detail)
-
+                
             return jsonify(workout_details), 200
 
         elif request.method == "POST":
-            cursor.execute("SELECT WorkoutsCompleted FROM UserInfo WHERE UserID = %s;", (user_id,))
+            cursor.execute("SELECT WorkoutsCompleted FROM UserLogins WHERE UserID = %s;", (user_id,))
+            app.logger.debug(f"User ID: {user_id}")
             num_complete = cursor.fetchone()
 
             if num_complete:
                 num_complete = num_complete[0] + 1
 
-                cursor.execute("UPDATE UserInfo SET WorkoutsCompleted = %s WHERE UserID = %s;", (num_complete, user_id))
+                cursor.execute("UPDATE UserLogins SET WorkoutsCompleted = %s WHERE UserID = %s;", (num_complete, user_id))
                 conn.commit()
-
+                app.logger.debug(f"Workouts completed updated for user ID: {user_id}")
                 return jsonify({"message": "Workouts completed updated successfully"}), 200
             else:
                 return jsonify({"error": "User info not found"}), 404
@@ -763,6 +764,37 @@ def get_workouts(username):
         if conn:
             conn.close()
 
+@app.route('/api/workouts/<workout_id>/exercises/<exercise_id>', methods=['DELETE', 'OPTIONS'])
+@cross_origin(origin='http://localhost:8081', supports_credentials=True)
+def delete_exercise(workout_id, exercise_id):
+    try:
+        if request.method == 'OPTIONS':
+            response = app.make_default_options_response()
+            response.headers.add("Access-Control-Allow-Origin", "http://localhost:8081")
+            response.headers.add("Access-Control-Allow-Credentials", "true")
+            response.headers.add("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+            response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+            return response
+        
+        if request.method == 'DELETE':
+
+            if not workout_id.isdigit() or not exercise_id.isdigit():
+                return jsonify({"success": False, "error": "Invalid workout_id or exercise_id"}), 400
+
+            conn = mysql.connector.connect(**db_config)
+            cursor = conn.cursor()
+
+            # Delete the exercise
+            cursor.execute("DELETE FROM WorkoutsExercises WHERE ExerciseID = %s;", (exercise_id))
+            conn.commit()
+            app.logger.debug(f"Deleted exercise ID: {exercise_id}")
+
+        conn.close()
+        return jsonify({"success": True}), 200
+
+    except mysql.connector.Error as err:
+        app.logger.error(f"Database error: {err}")
+        return jsonify({"success": False, "error": str(err)}), 500
 
 
 @app.route('/api/logout', methods=['POST'])

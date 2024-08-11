@@ -1,11 +1,10 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, Alert } from 'react-native';
-import { Button } from 'react-native-elements';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { NavigationProp } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ScrollView } from 'react-native-gesture-handler';
-import { LinearGradient } from 'expo-linear-gradient';
+import { Picker } from '@react-native-picker/picker';
+import LinearGradient from 'react-native-linear-gradient';
 
 interface PostWorkoutprops {
   navigation: NavigationProp<any>;
@@ -13,8 +12,7 @@ interface PostWorkoutprops {
 
 const PostWorkoutScreen: React.FC<PostWorkoutprops> = ({ navigation }) => {    
     const [Username, setUserName] = useState('');
-    const [WorkoutIntensity, setWorkoutIntensity] = useState([]);
-    const [WorkoutIntensityLevel, setWorkoutIntensityLevel] = useState('');
+    const [WorkoutIntensityLevel, setWorkoutIntensityLevel] = useState('medium');
 
     const getWorkoutIntensity = async () => {
     try {
@@ -25,39 +23,48 @@ const PostWorkoutScreen: React.FC<PostWorkoutprops> = ({ navigation }) => {
       }
       setUserName(storedUsername);
 
-      const response = await fetch(`http://localhost:5000/api/workouts/${storedUsername}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username: storedUsername, workoutIntensity: 'high' }),
-      });
+      // You can fetch or submit workout intensity here if needed
 
-      if (!response.ok) {
-        throw new Error(`Network response was not ok: ${response.status}`);
-      }
-      const data = await response.json();
-      setWorkoutIntensity(data);
     } catch (error) {
-      console.error('Error fetching workouts:', error);
+      console.error('Error fetching username:', error);
     }
     }
+
     useEffect(() => {
         getWorkoutIntensity();
     }, []);
 
+    const handleSubmit = () => {
+      navigation.reset ({
+        index: 0,
+        routes: [{ name: 'AccountProfileScreen', params: { Username } }],
+      });
+
+      console.log('Workout intensity level submitted:', WorkoutIntensityLevel);
+      alert('Workout intensity level submitted');
+    };
+
     return (
-        <ScrollView>
+        <ScrollView style={{ flex: 1, backgroundColor: 'black' }}>
         <View style={styles.container}>
-            <Image source={require('../../assets/images/fitappimage.jpg')} style={styles.headerImage} resizeMode="cover"  />
-            <LinearGradient style={styles.gradient} colors={['#F83600', '#FE8C00']}>
-            <Text style={[styles.welcomeText, { display: 'flex', fontFamily: 'AguafinaScript-Regular', fontSize: 55 }]}>
-                <Text style={styles.paragraphText}>Get</Text> <Text>Fit</Text>, <Text style={styles.paragraphText}>Feel</Text> <Text>Fierce</Text>
-            </Text>
-            </LinearGradient>
-            <Text style={styles.welcomeText}>Welcome, {Username}</Text>
-        </View>
+            <Text style={styles.welcomeText}>How was your workout, {Username}?</Text>
+            <Picker
+                selectedValue={WorkoutIntensityLevel}
+                style={styles.picker}
+                onValueChange={(itemValue) => setWorkoutIntensityLevel(itemValue)}>
+                <Picker.Item label="Easy" value="easy" />
+                <Picker.Item label="Medium" value="medium" />
+                <Picker.Item label="Hard" value="hard" />
+            </Picker>
+
+            <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+                <Text style={styles.buttonText}>Submit</Text>
+            </TouchableOpacity>
+        </View> 
         </ScrollView>
     );
 }
+
 const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -65,34 +72,37 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       backgroundColor: 'black',
     },
-    headerImage: {
-      width: '100%',
-      height: 200,
-    },
-    gradient: {
-      width: '100%',
-      alignItems: 'center',
-      padding: 10,
-    },
     welcomeText: {
       color: 'white',
+      marginTop: 50,
       fontSize: 30,
-      fontFamily: 'AguafinaScript-Regular',
+      fontFamily: 'Alkatra-VariableFront_wght',
+      textAlign: 'center',
     },
-    paragraphText: {
-      color: '#FE8C00',
-    },
-    workoutCard: {
-      backgroundColor: 'white',
-      padding: 20,
-      marginVertical: 10,
-      borderRadius: 5,
-    },
-    workoutName: {
+    picker: {
+      height: 50,
+      width: 200,
+      color: 'white',
       fontSize: 20,
-      fontWeight: 'bold',
+      marginTop: 20,
+      backgroundColor: '#1e1e1e',
+      borderRadius: 10,
+    },
+    button: {
+      backgroundColor: '#F83600',
+      padding: 10,
+      borderRadius: 5,
+      marginTop: 20,
+    },
+    buttonText: {
+      color: 'white',
+      fontSize: 20,
       fontFamily: 'Alkatra-VariableFront_wght',
     },
-    });
+    gradient: {
+      borderRadius: 10,
+      marginTop: 20,
+    },
+});
 
 export default PostWorkoutScreen;

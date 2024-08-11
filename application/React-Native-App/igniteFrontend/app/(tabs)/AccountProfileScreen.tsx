@@ -5,6 +5,12 @@ import { useState, useEffect } from 'react';
 import { NavigationProp} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+interface User {
+  WorkoutsCompleted?: number; 
+  Username: string;
+  Email: string;
+  Avatar: string;
+}
 interface AccountProfileProps {
   navigation: NavigationProp<any>;
 }
@@ -12,43 +18,55 @@ const AccountProfileScreen: React.FC<AccountProfileProps> = ({ navigation }) => 
   const [Username, setUserName] = useState('');
   const [Email, setEmail] = useState('');
   const [Avatar, setAvatar] = useState('');
-
-  const username = {  // Default user data
-    name: 'Doc Holiday',
-    email: 'DocRocks@example.com',
-    avatar: 'https://placeimg.com/150/150/people', 
-  };
-  const getUserData = async () => {
-    try {
-      const storedUsername = await AsyncStorage.getItem('Username');
-      console.log('Stored username:', storedUsername);
-      if (!storedUsername) {
-        throw new Error('No username found in storage');
-      }
-      setUserName(storedUsername);
-
-      const response = await fetch(`http://localhost:5000/api/user/${storedUsername}`, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-      });
-
-      if (!response.ok) {
-        throw new Error(`Network response was not ok: ${response.status}`);
-      }
-      const fetchedUser = await response.json();
-      setUserName(fetchedUser.Username);
-      console.log('Fetched user:', fetchedUser);
-      setEmail(fetchedUser.Email);
-      setAvatar(fetchedUser.Avatar);
-    } catch (error) {
-      console.error('Error fetching user data:', error);
-    }
-  };
+  const [WorkoutsCompleted, setWorkoutsCompleted] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    getUserData();
+    const fetchData = async () => {
+      const storedUsername = await AsyncStorage.getItem('Username');
+      if (!storedUsername) {
+        console.error('No username found in storage');
+        return;
+      }
+
+      try {
+        const response = await fetch(`http://localhost:5000/api/user/${storedUsername}`, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
+        });
+
+        if (!response.ok) {
+          throw new Error(`Network response was not ok: ${response.status}`);
+        }
+
+        const fetchedUser = await response.json();
+        if (!fetchedUser) {
+          console.error('Fetched user is undefined or null');
+        }
+        setUserName(fetchedUser.Username);
+        setEmail(fetchedUser.Email);
+        setAvatar(fetchedUser.Avatar);
+        setWorkoutsCompleted(fetchedUser.WorkoutsCompleted);
+        console.log('Fetched user:', fetchedUser);
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
   }, []);
 
+  useEffect(() => {
+    if (!isLoading) {
+      navigation.navigate('AccountProfileScreen', { Username });
+    }
+  }, [isLoading]);
+
+  if (isLoading) {
+    return <Text>Loading...</Text>;
+  }
   return (
     <View style={styles.container}>
       <Text style={styles.welcomeText}>Account Profile</Text>
@@ -61,8 +79,8 @@ const AccountProfileScreen: React.FC<AccountProfileProps> = ({ navigation }) => 
       </View>
       <View>
           <View style={styles.stat}>
-            <Text style={styles.statLabel}>Workouts Completed</Text>
-            <Text style={styles.statNumber}>0</Text>
+            <Text style={styles.statLabel}>Workouts Completed </Text>
+            <Text style={styles.statNumber}>{WorkoutsCompleted}</Text>
           </View>
       </View>
       <View style={styles.settingsList}>
