@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, ScrollView, Button, Alert, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Alert, TouchableOpacity } from 'react-native';
 import { NavigationProp } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
+import { time } from 'console';
 
 interface DailyWorkoutprops {
   navigation: NavigationProp<any>;
@@ -30,6 +31,27 @@ const DailyWorkoutScreen: React.FC<DailyWorkoutprops> = ({ navigation }) => {
   const [workouts, setWorkouts] = useState<Workout[]>([]);
   const [workoutName, setWorkoutName] = useState('');
   const [exercises, setExercises] = useState<Exercise[]>(workouts.length > 0 ? workouts[0].Exercises : []);
+  const [workoutTime, setWorkoutTime] = useState(0);
+  const [isTimerRunning, setIsTimerRunning] = useState(true);
+
+  // Start the timer when the component mounts
+  useEffect(() => {
+    if (isTimerRunning) {
+      const timer = setInterval(() => {
+        setWorkoutTime(prevTime => prevTime + 1); // Increment the timer every second
+      }, 1000);
+
+      return () => clearInterval(timer); // Clear the timer when the component unmounts
+    }
+  }, [isTimerRunning]);
+
+  // Format workout time as MM:SS
+  const formatTime = (seconds: number) => {
+  const minutes = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+  };
+  
 
   const getWorkouts = async () => {
     try {
@@ -68,12 +90,18 @@ const DailyWorkoutScreen: React.FC<DailyWorkoutprops> = ({ navigation }) => {
 
   const handleCompleteWorkout = async () => {
     try {
-      const storedUsername = await AsyncStorage.getItem('Username');
-      console.log('Stored username:', storedUsername);
+      // Stop the timer
+      const finalWorkoutTime = workoutTime;
+      clearInterval(finalWorkoutTime);
+     
+      await AsyncStorage.setItem('WorkoutTime', JSON.stringify(finalWorkoutTime));
+      
+      const storedUsername = await AsyncStorage.getItem('Username'); 
       if (!storedUsername) {
         throw new Error('No username found in storage');
       }
       setUsername(storedUsername);
+      
       const response = await fetch(`http://localhost:5000/api/workouts/${storedUsername}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -82,8 +110,7 @@ const DailyWorkoutScreen: React.FC<DailyWorkoutprops> = ({ navigation }) => {
 
       if (response.status === 200) {
         await AsyncStorage.setItem(`${storedUsername}_WorkoutsCompleted`, JSON.stringify(workouts.length));
-        console.log('Workouts completed:', workouts.length);
-        
+      
         console.log('Workout completed successfully');
         navigation.reset({
           index: 0,
@@ -104,13 +131,13 @@ const DailyWorkoutScreen: React.FC<DailyWorkoutprops> = ({ navigation }) => {
       console.error(error);
     }
   };
-  
 
   return (
     <ScrollView style={{ flex: 1, backgroundColor: 'black' }}>
       <View style={styles.container}>
         <Text style={styles.welcomeHeader}>Daily Workout</Text>
         <Text style={styles.welcomeText}>Enjoy Your Workout, {username}!</Text>
+        <Text style={styles.timerText}>Workout Time: {formatTime(workoutTime)}</Text>
       <View>
       {/* Render Workout Names */}
       {workouts.length > 0 ? (
@@ -322,6 +349,13 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontFamily: 'Alkatra-VariableFront_wght',
     fontWeight: 'bold',
+  },
+  timerText: {
+    fontSize: 24,
+    fontFamily: 'Alkatra-VariableFront_wght',
+    color: 'white',
+    marginBottom: 20,
+    marginTop: 20,
   },
 });
 export default DailyWorkoutScreen;
