@@ -35,6 +35,10 @@ serializer = URLSafeTimedSerializer(app.secret_key)
 # CORS configuration
 CORS(app, supports_credentials=True, origins=["https://localhost:8081"])
 
+@app.route('/')
+def home():
+    return "Hello, World!"
+
 @app.route('/accountSignup', methods=['POST', 'OPTIONS'])
 @cross_origin(origin='http://localhost:8081', supports_credentials=True)  # Ensure correct origin
 def account_signup():
