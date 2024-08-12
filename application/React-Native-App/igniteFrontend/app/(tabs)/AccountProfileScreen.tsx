@@ -4,6 +4,7 @@
   import { useState, useEffect } from 'react';
   import { NavigationProp} from '@react-navigation/native';
   import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ScrollView } from 'react-native-gesture-handler';
 
   interface User {
     WorkoutsCompleted?: number; 
@@ -26,6 +27,14 @@
     const [Avatar, setAvatar] = useState('');
     const [WorkoutsCompleted, setWorkoutsCompleted] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
+    const [finalWorkoutTime, setFinalWorkoutTime] = useState(0);
+
+    // Format workout time as MM:SS
+    const formatTime = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    };
 
     useEffect(() => {
       const fetchData = async () => {
@@ -39,6 +48,13 @@
           setAvatar(storedAvatar);
           console.log('Stored avatar:', storedAvatar);
         }
+        const storedWorkoutTime = await AsyncStorage.getItem('WorkoutTime');
+        if (storedWorkoutTime) {
+          const workoutTime = formatTime(parseInt(storedWorkoutTime, 10));
+          setFinalWorkoutTime(parseInt(workoutTime, 10));
+          console.log('Stored workout time:', formatTime(parseInt(workoutTime, 10)));
+        }
+
         try {
           const response = await fetch(`http://localhost:5000/api/user/${storedUsername}`, {
             method: 'GET',
@@ -77,19 +93,22 @@
       return <Text>Loading...</Text>;
     }
     return (
+      <ScrollView>
       <View style={styles.container}>
         <Text style={styles.welcomeText}>Account Profile</Text>
+        <Image source={require('../../assets/images/avatarblue.png')} style={styles.avatar} />
         <View style={styles.profileHeader}>
-          {Avatar && (
-            <Image source={{ uri: Avatar }} style={styles.avatar} />
-          )}
           <Text style={styles.name}>{Username}</Text>
           <Text style={styles.email}>{Email}</Text>
         </View>
         <View>
             <View style={styles.stat}>
-              <Text style={styles.statLabel}>Workouts Completed </Text>
-              <Text style={styles.statNumber}>{WorkoutsCompleted}</Text>
+              <Text style={styles.statLabel}>You've Completed </Text>
+              <Text style={styles.statNumber}>{WorkoutsCompleted} workouts</Text>
+            </View>
+            <View style={styles.stat}>
+              <Text style={styles.statLabel}>Last Workout Time </Text>
+              <Text style={styles.statNumber}>{finalWorkoutTime} minutes</Text>
             </View>
         </View>
         
@@ -108,6 +127,7 @@
           </TouchableOpacity>
         </View>
       </View>
+      </ScrollView>
     );
   }
 
@@ -122,10 +142,12 @@
       marginBottom: 20,
     },
     avatar: {
-      width: 100,
-      height: 100,
+      width: 50,
+      height: 50,
       borderRadius: 50,
+      marginTop: 50,
       marginBottom: 10,
+      alignSelf: 'center',
     },
     name: {
       fontSize: 30,
@@ -163,10 +185,15 @@
       alignItems: 'center',
       justifyContent: 'center',
       textAlign: 'center',
+      marginTop: 20,
     },
     statNumber: {
-      fontSize: 30,
-      color: 'white',
+      fontSize: 20,
+      color: '#F83600',
+      fontFamily: 'Alkatra-VariableFront_wght',
+      textTransform: 'uppercase',
+      marginTop: 10,
+
     },
     statLabel: {
       fontSize: 30,
@@ -186,7 +213,7 @@
     welcomeText: {
       fontSize: 44,
       color: 'white',
-      marginTop: 80,
+      marginTop: 20,
       marginBottom: 20,
       textAlign: 'center',
       fontFamily: 'Alkatra-VariableFront_wght',
