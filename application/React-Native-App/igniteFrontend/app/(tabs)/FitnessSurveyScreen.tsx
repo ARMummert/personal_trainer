@@ -52,12 +52,10 @@ const FitnessSurveyScreen: React.FC<{ navigation: NavigationProp<any> }> = ({ na
       const fetchUsername = async () => {
         try {
           const storedUsername = await AsyncStorage.getItem('Username');
-          console.log('Stored username:', storedUsername);
           if (!storedUsername) {
             throw new Error('No username found in storage');
           }
           setUsername(storedUsername);
-          console.log('Username:', storedUsername);
         } catch (error) {
           console.error('Error fetching username:', error);
         }
@@ -85,7 +83,7 @@ const FitnessSurveyScreen: React.FC<{ navigation: NavigationProp<any> }> = ({ na
         index: 0,
         routes: [{ name: 'DailyWorkoutScreen', params: { username } }],
       });
-      console.log('Survey submitted successfully:', result);
+
     } catch (error) {
       console.error('Error submitting survey:', error);
     }

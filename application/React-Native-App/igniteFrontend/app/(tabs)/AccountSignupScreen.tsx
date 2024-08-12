@@ -62,12 +62,9 @@ const AccountSignUpScreen: React.FC<SignUpProps> = ({ navigation }) => {
       if (response.ok) {
         const data = await response.json();
         await AsyncStorage.setItem('Username', Username);
-        console.log('Stored username:', Username);
-        // Save the file URI using AsyncStorage
         await AsyncStorage.setItem('Avatar', avatarUri || '');
 
         setAvatarUri(avatarUri);
-        console.log('Stored avatar URI:', avatarUri);
         
         if (data.success) {
           alert('Account created successfully');

@@ -76,7 +76,6 @@ const DailyWorkoutScreen: React.FC<DailyWorkoutprops> = ({ navigation }) => {
       setWorkoutName(data.workoutName);
       setExercises(data.exercises  || []);
       setExercises(data.exerciseName);
-      console.log('Fetched exercises:', data.exerciseName);
       
       
     } catch (error) {
@@ -111,7 +110,6 @@ const DailyWorkoutScreen: React.FC<DailyWorkoutprops> = ({ navigation }) => {
       if (response.status === 200) {
         await AsyncStorage.setItem(`${storedUsername}_WorkoutsCompleted`, JSON.stringify(workouts.length));
       
-        console.log('Workout completed successfully');
         navigation.reset({
           index: 0,
           routes: [{ name: 'PostWorkoutScreen' }],

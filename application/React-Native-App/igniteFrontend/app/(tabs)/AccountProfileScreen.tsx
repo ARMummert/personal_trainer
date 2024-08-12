@@ -46,13 +46,11 @@ import { ScrollView } from 'react-native-gesture-handler';
         const storedAvatar = await AsyncStorage.getItem('Avatar'); 
         if (storedAvatar) {
           setAvatar(storedAvatar);
-          console.log('Stored avatar:', storedAvatar);
         }
         const storedWorkoutTime = await AsyncStorage.getItem('WorkoutTime');
         if (storedWorkoutTime) {
           const workoutTime = formatTime(parseInt(storedWorkoutTime, 10));
           setFinalWorkoutTime(parseInt(workoutTime, 10));
-          console.log('Stored workout time:', formatTime(parseInt(workoutTime, 10)));
         }
 
         try {
@@ -72,7 +70,6 @@ import { ScrollView } from 'react-native-gesture-handler';
           setUserName(fetchedUser.Username);
           setEmail(fetchedUser.Email);
           setWorkoutsCompleted(fetchedUser.WorkoutsCompleted);
-          console.log('Fetched user:', fetchedUser);
         } catch (error) {
           console.error('Error fetching user data:', error);
         } finally {
