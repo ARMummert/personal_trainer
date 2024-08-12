@@ -766,6 +766,7 @@ def get_workouts(username):
         if conn:
             conn.close()
 
+# NOT IMPLEMENTED
 @app.route('/api/workouts/<workout_id>/exercises/<exercise_id>', methods=['DELETE', 'OPTIONS'])
 @cross_origin(origin='http://localhost:8081', supports_credentials=True)
 def delete_exercise(workout_id, exercise_id):
@@ -798,6 +799,7 @@ def delete_exercise(workout_id, exercise_id):
         app.logger.error(f"Database error: {err}")
         return jsonify({"success": False, "error": str(err)}), 500
 
+# NOT IMPLEMENTED
 @app.route('/api/exercises/random', methods=['PUT', 'OPTIONS'])
 def get_random_exercise(exercise_id):
     try:
