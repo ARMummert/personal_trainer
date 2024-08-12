@@ -91,7 +91,7 @@ const DailyWorkoutScreen: React.FC<DailyWorkoutprops> = ({ navigation }) => {
         });
        
         Alert.alert("Success", "Workout completed successfully!");
-        const confirm = window.confirm('Workout Completed Succesfully! Would you like to return to the home screen?');
+        const confirm = window.confirm('Workout Completed Succesfully!');
         if (!confirm) {
           return;
         }
@@ -104,18 +104,18 @@ const DailyWorkoutScreen: React.FC<DailyWorkoutprops> = ({ navigation }) => {
       console.error(error);
     }
   };
-
+  
 
   return (
     <ScrollView style={{ flex: 1, backgroundColor: 'black' }}>
       <View style={styles.container}>
         <Text style={styles.welcomeHeader}>Daily Workout</Text>
         <Text style={styles.welcomeText}>Enjoy Your Workout, {username}!</Text>
-      <View style={styles.cardcontainer}>
+      <View>
       {/* Render Workout Names */}
       {workouts.length > 0 ? (
       workouts.map((workout, index) => (
-      <View key={index}>
+      <View style={styles.container2} key={index}>
         <LinearGradient style={styles.gradient} colors={['#F83600', '#FE8C00']}>
         <Text style={styles.workoutName}>{workout.WorkoutName}</Text>
         </LinearGradient>
@@ -132,8 +132,6 @@ const DailyWorkoutScreen: React.FC<DailyWorkoutprops> = ({ navigation }) => {
                 Sets: {exercise.Sets} | Reps: {exercise.Reps}
               </Text>
               <Text style={styles.exerciseDescription}>{exercise.Description}</Text>
-              <LinearGradient style={styles.gradient2} colors={['#F83600', '#FE8C00']}>
-              </LinearGradient>
             </View>
           ))
         ) : (
@@ -165,14 +163,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'black',
     color: 'white',
-    marginBottom: 50, 
   },
-  cardcontainer: {
-    width: '80%',
+  container2: {
+    justifyContent: 'center',
     alignItems: 'center',
-    textAlign: 'center',
-    borderRadius: 15,
-    backgroundColor: 'white',
+    backgroundColor: 'black',
+    color: 'white',
   },
   cardText: {
     fontSize: 24,
@@ -224,10 +220,14 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   gradient: {
-    width: '100%',
-    marginBottom: 15,
-    borderTopLeftRadius: 15,
-    borderTopRightRadius: 15,
+    width: '80%',
+    height: 220,
+    borderRadius: 5,
+    marginBottom: -90,
+    padding: 20,
+    alignContent: 'center',
+    textAlign: 'center',
+    alignSelf: 'center',
   },
   gradient2: {
     borderRadius: 5,
@@ -249,11 +249,14 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   exerciseContainer: {
-    width: '100%',
+    width: '80%',
     padding: 20,
     marginVertical: 10,
     borderRadius: 5,
     backgroundColor: 'white',
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
   },
   exerciseName: {
     fontSize: 20,

@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, Modal, FlatList } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import * as FileSystem from 'expo-file-system';
 import { NavigationProp } from '@react-navigation/native';
 import { AntDesign } from '@expo/vector-icons';
 import { ScrollView } from 'react-native';
+
 interface SignUpProps {
   navigation: NavigationProp<any>;
 }
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Avatar } from 'react-native-elements';
 
 const AccountSignUpScreen: React.FC<SignUpProps> = ({ navigation }) => {
   const [Username, setUsername] = useState('');
@@ -18,6 +21,7 @@ const AccountSignUpScreen: React.FC<SignUpProps> = ({ navigation }) => {
   const [loadedAvatarOptions, setLoadedAvatarOptions] = useState<{ label: string; value: any; }[]>([]);
   const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [avatarUri, setAvatarUri] = useState<string | null>(null);
 
   useEffect(() => {
     const loadAvatars = () => {
@@ -36,30 +40,39 @@ const AccountSignUpScreen: React.FC<SignUpProps> = ({ navigation }) => {
 
     loadAvatars();
   }, []);
-
+  
   const handleSignUp = async () => {
-    if (!Fullname || !Username || !Email || !Password) {
+    if (!Fullname || !Username || !Email || !Password || !RePassword || !selectedAvatar) {
       alert('Please fill out all fields');
       return;
     }
 
     try {
+      if (Password !== RePassword) {
+        alert('Passwords do not match');
+        return;
+      }
+
       const response = await fetch('http://localhost:5000/accountSignup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ Fullname, Username, Email, Password, selectedAvatar }),
+        body: JSON.stringify({ Fullname, Username, Email, Password, Avatar: selectedAvatar }),  
       });
 
       if (response.ok) {
-        const signupSuccessful = true;
         const data = await response.json();
         await AsyncStorage.setItem('Username', Username);
-        await AsyncStorage.setItem('Avatar', selectedAvatar || '');
+        console.log('Stored username:', Username);
+        // Save the file URI using AsyncStorage
+        await AsyncStorage.setItem('Avatar', avatarUri || '');
+
+        setAvatarUri(avatarUri);
+        console.log('Stored avatar URI:', avatarUri);
+        
         if (data.success) {
           alert('Account created successfully');
-          
-            navigation.navigate('FitnessSurveyScreen', {Username});
-            console.log(`Account created successfully. Username: ${Username}`);
+          navigation.navigate('FitnessSurveyScreen', {Username});
+          console.log(`Account created successfully. Username: ${Username}`);
         } else {
           alert('Failed to create account');
         }
