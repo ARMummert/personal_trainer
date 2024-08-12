@@ -1,3 +1,4 @@
+import random
 from flask import Flask, request, jsonify, send_from_directory, session, url_for, render_template_string
 from flask_cors import CORS, cross_origin
 import mysql.connector
@@ -65,7 +66,7 @@ def account_signup():
             # Insert user login data into the UserLogins table
             query_userlogins = "INSERT INTO UserLogins (Username, Email, Password, Name) VALUES (%s, %s, %s, %s)"
             cursor.execute(query_userlogins, (username, email, hashed_password, fullname))
-            
+
             # Fetch the generated UserID
             cursor.execute("SELECT UserID FROM UserLogins WHERE Username = %s", (username,))
             user = cursor.fetchone()
@@ -540,11 +541,12 @@ def submit_survey(username):
                     # Insert new survey info if it doesn't exist
                     cursor.execute(
                         "INSERT INTO SurveyInfo (UserID, GenderID, FitnessGoalID, BodyTypeID, FitnessLevelID, ActivityLevelID) "
-                        "VALUES (%s, %s, %s, %s, %s, %s)",
+                        "VALUES (%s, %s, %s, %s, %s, %s) RETURNING SurveyID",
                         (user_info_id, gender_id, fitness_goal_id, body_type_id, fitness_level_id, activity_level_id)
                     )
+                    survey_id = cursor.fetchone()[0]  # Fetch the newly inserted survey ID
                     app.logger.debug("Inserted new survey info for user ID: %s", user_id)
-                    
+    
                     cursor.execute("UPDATE UserInfo SET SurveyID = %s WHERE UserInfoID = %s", (survey_id, user_info_id))
                     
                 else: 
@@ -796,6 +798,49 @@ def delete_exercise(workout_id, exercise_id):
         app.logger.error(f"Database error: {err}")
         return jsonify({"success": False, "error": str(err)}), 500
 
+@app.route('/api/exercises/random', methods=['PUT', 'OPTIONS'])
+def get_random_exercise(exercise_id):
+    try:
+        if request.method == 'OPTIONS':
+            response = app.make_default_options_response()
+            response.headers.add("Access-Control-Allow-Origin", "http://localhost:8081")
+            response.headers.add("Access-Control-Allow-Credentials", "true")
+            response.headers.add("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+            response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+            return response
+        
+        if request.method == 'PUT':
+            # Query all exercises from the database
+            conn = mysql.connector.connect(**db_config)
+            cursor = conn.cursor()
+
+            exercise_id = request.args.get('exercise_id')
+
+            # Fetch exercises from the database
+            cursor.execute("SELECT * FROM Exercises", (exercise_id))
+            exercises = cursor.fetchall()
+            conn.commit()
+
+            if not exercises:
+                return jsonify({"error": "No exercises found"}), 404
+
+            # Randomly select one exercise
+            random_exercise = random.choice(exercises)
+
+            # Serialize the exercise data to JSON
+            exercise_data = {
+                "id": random_exercise.id,
+                "ExerciseName": random_exercise.ExerciseName,
+                "Sets": random_exercise.Sets,
+                "Reps": random_exercise.Reps,
+                "Description": random_exercise.Description
+            }
+            conn.close()
+            cursor.close()
+            return jsonify(exercise_data), 200
+    
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/api/logout', methods=['POST'])
 @cross_origin(origin='http://localhost:8081', supports_credentials=True)  # Ensure correct origin

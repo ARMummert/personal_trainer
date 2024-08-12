@@ -51,8 +51,10 @@ const AccountSignUpScreen: React.FC<SignUpProps> = ({ navigation }) => {
       });
 
       if (response.ok) {
+        const signupSuccessful = true;
         const data = await response.json();
         await AsyncStorage.setItem('Username', Username);
+        await AsyncStorage.setItem('Avatar', selectedAvatar || '');
         if (data.success) {
           alert('Account created successfully');
           

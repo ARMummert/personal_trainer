@@ -13,7 +13,13 @@ interface User {
 }
 interface AccountProfileProps {
   navigation: NavigationProp<any>;
+  Avatar: string;
+  Username: string;
+  Email: string;
+  WorkoutsCompleted: number;
+  isLoading: boolean;
 }
+
 const AccountProfileScreen: React.FC<AccountProfileProps> = ({ navigation }) => {
   const [Username, setUserName] = useState('');
   const [Email, setEmail] = useState('');
@@ -28,7 +34,11 @@ const AccountProfileScreen: React.FC<AccountProfileProps> = ({ navigation }) => 
         console.error('No username found in storage');
         return;
       }
-
+      const storedAvatar = await AsyncStorage.getItem('Avatar');
+      if (storedAvatar) {
+        setAvatar(storedAvatar);
+        console.log('Stored avatar:', storedAvatar);
+      }
       try {
         const response = await fetch(`http://localhost:5000/api/user/${storedUsername}`, {
           method: 'GET',
@@ -45,7 +55,6 @@ const AccountProfileScreen: React.FC<AccountProfileProps> = ({ navigation }) => 
         }
         setUserName(fetchedUser.Username);
         setEmail(fetchedUser.Email);
-        setAvatar(fetchedUser.Avatar);
         setWorkoutsCompleted(fetchedUser.WorkoutsCompleted);
         console.log('Fetched user:', fetchedUser);
       } catch (error) {

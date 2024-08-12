@@ -61,14 +61,14 @@ const DailyWorkoutScreen: React.FC<DailyWorkoutprops> = ({ navigation }) => {
       console.error('Error fetching workouts:', error);
     }
   };
-
+  
   useEffect(() => {
     getWorkouts();
   }, []);
 
   const handleCompleteWorkout = async () => {
     try {
-        const storedUsername = await AsyncStorage.getItem('Username');
+      const storedUsername = await AsyncStorage.getItem('Username');
       console.log('Stored username:', storedUsername);
       if (!storedUsername) {
         throw new Error('No username found in storage');
@@ -83,7 +83,7 @@ const DailyWorkoutScreen: React.FC<DailyWorkoutprops> = ({ navigation }) => {
       if (response.status === 200) {
         await AsyncStorage.setItem(`${storedUsername}_WorkoutsCompleted`, JSON.stringify(workouts.length));
         console.log('Workouts completed:', workouts.length);
-
+        
         console.log('Workout completed successfully');
         navigation.reset({
           index: 0,
@@ -95,7 +95,7 @@ const DailyWorkoutScreen: React.FC<DailyWorkoutprops> = ({ navigation }) => {
         if (!confirm) {
           return;
         }
-        // Optionally, update local state or trigger a re-render
+    
       } else {
         Alert.alert("Error", "Failed to complete the workout.");
       }
@@ -105,21 +105,6 @@ const DailyWorkoutScreen: React.FC<DailyWorkoutprops> = ({ navigation }) => {
     }
   };
 
-  const handleRemoveExercise = async (exercise_id: number, workout_id: number) => {
-    console.log('exercise_id:', exercise_id);
-    console.log('workout_id:', workout_id);
-    const confirm = window.confirm('Are you sure you want to delete this exercise?');
-    if (!confirm) {
-      return;
-    }
-    if (!exercises) {
-      console.error("Exercises array is undefined");
-      return;
-    }
-    const updatedExercises = exercises.filter(exercise => exercise.id !== exercise_id);
-
-    setExercises(updatedExercises);
-};
 
   return (
     <ScrollView style={{ flex: 1, backgroundColor: 'black' }}>
@@ -148,11 +133,6 @@ const DailyWorkoutScreen: React.FC<DailyWorkoutprops> = ({ navigation }) => {
               </Text>
               <Text style={styles.exerciseDescription}>{exercise.Description}</Text>
               <LinearGradient style={styles.gradient2} colors={['#F83600', '#FE8C00']}>
-              <TouchableOpacity
-                style={styles.button}
-                onPress={() => handleRemoveExercise(Number(exercise.id), Number(workout.id))}>
-                  <Text style={styles.buttonText}>Delete</Text>
-              </TouchableOpacity>
               </LinearGradient>
             </View>
           ))
