@@ -1,1 +1,1 @@
-web: gunicorn app:app
+web: concurrently "set NODE_OPTIONS=--openssl-legacy-provider && npx expo start" "gunicorn app:App"
