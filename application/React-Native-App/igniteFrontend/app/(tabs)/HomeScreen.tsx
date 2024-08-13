@@ -1,7 +1,7 @@
 // Filename: HomeScreen.tsx
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, Alert, Button } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, Alert, Button, ScrollView } from 'react-native';
 import { NavigationProp } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -30,6 +30,7 @@ const HomeScreen: React.FC<Homeprops> = ({ navigation }) => {
   }, []);
 
   return (
+    <ScrollView>
     <View style={styles.container}>
       <Image source={require('../../assets/images/fitappimage.jpg')} style={styles.headerImage} resizeMode="cover"  />
       <LinearGradient style={styles.gradient} colors={['#F83600', '#FE8C00']}>
@@ -54,6 +55,7 @@ const HomeScreen: React.FC<Homeprops> = ({ navigation }) => {
         </View>
       </LinearGradient>
     </View>
+    </ScrollView>
   );
 };
 

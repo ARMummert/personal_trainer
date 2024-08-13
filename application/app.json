@@ -1,0 +1,16 @@
+{
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "cfa83f58-dbfa-4870-bd8b-ade44d009699"
+      }
+    },
+    "android": {
+      "package": "com.armummert.application"
+    },
+    "ios": {
+      "bundleIdentifier": "com.armummert.application"
+    },
+    "owner": "mummeram"
+  }
+}
