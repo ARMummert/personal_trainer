@@ -301,7 +301,8 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   workoutDescription: {
-    fontSize: 24,
+    fontSize: 20,
+    width: '80%',
     fontFamily: 'Alkatra-VariableFront_wght',
     color: 'black',
     alignItems: 'center',

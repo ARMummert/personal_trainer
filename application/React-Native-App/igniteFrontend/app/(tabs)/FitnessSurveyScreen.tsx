@@ -179,12 +179,14 @@ const FitnessSurveyScreen: React.FC<{ navigation: NavigationProp<any> }> = ({ na
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
+    alignContent: 'center',
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'black',
   },
   title: {
     fontSize: 44,
+    width: '80%',
     marginBottom: 20,
     color: 'white',
     fontFamily: 'Alkatra-VariableFront_wght',
@@ -215,12 +217,17 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 20,
     color: 'white',
+    width: '80%',
     marginBottom: 5,
     fontFamily: 'Alkatra-VariableFront_wght',
+    alignContent: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+    textAlign: 'center',
   },
   picker: {
       height: 50,
-      width: '20%',
+      width: '50%',
       color: 'black',
       fontWeight: 600,
       backgroundColor: 'white',
@@ -230,7 +237,7 @@ const styles = StyleSheet.create({
       marginBottom: 25,
   },
   checkboxContainer: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     alignItems: 'center',
     marginBottom: 10,
   },
@@ -246,7 +253,7 @@ const styles = StyleSheet.create({
   },
   fitnesswarning: {
     fontSize: 20,
-    width: 400,
+    width: '80%',
     alignItems: 'flex-start',
     color: 'white',
     marginBottom: 20,

@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Alkatra-VariableFront_wght',
   },
   emailInput: {
-    width: '20%',
+    width: '50%',
     height: 40,
     borderRadius: 5,
     color: 'white',

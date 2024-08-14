@@ -142,7 +142,7 @@ export default function TabLayout() {
         headerTitleStyle: {
         fontWeight: 'bold',
         },
-        headerTitle: ({ children }) => ( // Custom header for Home screen
+        headerTitle: ({ }) => ( // Custom header for Home screen
         <View>
           <Text style={styles.headerTitle}>Ignite</Text>
         </View>

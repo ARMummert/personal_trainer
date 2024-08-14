@@ -191,7 +191,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Alkatra-VariableFront_wght',
   },
   input: {
-    width: '20%',
+    width: '50%',
     fontSize: 20,
     height: 40,
     borderWidth: 1,
@@ -293,7 +293,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   gradient: {
-    width: '20%',
+    width: '50%',
     marginBottom: 15,
     borderRadius: 5,
   },

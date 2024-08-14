@@ -105,6 +105,8 @@ def login():
         return response
 
     if request.method == 'POST':
+        cursor = None
+        conn = None
         try:
             data = request.json
             username = data['Username']
@@ -130,8 +132,10 @@ def login():
             return jsonify({"success": False, "error": str(err)}), 500
 
         finally:
-            cursor.close()
-            conn.close()
+            if cursor is not None:
+                cursor.close()
+            if conn is not None:
+                conn.close()
 
 @app.route('/reset-password', methods=['POST', 'OPTIONS'])
 @cross_origin(origin='http://localhost:8081', supports_credentials=True)

@@ -30,7 +30,7 @@ const HomeScreen: React.FC<Homeprops> = ({ navigation }) => {
   }, []);
 
   return (
-    <ScrollView>
+    <ScrollView style={styles.scrollview}>
     <View style={styles.container}>
       <Image source={require('../../assets/images/fitappimage.jpg')} style={styles.headerImage} resizeMode="cover"  />
       <LinearGradient style={styles.gradient} colors={['#F83600', '#FE8C00']}>
@@ -66,7 +66,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'black',
   },
- 
+  scrollview: 
+  {
+    backgroundColor: 'black',
+  },
   card: {
     backgroundColor: 'white',
     padding: 20,

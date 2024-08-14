@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   emailInput: {
-    width: '25%',
+    width: '50%',
     height: 40,
     borderRadius: 5,
     color: 'white',
